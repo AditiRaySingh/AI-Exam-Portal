@@ -1,0 +1,32 @@
+.result-card{
+ border:1px solid #ddd;
+ border-radius:18px;
+ background:white;
+ padding:25px;
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ margin-top:20px;
+}
+
+.result-right{
+ display:flex;
+ align-items:center;
+ gap:20px;
+}
+
+.badge{
+ background:#030617;
+ color:white;
+ padding:8px 15px;
+ border-radius:10px;
+ font-size:14px;
+}
+
+.detail-btn{
+ padding:10px 18px;
+ border:1px solid #ddd;
+ background:white;
+ border-radius:10px;
+ cursor:pointer;
+}

@@ -7,7 +7,10 @@ import {
 const router = express.Router();
 
 // register
-router.post("/register", userregistration);
+router.post("/register", (req,res,next)=>{
+  console.log("REGISTER ROUTE HIT");
+  next();
+}, userregistration);
 
 // login
 router.post("/login", loginUser);

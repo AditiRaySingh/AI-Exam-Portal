@@ -1,0 +1,61 @@
+.create-exam-page{
+  min-height:100vh;
+  background:#f5f7fb;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:40px;
+}
+
+.create-exam-card{
+  width:100%;
+  max-width:700px;
+  background:white;
+  padding:40px;
+  border-radius:20px;
+  box-shadow:0 5px 20px rgba(0,0,0,0.1);
+}
+
+.create-exam-card h1{
+  color:#2563eb;
+  margin-bottom:10px;
+}
+
+.create-exam-card p{
+  color:#666;
+  margin-bottom:25px;
+}
+
+.create-exam-card form{
+  display:flex;
+  flex-direction:column;
+  gap:15px;
+}
+
+.create-exam-card input,
+.create-exam-card textarea{
+  padding:14px;
+  border:1px solid #ddd;
+  border-radius:10px;
+  font-size:15px;
+}
+
+.create-exam-card textarea{
+  min-height:100px;
+  resize:none;
+}
+
+.create-exam-card button{
+  background:#2563eb;
+  color:white;
+  border:none;
+  padding:15px;
+  border-radius:10px;
+  cursor:pointer;
+  font-size:16px;
+  font-weight:600;
+}
+
+.create-exam-card button:hover{
+  background:#1d4ed8;
+}

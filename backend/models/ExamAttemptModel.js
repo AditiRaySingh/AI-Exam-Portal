@@ -4,7 +4,7 @@ const ExamAttemptSchema = new mongoose.Schema({
   studentId: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
-    ref: "User",
+    ref: "user",
   },
 
   examId: {

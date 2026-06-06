@@ -1,0 +1,67 @@
+.navbar{
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ padding:18px 40px;
+ border-bottom:1px solid #ddd;
+ background:white;
+}
+
+.nav-left{
+ display:flex;
+ align-items:center;
+ gap:12px;
+}
+
+.logo-box{
+ width:45px;
+ height:45px;
+ background:#2563eb;
+ color:white;
+ display:flex;
+ justify-content:center;
+ align-items:center;
+ border-radius:12px;
+ font-size:22px;
+}
+
+.nav-left h2{
+ font-size:34px;
+}
+
+.nav-center{
+ display:flex;
+ gap:15px;
+}
+
+.nav-btn{
+ padding:12px 22px;
+ border:none;
+ border-radius:10px;
+ background:white;
+ font-size:16px;
+ cursor:pointer;
+}
+
+.active{
+ background:#030617;
+ color:white;
+}
+
+.nav-right{
+ display:flex;
+ align-items:center;
+ gap:10px;
+}
+
+.profile-circle{
+ width:42px;
+ height:42px;
+ border-radius:50%;
+ background:#2563eb;
+ color:white;
+ display:flex;
+ justify-content:center;
+ align-items:center;
+ font-weight:bold;
+}

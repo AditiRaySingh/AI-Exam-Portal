@@ -43,11 +43,13 @@ export const userregistration = async (req, res) => {
       email: user.email,
       role: user.role
     };
-
+  console.log("BODY RECEIVED:", req.body);
+  
     res.status(201).json({
       message: "User registered successfully",
       user: userData
     });
+   
 
   } catch (error) {
 

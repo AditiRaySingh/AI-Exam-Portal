@@ -1,0 +1,35 @@
+.exam-card{
+ width:500px;
+ border:1px solid #ddd;
+ border-radius:18px;
+ padding:25px;
+ background:white;
+}
+
+.exam-card h2{
+ margin-bottom:10px;
+}
+
+.desc{
+ color:#666;
+ margin-bottom:20px;
+}
+
+.exam-info{
+ display:flex;
+ flex-direction:column;
+ gap:10px;
+ margin-bottom:20px;
+ color:#444;
+}
+
+.start-btn{
+ width:100%;
+ padding:14px;
+ border:none;
+ border-radius:12px;
+ background:#030617;
+ color:white;
+ font-size:17px;
+ cursor:pointer;
+}

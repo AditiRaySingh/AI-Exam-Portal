@@ -1,0 +1,50 @@
+.register-container{
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:#f4f4f4;
+}
+
+.register-box{
+  width:350px;
+  background:white;
+  padding:30px;
+  border-radius:10px;
+  box-shadow:0 0 10px rgba(0,0,0,0.1);
+}
+
+.register-box h2{
+  text-align:center;
+  margin-bottom:20px;
+}
+
+.register-box input{
+  width:100%;
+  padding:10px;
+  margin-bottom:15px;
+  border:1px solid #ccc;
+  border-radius:5px;
+}
+
+.register-box button{
+  width:100%;
+  padding:10px;
+  border:none;
+  background:#16a34a;
+  color:white;
+  border-radius:5px;
+  cursor:pointer;
+}
+
+.register-box button:hover{
+  background:#15803d;
+}
+
+.register-box select{
+  width:100%;
+  padding:10px;
+  margin-bottom:15px;
+  border:1px solid #ccc;
+  border-radius:5px;
+}

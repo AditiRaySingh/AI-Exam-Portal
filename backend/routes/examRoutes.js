@@ -11,12 +11,20 @@ import {
   startExam,
   showQuestions,
   submitExam,
-  getExamResults
+  getExamResults,
+  getAllExamResults
 } from "../controllers/examAttemptController.js";
-
 import {
   protect
 } from "../middleware/authMiddleware.js";
+
+
+
+
+import {
+  getTeacherDashboard
+} from "../controllers/dashboardController.js";
+
 
 const router = express.Router();
 
@@ -58,8 +66,17 @@ router.get(
   showQuestions
 );
 
+
 router.post(
   "/submit",
+  (req,res,next)=>{
+
+    console.log(
+      "SUBMIT ROUTE HIT"
+    );
+
+    next();
+  },
   protect,
   submitExam
 );
@@ -69,6 +86,18 @@ router.get(
   "/results/:examId",
   protect,
   getExamResults
+);
+
+router.get(
+  "/teacher-results/:examId",
+  protect,
+  getAllExamResults
+);
+
+router.get(
+  "/dashboard",
+  protect,
+  getTeacherDashboard
 );
 
 export default router;

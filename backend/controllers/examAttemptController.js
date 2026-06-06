@@ -91,12 +91,36 @@ export const showQuestions = async (req, res) => {
 // Submit Exam
 export const submitExam = async (req, res) => {
   try {
+      console.log(
+      "SUBMIT BODY:",
+      req.body
+    );
     const { examId, answers } = req.body;
     const studentId = req.user.id;
+
+        console.log(
+      "EXAM ID:",
+      examId
+    );
+
+    console.log(
+      "ANSWERS:",
+      answers
+    );
+
+    console.log(
+      "STUDENT:",
+      studentId
+    );
 
     // get questions
     const questions =
       await questionModel.find({ examId });
+
+      console.log(
+  "QUESTIONS:",
+  questions.length
+);
 
     if (questions.length === 0) {
       return res.status(404).json({
@@ -132,6 +156,11 @@ export const submitExam = async (req, res) => {
         examId,
       });
 
+      console.log(
+  "ATTEMPT:",
+  examAttempt
+);
+
     if (!examAttempt) {
       return res.status(404).json({
         message: "Exam attempt not found",
@@ -145,6 +174,7 @@ export const submitExam = async (req, res) => {
     examAttempt.submittedAt = Date.now();
 
     await examAttempt.save();
+    console.log("AFTER SAVE:", examAttempt);
 
     return res.status(200).json({
       success: true,
@@ -215,3 +245,44 @@ return res.status(200).json({
     });  
     }
 }
+
+
+export const getAllExamResults = async (req, res) => {
+
+  try {
+
+    const { examId } = req.params;
+
+    console.log("EXAM ID:", examId);
+
+    const results =
+      await ExamAttemptModel
+        .find({
+          examId,
+          status: "submitted"
+        })
+        .populate(
+          "studentId",
+          "name email"
+        );
+
+    console.log("RESULTS:", results);
+
+    return res.status(200).json({
+      success: true,
+      results
+    });
+
+  } catch (error) {
+
+    console.log(error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: error.message
+    });
+
+  }
+
+};

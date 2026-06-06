@@ -60,7 +60,9 @@ export const getExam= async (req, res) => {
 
     try {
 
-        const exams = await examModel.find();
+      const exams = await examModel.find({
+  teacherId: req.user.id
+});
 
         // fixed variable name
         if (!exams || exams.length === 0) {
