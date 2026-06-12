@@ -1,66 +1,59 @@
 import examModel from "../models/examModel.js";
 import ExamAttemptModel from "../models/ExamAttemptModel.js";
 import questionModel from "../models/QuestionModel.js";
-
-// Start Exam
+import { evaluateAnswer }
+from "./aiEvaluationController.js";
+// START EXAM
 export const startExam = async (req, res) => {
   try {
     const { examId } = req.body;
     const studentId = req.user.id;
 
-    // find exam
     const exam = await examModel.findById(examId);
 
     if (!exam) {
       return res.status(404).json({
-        message: "Exam not found",
+        message: "Exam not found"
       });
     }
 
-    // check published
-    if (exam.status !== "published") {
-      return res.status(400).json({
-        message: "Exam is not available",
+    const alreadyAttempt =
+      await ExamAttemptModel.findOne({
+        studentId,
+        examId
       });
-    }
-
-    // check already attempted
-    const alreadyAttempt = await ExamAttemptModel.findOne({
-      studentId,
-      examId,
-    });
 
     if (alreadyAttempt) {
       return res.status(400).json({
-        message: "You already attempted the exam",
+        message: "You already attempted this exam"
       });
     }
 
-    // create exam attempt
     const examAttempt =
       await ExamAttemptModel.create({
         studentId,
         examId,
-        status: "in progress",
+        status: "in progress"
       });
 
     return res.status(201).json({
       success: true,
-      message: "Exam started successfully",
-      examAttempt,
+      examAttempt
     });
 
   } catch (error) {
+
     return res.status(500).json({
-      message: "Internal server error",
-      error: error.message,
+      message: error.message
     });
+
   }
 };
 
-// Show Questions
+// SHOW QUESTIONS
 export const showQuestions = async (req, res) => {
   try {
+
     const { examId } = req.params;
 
     const questions =
@@ -68,221 +61,311 @@ export const showQuestions = async (req, res) => {
         .find({ examId })
         .select("-correctAnswer");
 
-    if (questions.length === 0) {
-      return res.status(404).json({
-        message: "Questions not found",
-      });
-    }
-
     return res.status(200).json({
       success: true,
-      message: "Questions fetched successfully",
-      questions,
+      questions
     });
 
   } catch (error) {
+
     return res.status(500).json({
-      message: "Internal server error",
-      error: error.message,
+      message: error.message
     });
+
   }
 };
 
-// Submit Exam
+
 export const submitExam = async (req, res) => {
-  try {
-      console.log(
-      "SUBMIT BODY:",
-      req.body
-    );
-    const { examId, answers } = req.body;
-    const studentId = req.user.id;
 
-        console.log(
-      "EXAM ID:",
-      examId
-    );
+try {
 
-    console.log(
-      "ANSWERS:",
-      answers
-    );
+ 
+const { examId, answers } = req.body;
 
-    console.log(
-      "STUDENT:",
-      studentId
-    );
+const studentId = req.user.id;
 
-    // get questions
-    const questions =
-      await questionModel.find({ examId });
+const questions = await questionModel.find({
+  examId
+});
 
-      console.log(
-  "QUESTIONS:",
-  questions.length
-);
+console.log("QUESTIONS =", questions);
 
-    if (questions.length === 0) {
-      return res.status(404).json({
-        message: "Questions not found",
-      });
+let score = 0;
+
+const evaluatedAnswers = [];
+
+for (let question of questions) {
+
+  const studentAnswer = answers.find(
+    ans =>
+      ans.questionId.toString() ===
+      question._id.toString()
+  );
+
+  if (!studentAnswer) continue;
+
+  // MCQ Evaluation
+
+  if (
+    question.questionType === "mcq" ||
+    question.questionType === "truefalse"
+  ) {
+
+    if (
+      studentAnswer.selectedAnswer ===
+      question.correctAnswer
+    ) {
+
+      score += question.marks;
     }
 
-    // calculate score
-    let score = 0;
+    evaluatedAnswers.push({
+      questionId: question._id,
+      selectedAnswer:
+        studentAnswer.selectedAnswer
+    });
 
-    for (let question of questions) {
+  }
 
-      const studentAnswer = answers.find(
-        (ans) =>
-          ans.questionId.toString() ===
-          question._id.toString()
+  // Subjective Evaluation
+
+  else {
+
+    console.log(
+      "AI EVALUATION STARTED"
+    );
+
+    const aiResult =
+      await evaluateAnswer(
+        question.question,
+        question.correctAnswer,
+        studentAnswer.selectedAnswer,
+        question.marks
       );
 
-      // compare answers
-      if (
-        studentAnswer &&
-        studentAnswer.selectedAnswer ===
-          question.correctAnswer
-      ) {
-        score += question.marks;
-      }
-    }
+    console.log(
+      "AI RESULT =",
+      aiResult
+    );
 
-    // find exam attempt
-    const examAttempt =
-      await ExamAttemptModel.findOne({
-        studentId,
-        examId,
-      });
+    score += Number(
+      aiResult.score
+    );
 
-      console.log(
-  "ATTEMPT:",
-  examAttempt
-);
+    evaluatedAnswers.push({
+      questionId: question._id,
 
-    if (!examAttempt) {
-      return res.status(404).json({
-        message: "Exam attempt not found",
-      });
-    }
+      selectedAnswer:
+        studentAnswer.selectedAnswer,
 
-    // update attempt
-    examAttempt.answers = answers;
-    examAttempt.score = score;
-    examAttempt.status = "submitted";
-    examAttempt.submittedAt = Date.now();
+      aiScore:
+        aiResult.score,
 
-    await examAttempt.save();
-    console.log("AFTER SAVE:", examAttempt);
-
-    return res.status(200).json({
-      success: true,
-      message: "Exam submitted successfully",
-      score,
-    });
-
-  } catch (error) {
-    return res.status(500).json({
-      message: "Internal server error",
-      error: error.message,
+      aiFeedback:
+        aiResult.feedback
     });
   }
+}
+
+const examAttempt =
+  await ExamAttemptModel.findOne({
+    studentId,
+    examId
+  });
+
+if (!examAttempt) {
+
+  return res.status(404).json({
+    message:
+      "Exam attempt not found"
+  });
+
+}
+
+let totalMarks = 0;
+
+questions.forEach(q => {
+  totalMarks += q.marks;
+});
+
+const percentage =
+  (score / totalMarks) * 100;
+
+examAttempt.answers =
+  evaluatedAnswers;
+
+examAttempt.score =
+  score;
+
+examAttempt.totalMarks =
+  totalMarks;
+
+examAttempt.percentage =
+  percentage;
+
+examAttempt.status =
+  "submitted";
+
+examAttempt.submittedAt =
+  Date.now();
+
+await examAttempt.save();
+
+return res.status(200).json({
+  success: true,
+  score,
+  percentage,
+  answers:
+    evaluatedAnswers
+});
+
+
+} catch (error) {
+
+
+console.log(
+  "SUBMIT ERROR =",
+  error
+);
+
+return res.status(500).json({
+  message:
+    error.message
+});
+
+
+}
 };
 
 
 
-// getstudentresult...
-
-export const   getExamResults=async(req,res)=>{
-    try{
-
-        const {examId}=req.params;
-        const studentId=req.user.id;
-
-        const examAttempt=await ExamAttemptModel.findOne({
-            studentId,examId
-        })
-
-        if(!examAttempt)
-        {
-            return res.status(404).json({
-        success: false,
-        message: "Result not found",
-      });
-        }
- // find exam
-        const exam=await examModel.findById(examId);
-
-// calculate question
-const questions=await questionModel.find({
-    examId
-})
-
-let totalMarks=0;
-for(let question of questions)
-{
-    totalMarks=totalMarks+question.marks;
-}
-
-return res.status(200).json({
-    success:true,
-    examName:exam.title,
-    score:examAttempt.score,
-    totalMarks,
-    submittedTime:examAttempt.submittedAt,
-    status:examAttempt.status,
-})
-
-
-    }
-    catch(error)
-    {
-      return res.status(500).json({
-        success:false,
-      message: "Internal server error",
-      error: error.message,
-    });  
-    }
-}
-
-
-export const getAllExamResults = async (req, res) => {
-
+// STUDENT RESULT
+export const getExamResults = async (req, res) => {
   try {
 
     const { examId } = req.params;
+    const studentId = req.user.id;
 
-    console.log("EXAM ID:", examId);
+    const examAttempt =
+      await ExamAttemptModel.findOne({
+        studentId,
+        examId
+      });
+
+    if (!examAttempt) {
+      return res.status(404).json({
+        success: false,
+        message: "Result not found"
+      });
+    }
+
+    const exam =
+      await examModel.findById(examId);
+
+    const questions =
+      await questionModel.find({
+        examId
+      });
+
+    let totalMarks = 0;
+
+    questions.forEach(q => {
+      totalMarks += q.marks;
+    });
+
+return res.status(200).json({
+  success: true,
+  examName: exam.title,
+  score: examAttempt.score,
+  totalMarks,
+  submittedTime:
+    examAttempt.submittedAt,
+  status:
+    examAttempt.status,
+
+  answers:
+    examAttempt.answers
+});
+
+  } catch (error) {
+
+    return res.status(500).json({
+      success: false,
+      message: error.message
+    });
+
+  }
+};
+
+// TEACHER RESULTS + ANALYTICS
+export const getAllExamResults = async (req, res) => {
+  try {
 
     const results =
-      await ExamAttemptModel
-        .find({
-          examId,
-          status: "submitted"
-        })
-        .populate(
-          "studentId",
-          "name email"
-        );
+      await ExamAttemptModel.find({
+        examId: req.params.examId,
+        status: "submitted"
+      })
+      .populate(
+        "studentId",
+        "name email"
+      );
 
-    console.log("RESULTS:", results);
+    const totalAttempts =
+      results.length;
 
-    return res.status(200).json({
+    const scores =
+      results.map(
+        r => r.score || 0
+      );
+
+    const highestScore =
+      scores.length
+        ? Math.max(...scores)
+        : 0;
+
+    const lowestScore =
+      scores.length
+        ? Math.min(...scores)
+        : 0;
+
+    const averageScore =
+      scores.length
+        ? (
+            scores.reduce(
+              (a, b) => a + b,
+              0
+            ) / scores.length
+          ).toFixed(2)
+        : 0;
+
+    const leaderboard =
+      [...results].sort(
+        (a, b) =>
+          b.score - a.score
+      );
+
+    res.status(200).json({
       success: true,
-      results
+      results,
+      analytics: {
+        totalAttempts,
+        highestScore,
+        lowestScore,
+        averageScore
+      },
+      leaderboard
     });
 
   } catch (error) {
 
     console.log(error);
 
-    return res.status(500).json({
+    res.status(500).json({
       success: false,
-      message: "Internal server error",
-      error: error.message
+      message: error.message
     });
 
   }
-
 };

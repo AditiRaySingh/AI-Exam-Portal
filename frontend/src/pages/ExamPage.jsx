@@ -1,225 +1,161 @@
-import {
-  useState,
-  useEffect
-} from "react";
-
-
-import {
- useNavigate
-} from "react-router-dom";
-
-
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import api from "../services/api";
+import "../styles/ExamPage.css";
 
 function ExamPage() {
 
   const navigate = useNavigate();
-  const [questions,
-    setQuestions]
-    = useState([]);
 
-  const [currentQuestion,
-    setCurrentQuestion]
-    = useState(0);
+  const [questions, setQuestions] = useState([]);
+  const [currentQuestion, setCurrentQuestion] = useState(0);
 
-  const [timeLeft,
-    setTimeLeft]
-    = useState(1800);
+  const [timeLeft, setTimeLeft] = useState(3600);
 
-  const [answers,
-    setAnswers]
-    = useState({});
+  const [answers, setAnswers] = useState({});
 
-  // TEMP examId
   const examId =
-    localStorage.getItem(
-      "examId"
-    );
+    localStorage.getItem("examId");
 
-  // fetch questions
   useEffect(() => {
-
     fetchQuestions();
-
   }, []);
 
-  const fetchQuestions =
-    async () => {
+  const fetchQuestions = async () => {
 
-      try {
+    try {
 
-        const token =
-          localStorage.getItem(
-            "token"
-          );
+      const token =
+        localStorage.getItem("token");
 
-        const res =
-          await api.get(
-            `/exam/questions/${examId}`,
-            {
-              headers:{
-                Authorization:
-                `Bearer ${token}`
-              }
-            }
-          );
+      const res = await api.get(
+        `/exam/questions/${examId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
 
-        setQuestions(
-          res.data.questions
-        );
+      setQuestions(
+        res.data.questions || []
+      );
 
-      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-      catch(error){
+  // Timer
 
-        console.log(
-          error
-        );
-      }
-    };
-
-  // timer
   useEffect(() => {
 
-    const timer =
-      setInterval(()=>{
+    if (timeLeft <= 0) {
+      handleSubmit();
+      return;
+    }
 
-        setTimeLeft(
-          prev=>prev-1
+    const timer = setInterval(() => {
+
+      setTimeLeft(prev => prev - 1);
+
+    }, 1000);
+
+    return () =>
+      clearInterval(timer);
+
+  }, [timeLeft]);
+
+ const handleAnswer = (answer) => {
+
+  setAnswers(prev => ({
+    ...prev,
+    [questions[currentQuestion]._id]:
+      answer
+  }));
+
+};
+
+  const handleSubmit = async () => {
+
+    try {
+
+      const token =
+        localStorage.getItem("token");
+
+      const formattedAnswers =
+        Object.keys(answers).map(
+          questionId => ({
+            questionId,
+            selectedAnswer:
+              answers[questionId]
+          })
         );
 
-      },1000);
+      const res = await api.post(
+        "/exam/submit",
+        {
+          examId,
+          answers:
+            formattedAnswers
+        },
+        {
+          headers: {
+            Authorization:
+              `Bearer ${token}`
+          }
+        }
+      );
 
-      return()=>
-        clearInterval(
-          timer
-        );
+      console.log(res.data);
 
-  },[]);
+      navigate(
+        `/result/${examId}`
+      );
 
-  if(
-    questions.length===0
-  ){
-    return(
-      <h2>
-        Loading...
+    } catch (error) {
+
+      console.log(error);
+
+      alert(
+        "Failed to submit exam"
+      );
+    }
+  };
+
+  if (questions.length === 0) {
+    return (
+      <h2
+        style={{
+          textAlign: "center",
+          marginTop: "100px"
+        }}
+      >
+        Loading Questions...
       </h2>
     );
   }
 
+  const question =
+    questions[currentQuestion];
+
   const minutes =
-    Math.floor(
-      timeLeft/60
-    );
+    Math.floor(timeLeft / 60);
 
   const seconds =
-    timeLeft%60;
-
-  const question =
-    questions[
-      currentQuestion
-    ];
-
-  // select answer
-  const handleAnswer =
-    (option)=>{
-
-      setAnswers({
-        ...answers,
-        [question._id]:
-          option
-      });
-
-    };
-
-  // submit
-  const handleSubmit =
-    async()=>{
-
-      try{
-
-        const token =
-          localStorage.getItem(
-            "token"
-          );
-
-        const formattedAnswers =
-          Object.keys(
-            answers
-          ).map(
-            questionId=>({
-
-              questionId,
-
-              selectedAnswer:
-              answers[
-                questionId
-              ]
-
-            })
-          );
-
-
-          console.log(
-  "Submitting to backend..."
-);
-
-console.log(
-  "ExamId:",
-  examId
-);
-
-console.log(
-  "Answers:",
-  formattedAnswers
-);
-
-        const res =
-          await api.post(
-            "/exam/submit",
-            {
-              examId,
-              answers:
-              formattedAnswers
-            },
-            {
-              headers:{
-                Authorization:
-                `Bearer ${token}`
-              }
-            }
-          );
-
-        console.log(
-          res.data
-        );
-
-        navigate(
-  `/result/${examId}`
-);
-
-      }
-
-      catch(error){
-
-  console.log(
-    "FULL ERROR:",
-    error.response?.data
-  );
-
-  console.log(error);
-
-  alert(
-    "Submit Failed"
-  );
-}
-    };
-
-  return(
+    timeLeft % 60;
+console.log(question);
+  return (
 
     <div
       style={{
-        padding:"40px"
+        maxWidth: "900px",
+        margin: "40px auto",
+        padding: "30px",
+        background: "#fff",
+        borderRadius: "15px",
+        boxShadow:
+          "0 0 20px rgba(0,0,0,0.1)"
       }}
     >
 
@@ -227,139 +163,208 @@ console.log(
 
       <div
         style={{
-          display:"flex",
+          display: "flex",
           justifyContent:
-          "space-between"
+            "space-between",
+          alignItems: "center"
         }}
       >
 
         <h1>
-          Exam Page
+          Online Exam
         </h1>
 
-        <h2>
-          ⏰
-          {minutes}:
+        <h2
+          style={{
+            color: "#2563eb"
+          }}
+        >
+          ⏰ {minutes}:
           {seconds
             .toString()
-            .padStart(
-              2,
-              "0"
-            )}
+            .padStart(2, "0")}
         </h2>
+
+      </div>
+
+      {/* Progress */}
+
+      <div
+        style={{
+          marginTop: "20px"
+        }}
+      >
+
+        Question
+        {" "}
+        {currentQuestion + 1}
+        {" "}
+        of
+        {" "}
+        {questions.length}
+
+        <div
+          style={{
+            width: "100%",
+            height: "10px",
+            background:
+              "#ddd",
+            borderRadius: "10px",
+            marginTop: "8px"
+          }}
+        >
+
+          <div
+            style={{
+              width:
+                `${((currentQuestion + 1) / questions.length) * 100}%`,
+              height: "100%",
+              background:
+                "#2563eb",
+              borderRadius: "10px"
+            }}
+          />
+
+        </div>
 
       </div>
 
       {/* Question */}
 
-      <h2
-        style={{
-          marginTop:"30px"
-        }}
-      >
-        Question
-        {currentQuestion+1}
-      </h2>
-
-      <h3
-        style={{
-          marginTop:"15px"
-        }}
-      >
-        {question.question}
-      </h3>
-
-      {/* Options */}
-
       <div
         style={{
-          display:"flex",
-          flexDirection:
-          "column",
-          gap:"15px",
-          marginTop:"25px"
+          marginTop: "40px"
         }}
       >
 
-        {question.options.map(
-          (option,index)=>(
-
-            <button
-              key={index}
-              onClick={()=>
-                handleAnswer(
-                  option
-                )
-              }
-              style={{
-
-                padding:"15px",
-
-                border:
-                "1px solid #ccc",
-
-                borderRadius:
-                "10px",
-
-                cursor:
-                "pointer",
-
-                textAlign:
-                "left",
-
-                background:
-                answers[
-                  question._id
-                ]===option
-                ? "#2563eb"
-                : "white",
-
-                color:
-                answers[
-                  question._id
-                ]===option
-                ? "white"
-                : "black"
-
-              }}
-            >
-              {option}
-            </button>
-
-        ))}
+        <h2>
+          {question.question}
+        </h2>
 
       </div>
 
-      {/* Buttons */}
+{/* MCQ */}
+
+{question.questionType === "mcq" && (
+
+  <div
+    style={{
+      display: "flex",
+      flexDirection: "column",
+      gap: "15px",
+      marginTop: "30px"
+    }}
+  >
+
+    {question.options.map(
+      (option, index) => (
+
+        <button
+          key={index}
+          onClick={() =>
+            handleAnswer(option)
+          }
+          style={{
+            padding: "15px",
+            borderRadius: "10px",
+            border: "1px solid #ddd",
+            cursor: "pointer",
+            textAlign: "left",
+
+            background:
+              answers[question._id] === option
+                ? "#2563eb"
+                : "#fff",
+
+            color:
+              answers[question._id] === option
+                ? "#fff"
+                : "#000"
+          }}
+        >
+          {option}
+        </button>
+
+      )
+    )}
+
+  </div>
+
+)}
+
+{/* Subjective */}
+
+{(
+  question.questionType === "shortanswer" ||
+  question.questionType === "veryshortanswer"
+) && (
+
+  <div
+    style={{
+      marginTop: "30px"
+    }}
+  >
+
+    <textarea
+
+      rows="6"
+
+      placeholder="Write your answer here..."
+
+      value={
+        answers[question._id] || ""
+      }
+
+      onChange={(e) =>
+        handleAnswer(
+          e.target.value
+        )
+      }
+
+      style={{
+        width: "100%",
+        padding: "15px",
+        borderRadius: "10px",
+        border: "1px solid #ccc",
+        fontSize: "16px"
+      }}
+    />
+
+  </div>
+
+)}
+
+      {/* Navigation */}
 
       <div
         style={{
-          display:"flex",
-          gap:"15px",
-          marginTop:"35px"
+          marginTop: "40px",
+          display: "flex",
+          justifyContent:
+            "space-between"
         }}
       >
 
         <button
-          onClick={()=>
-            setCurrentQuestion(
-              currentQuestion-1
-            )
-          }
           disabled={
-            currentQuestion===0
+            currentQuestion === 0
+          }
+          onClick={() =>
+            setCurrentQuestion(
+              currentQuestion - 1
+            )
           }
         >
           Previous
         </button>
 
         {currentQuestion <
-        questions.length-1 ? (
+        questions.length - 1 ? (
 
           <button
-            onClick={()=>
+            onClick={() =>
               setCurrentQuestion(
-                currentQuestion+1
+                currentQuestion + 1
               )
             }
           >
@@ -372,6 +377,11 @@ console.log(
             onClick={
               handleSubmit
             }
+            style={{
+              background:
+                "#16a34a",
+              color: "#fff"
+            }}
           >
             Submit Exam
           </button>
@@ -380,7 +390,36 @@ console.log(
 
       </div>
 
+      <div className="sidebar">
+  <h3>Questions</h3>
+
+  <div className="question-palette">
+    {questions.map((q, index) => (
+      <button
+        key={q._id}
+        className={
+          currentQuestion === index
+            ? "active-question"
+            : answers[q._id]
+            ? "answered-question"
+            : ""
+        }
+        onClick={() =>
+          setCurrentQuestion(index)
+        }
+      >
+        {index + 1}
+      </button>
+    ))}
+  </div>
+</div>
+
     </div>
+
+   
+
+
+
   );
 }
 

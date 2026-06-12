@@ -27,6 +27,18 @@ import AddQuestion from "./pages/AddQuestion";
 
 import CreateExam from "./pages/CreateExam";
 
+import AIGenerate from "./pages/AIGenerate";
+import ManageQuestions
+from "./pages/ManageQuestions";
+
+import EditQuestion from "./pages/EditQuestion";
+import GenerateFromMaterial
+from "./pages/GenerateFromMaterial";
+
+
+import SubjectiveEvaluation
+from "./pages/SubjectiveEvaluation";
+
 function App() {
  return (
   <BrowserRouter>
@@ -81,6 +93,35 @@ function App() {
 <Route
   path="/create-exam"
   element={<CreateExam />}
+/>
+
+
+<Route
+  path="/ai-generate"
+  element={<AIGenerate />}
+/>
+
+
+<Route
+  path="/questions/:examId"
+  element={<ManageQuestions />}
+/>
+
+
+<Route
+  path="/edit-question/:id"
+  element={<EditQuestion />}
+/>
+
+<Route
+ path="/generate-material"
+ element={<GenerateFromMaterial />}
+/>
+
+
+<Route
+ path="/evaluate"
+ element={<SubjectiveEvaluation/>}
 />
 
    </Routes>

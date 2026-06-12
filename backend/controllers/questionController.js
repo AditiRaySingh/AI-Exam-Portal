@@ -1,152 +1,289 @@
 import questionModel from "../models/QuestionModel.js";
 import examModel from "../models/examModel.js";
+
+// CREATE QUESTION
 export const questionDesign = async (req, res) => {
-    try {
+  try {
+    const teacherId = req.user.id;
 
-        const teacherId = req.user.id;
-        const { examId, question, options, correctAnswer, marks, questionType } = req.body;
-        if (!examId || !question || !options || !correctAnswer || !marks || !questionType) {
-            return res.status(400).json({ message: "all field are required to filled" })
-        }
-        const exam = await examModel.findById(examId);
+const {
+ examId,
+ topic,
+ question,
+ options,
+ correctAnswer,
+ marks,
+ questionType,
+ difficulty
+} = req.body;
 
-        if (!exam) {
-            return res.status(404).json({
-                message: "Exam not found"
-            });
-        }
-        // ownership check
-        if (exam.teacherId.toString() !== teacherId) {
-            return res.status(403).json({
-                message: "Only teacher who created the exam can add questions"
-            });
-        }
-        const validQuestionTypes = ["mcq", "truefalse", "shortanswer"];
-        if (!validQuestionTypes.includes(questionType)) {
-            return res.status(400).json({
-                message: "invalid question type"
-            })
-        }
-        if (questionType === "mcq") {
-            if (!options || !Array.isArray(options) || options.length < 2) {
-                return res.status(400).json({
-                    message: "mcq must have options"
-                })
-            }
-        }
-        if (isNaN(marks) || Number(marks) <= 0) {
-            return res.status(400).json({
-                message: "Marks must be a valid number greater than 0",
-            });
-        }
-        const newQuestion = await questionModel.create({
-            examId,
-            question,
-            options,
-            correctAnswer,
-            marks,
-            questionType
-        });
-
-        return res.status(201).json({
-            success: true,
-            message: "Question created successfully",
-            question: newQuestion,
-        });
-
-
-    }
-    catch (error) {
-        return res.status(500).json({ message: "internal server error" })
-    }
-}
-
-// get questions
-
-export const getQuestion = async (req, res) => {
-    try {
-
-        const Questions = await questionModel.find();
-        if (!Questions && Questions.length === 0) {
-            return res.status(404).json({
-                message: "NO questions found"
-            })
-        }
-        return res.status(200).json({
-            message: "all questions feched successfully", Questions
-        })
-
-    }
-    catch (error) {
-        return res.status(500).json({ message: "internal server error" })
-    }
-}
-
-
-// update questions 
-
-export const updateQuestion = async (req, res) => {
-    try {
-
-        const { questions, options, correctanswer, questionType, marks } = req.body;
-        const { id } = req.params;
-        if (!questions || !options || !correctanswer || !questionType || !marks) {
-            return res.status(201).send(message, "all filed are required to filled")
-        }
-        const updateQuestion = await questionModel.findByIdAndUpdate(id, {
-            question,
-            options,
-            correctanswer,
-            questionType,
-            marks
-        },
-            {
-                new: true
-            })
-
-        if (!updateQuestion) {
-            return res.status(404).json({
-                message: "Question not found"
-            })
-        }
-        return res.status(200).json({
-            message:
-                "question updated succesfully", updateQuestion
-        })
-
+    if (
+  !examId ||
+  !topic ||
+  !question ||
+  !correctAnswer ||
+  !marks ||
+  !questionType ||
+  !difficulty
+){
+      return res.status(400).json({
+        message: "All fields are required"
+      });
     }
 
-    catch (error) {
-        return res.status(500).json({ message: "internal server error" })
+    const exam = await examModel.findById(examId);
+
+    if (!exam) {
+      return res.status(404).json({
+        message: "Exam not found"
+      });
     }
-}
 
-
-// delete questions
-
-export const deleteQuestion=async(req,res)=>{
-    try{
-
-        const{id}=req.params;
-        const deleteQuestion=await questionModel.findByIdAndDelete();
-        if(!deleteQuestion){
-            return res.status(404).send({message:"question is not deleted"});
-
-        }
-         return res.status(200).json({
-            message:
-                "question deleted succesfully", updateQuestion
-        })
-
+    if (exam.teacherId.toString() !== teacherId) {
+      return res.status(403).json({
+        message:
+          "Only exam owner can add questions"
+      });
     }
-   catch (error) {
+
+   const validTypes = [
+  "mcq",
+  "truefalse",
+  "shortanswer",
+  "veryshortanswer"
+];
+
+    if (!validTypes.includes(questionType)) {
+      return res.status(400).json({
+        message: "Invalid question type"
+      });
+    }
+
+    if (
+      questionType === "mcq" &&
+      (!options ||
+        !Array.isArray(options) ||
+        options.length < 2)
+    ) {
+      return res.status(400).json({
+        message:
+          "MCQ must contain at least 2 options"
+      });
+    }
+
+    const newQuestion =
+await questionModel.create({
+ examId,
+ topic,
+ question,
+ options,
+ correctAnswer,
+ marks,
+ questionType,
+ difficulty
+});
+
+    return res.status(201).json({
+      success: true,
+      message:
+        "Question added successfully",
+      question: newQuestion
+    });
+
+  } catch (error) {
 
     console.log(error);
 
     return res.status(500).json({
-        message: "internal server error",
-        error: error.message
+      message: error.message
     });
-} 
-    
-}
+
+  }
+};
+
+// GET QUESTIONS
+export const getQuestion = async (
+  req,
+  res
+) => {
+  try {
+
+    const questions =
+      await questionModel.find();
+
+    if (
+      !questions ||
+      questions.length === 0
+    ) {
+      return res.status(404).json({
+        message: "No questions found"
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      questions
+    });
+
+  } catch (error) {
+
+    return res.status(500).json({
+      message: error.message
+    });
+
+  }
+};
+
+// UPDATE QUESTION
+export const updateQuestion = async (
+  req,
+  res
+) => {
+  try {
+
+    const { id } = req.params;
+
+    const {
+  topic,
+  question,
+  options,
+  correctAnswer,
+  marks,
+  questionType,
+  difficulty
+} = req.body;
+
+    const updatedQuestion =
+      await questionModel.findByIdAndUpdate(
+        id,
+      {
+  topic,
+  question,
+  options,
+  correctAnswer,
+  marks,
+  questionType,
+  difficulty
+},
+        {
+          new: true
+        }
+      );
+
+    if (!updatedQuestion) {
+      return res.status(404).json({
+        message: "Question not found"
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message:
+        "Question updated successfully",
+      question: updatedQuestion
+    });
+
+  } catch (error) {
+
+    return res.status(500).json({
+      message: error.message
+    });
+
+  }
+};
+
+// DELETE QUESTION
+export const deleteQuestion = async (
+  req,
+  res
+) => {
+  try {
+
+    const { id } = req.params;
+
+    const deletedQuestion =
+      await questionModel.findByIdAndDelete(
+        id
+      );
+
+    if (!deletedQuestion) {
+      return res.status(404).json({
+        message: "Question not found"
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message:
+        "Question deleted successfully"
+    });
+
+  } catch (error) {
+
+    console.log(error);
+
+    return res.status(500).json({
+      message: error.message
+    });
+
+  }
+};
+
+
+// GET QUESTIONS BY EXAM
+export const getQuestionsByExam = async (
+  req,
+  res
+) => {
+  try {
+
+    const { examId } = req.params;
+
+    const questions =
+      await questionModel.find({
+        examId
+      });
+
+    return res.status(200).json({
+      success: true,
+      questions
+    });
+
+  } catch (error) {
+
+    return res.status(500).json({
+      message: error.message
+    });
+
+  }
+};
+
+// GET SINGLE QUESTION
+
+export const getSingleQuestion = async (req, res) => {
+  try {
+
+    const { id } = req.params;
+
+    const question =
+      await questionModel.findById(id);
+
+    if (!question) {
+      return res.status(404).json({
+        message: "Question not found"
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      question
+    });
+
+  } catch (error) {
+
+    return res.status(500).json({
+      message: error.message
+    });
+
+  }
+};

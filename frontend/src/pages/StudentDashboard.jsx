@@ -1,3 +1,6 @@
+import { useEffect, useState } from "react";
+import api from "../services/api";
+
 import "../styles/studentDashboard.css";
 
 import Navbar from "../components/Navbar";
@@ -7,6 +10,63 @@ import ResultCard from "../components/ResultCard";
 
 function StudentDashboard() {
 
+  const [dashboard, setDashboard] =
+    useState(null);
+
+  useEffect(() => {
+    fetchDashboard();
+  }, []);
+
+  const fetchDashboard = async () => {
+
+    try {
+
+      const token =
+        localStorage.getItem("token");
+
+      const res =
+        await api.get(
+          "/dashboard/student",
+          {
+            headers: {
+              Authorization:
+                `Bearer ${token}`
+            }
+          }
+        );
+
+      console.log(
+        "DASHBOARD:",
+        res.data
+      );
+
+      setDashboard(
+        res.data
+      );
+
+    } catch (error) {
+
+      console.log(error);
+
+    }
+
+  };
+
+  if (!dashboard) {
+
+    return (
+      <h2
+        style={{
+          textAlign: "center",
+          marginTop: "100px"
+        }}
+      >
+        Loading Dashboard...
+      </h2>
+    );
+
+  }
+
   return (
 
     <div className="dashboard">
@@ -14,8 +74,6 @@ function StudentDashboard() {
       <Navbar />
 
       <div className="dashboard-content">
-
-        {/* Welcome */}
 
         <h1>
           Welcome back!
@@ -31,25 +89,25 @@ function StudentDashboard() {
 
           <StatCard
             title="Total Exams"
-            value="2"
+            value={dashboard.totalExams}
             icon="📘"
           />
 
           <StatCard
             title="Average Score"
-            value="85%"
+            value={`${dashboard.averageScore}%`}
             icon="📈"
           />
 
           <StatCard
             title="Pending Exams"
-            value="2"
+            value={dashboard.pendingExams}
             icon="⏰"
           />
 
           <StatCard
             title="Passed Exams"
-            value="2"
+            value={dashboard.passedExams}
             icon="🏆"
           />
 
@@ -69,25 +127,26 @@ function StudentDashboard() {
 
           <div className="exam-row">
 
-            <ExamCard
-              examId="6a1a62f936b49b8ff5fb3fe3"
-              title="Mathematics Final Exam"
-              description="Comprehensive mathematics examination."
-              duration="120 minutes"
-              questions="50"
-              marks="100"
-              dueDate="Jun 08, 2026"
-            />
+            {dashboard.exams?.map(
+              (exam) => (
 
-            <ExamCard
-              examId="6a1955ed691f722d9e7034de"
-              title="Mathematics Final Exam"
-              description="Comprehensive mathematics examination."
-              duration="120 minutes"
-              questions="50"
-              marks="100"
-              dueDate="Jun 08, 2026"
-            />
+                <ExamCard
+                  key={exam._id}
+                  examId={exam._id}
+                  title={exam.title}
+                  description={
+                    exam.description
+                  }
+                  duration={
+                    exam.duration
+                  }
+                  marks={
+                    exam.totalMarks
+                  }
+                />
+
+              )
+            )}
 
           </div>
 
@@ -105,25 +164,34 @@ function StudentDashboard() {
             Your latest exam performances
           </p>
 
-          <ResultCard
-            title="Mathematics Final Exam"
-            date="May 30, 2026"
-            percentage="85%"
-            marks="85/100 marks"
-          />
+          {dashboard.results?.map(
+            (result) => (
 
-          <ResultCard
-            title="Physics Quiz"
-            date="May 27, 2026"
-            percentage="84%"
-            marks="42/50 marks"
-          />
+              <ResultCard
+                key={result._id}
+                title="Exam Result"
+                date={
+                  new Date(
+                    result.submittedAt
+                  ).toLocaleDateString()
+                }
+                percentage={
+                  `${result.percentage}%`
+                }
+                marks={
+                  `${result.score}/${result.totalMarks}`
+                }
+              />
+
+            )
+          )}
 
         </div>
 
       </div>
 
     </div>
+
   );
 }
 

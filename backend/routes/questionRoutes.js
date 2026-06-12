@@ -4,7 +4,9 @@ import {
   questionDesign,
   getQuestion,
   updateQuestion,
-  deleteQuestion
+  deleteQuestion,
+   getQuestionsByExam,
+   getSingleQuestion
 } from "../controllers/questionController.js";
 
 import {
@@ -29,6 +31,12 @@ router.get(
   getQuestion
 );
 
+router.get(
+  "/exam/:examId",
+  protect,
+  getQuestionsByExam
+);
+
 router.put(
   "/:id",
   protect,
@@ -45,6 +53,12 @@ router.post(
   "/ai-generate",
   protect,
   generateQuestions
+);
+
+router.get(
+  "/single/:id",
+  protect,
+  getSingleQuestion
 );
 
 export default router;

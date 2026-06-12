@@ -140,6 +140,63 @@ function ResultPage() {
             {result.status}
           </p>
 
+
+          <hr />
+
+<h2>
+  AI Evaluation
+</h2>
+
+{
+result.answers &&
+result.answers.map(
+(answer,index)=>(
+
+<div
+key={index}
+style={{
+border:"1px solid #ddd",
+padding:"15px",
+marginBottom:"15px",
+borderRadius:"10px"
+}}
+>
+
+<p>
+<b>Your Answer:</b>
+</p>
+
+<p>
+{answer.selectedAnswer}
+</p>
+
+{
+answer.aiScore > 0 && (
+
+<>
+<p>
+<b>AI Score:</b>
+{" "}
+{answer.aiScore}
+</p>
+
+<p>
+<b>AI Feedback:</b>
+</p>
+
+<p>
+{answer.aiFeedback}
+</p>
+</>
+
+)
+}
+
+</div>
+
+))
+}
+
           <p>
             <strong>⏰ Submitted:</strong>{" "}
             {

@@ -13,18 +13,28 @@ const ExamAttemptSchema = new mongoose.Schema({
     required: true,
   },
 
-  answers: [
-    {
-      questionId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Question",
-      },
+ answers: [
+{
+  questionId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Question"
+  },
 
-      selectedAnswer: {
-        type: String,
-      },
-    },
-  ],
+  selectedAnswer: {
+    type: String
+  },
+
+  aiScore: {
+    type: Number,
+    default: 0
+  },
+
+  aiFeedback: {
+    type: String,
+    default: ""
+  }
+}
+],
 
   score: {
     type: Number,

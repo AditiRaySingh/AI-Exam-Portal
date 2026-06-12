@@ -1,5 +1,8 @@
 import examModel from "../models/examModel.js";
-
+import {
+evaluateAnswer
+}
+from "./aiEvaluationController.js";
 // create the exam
 export const exam = async (req, res) => {
     try {
@@ -159,4 +162,63 @@ export const updateExam = async (req, res) => {
             message: "internal server error"
         });
     }
+};
+
+export const publishExam = async (req, res) => {
+try {
+
+
+const examId = req.params.id;
+
+const exam =
+  await examModel.findById(examId);
+
+if (!exam) {
+  return res.status(404).json({
+    success: false,
+    message: "Exam not found"
+  });
+}
+
+const questions =
+  await questionModel.find({
+    examId
+  });
+
+if (questions.length === 0) {
+  return res.status(400).json({
+    success: false,
+    message:
+      "Add at least one question before publishing"
+  });
+}
+
+let totalMarks = 0;
+
+questions.forEach((q) => {
+  totalMarks += q.marks;
+});
+
+exam.totalMarks = totalMarks;
+exam.status = "published";
+
+await exam.save();
+
+return res.status(200).json({
+  success: true,
+  message:
+    "Exam published successfully",
+  exam
+});
+
+} catch (error) {
+
+
+return res.status(500).json({
+  success: false,
+  message: error.message
+});
+
+
+}
 };

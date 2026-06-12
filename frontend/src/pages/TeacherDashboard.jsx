@@ -53,10 +53,46 @@ function TeacherDashboard() {
       );
 
       setExams(res.data.exams || []);
+      console.log("EXAMS", exams);
     } catch (error) {
       console.log(error);
     }
   };
+
+
+  const publishExam = async (examId) => {
+
+  try {
+
+    const token =
+      localStorage.getItem("token");
+
+await api.put(
+  `/exam/publish/${examId}`,
+  {},
+  {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  }
+);
+
+    alert(
+      "Exam Published Successfully"
+    );
+
+    fetchExams();
+    fetchDashboard();
+
+  } catch (error) {
+ console.log("PUBLISH ERROR:", error.response?.data || error);
+    alert(
+      "Failed to publish exam"
+    );
+
+  }
+
+};
 
   return (
     <div className="teacher-dashboard">
@@ -123,15 +159,40 @@ function TeacherDashboard() {
           <p>Create and publish exams</p>
         </div>
 
-        <div className="action-card">
+        <div
+          className="action-card"
+          onClick={() =>
+            navigate("/ai-generate")
+          }
+        >
           <h2>🤖 AI Questions</h2>
-          <p>Generate questions using AI</p>
-        </div>
 
+          <p>
+            Generate questions using AI
+          </p>
+        </div>
         <div className="action-card">
           <h2>📊 Analytics</h2>
           <p>Track student performance</p>
         </div>
+     
+
+
+     <div
+ className="action-card"
+ onClick={() =>
+  navigate("/generate-material")
+ }
+>
+ <h2>📄 Upload Notes</h2>
+ <p>
+  Generate Questions From PDF
+ </p>
+</div>
+
+
+
+
 
       </div>
 
@@ -196,33 +257,46 @@ function TeacherDashboard() {
                 >
                   {exam.status}
                 </span>
+<div className="card-buttons">
 
-                <div className="card-buttons">
+  <button
+    className="question-btn"
+    onClick={() =>
+      navigate(`/add-question/${exam._id}`)
+    }
+  >
+    Add Questions
+  </button>
+<button
+  className="view-btn"
+  onClick={() =>
+    navigate(`/questions/${exam._id}`)
+  }
+>
+  View Questions
+</button>
 
-                  <button
-                    className="question-btn"
-                    onClick={() =>
-                      navigate(
-                        `/add-question/${exam._id}`
-                      )
-                    }
-                  >
-                    Add Questions
-                  </button>
+  <button
+    className="result-btn"
+    onClick={() =>
+      navigate(`/teacher-results/${exam._id}`)
+    }
+  >
+    Results
+  </button>
 
-                  <button
-                    className="result-btn"
-                    onClick={() =>
-                      navigate(
-                        `/teacher-results/${exam._id}`
-                      )
-                    }
-                  >
-                    Results
-                  </button>
+  {exam.status === "draft" && (
+    <button
+      className="publish-btn"
+      onClick={() =>
+        publishExam(exam._id)
+      }
+    >
+      Publish
+    </button>
+  )}
 
-                </div>
-
+</div>
               </div>
 
             ))}
@@ -232,6 +306,7 @@ function TeacherDashboard() {
         )}
 
       </div>
+
 
     </div>
   );

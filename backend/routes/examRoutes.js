@@ -4,7 +4,8 @@ import {
   exam,
   getExam,
   deleteExam,
-  updateExam
+  updateExam,
+  publishExam
 } from "../controllers/examController.js";
 
 import {
@@ -14,86 +15,96 @@ import {
   getExamResults,
   getAllExamResults
 } from "../controllers/examAttemptController.js";
+
 import {
   protect
 } from "../middleware/authMiddleware.js";
-
-
-
 
 import {
   getTeacherDashboard
 } from "../controllers/dashboardController.js";
 
-
 const router = express.Router();
 
-// Exam CRUD
+// Create Exam
 router.post(
   "/create",
   protect,
   exam
 );
 
+// Get All Exams
 router.get(
   "/",
   protect,
   getExam
 );
 
+// Update Exam
 router.put(
   "/:id",
   protect,
   updateExam
 );
 
+// Delete Exam
 router.delete(
   "/:id",
   protect,
   deleteExam
 );
 
-// Exam Attempt
+// Publish Exam
+router.put(
+  "/publish/:id",
+  protect,
+  (req,res,next)=>{
+    console.log("PUBLISH API CALLED");
+    next();
+  },
+  publishExam
+);
+
+// Start Exam
 router.post(
   "/start",
   protect,
   startExam
 );
 
+// Get Questions
 router.get(
   "/questions/:examId",
   protect,
   showQuestions
 );
 
-
+// Submit Exam
 router.post(
   "/submit",
-  (req,res,next)=>{
-
-    console.log(
-      "SUBMIT ROUTE HIT"
-    );
-
+  (req, res, next) => {
+    console.log("SUBMIT ROUTE HIT");
     next();
   },
   protect,
   submitExam
 );
 
-// Teacher Results
+// Student Results
 router.get(
   "/results/:examId",
   protect,
   getExamResults
 );
 
+// Teacher Results
 router.get(
   "/teacher-results/:examId",
   protect,
   getAllExamResults
 );
 
+// Dashboard
 router.get(
   "/dashboard",
   protect,

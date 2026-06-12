@@ -2,26 +2,35 @@
   margin:0;
   padding:0;
   box-sizing:border-box;
-  font-family:Inter,sans-serif;
+}
+
+body{
+  background:#f5f7fb;
+  font-family:'Segoe UI',sans-serif;
 }
 
 .teacher-dashboard{
   min-height:100vh;
-  background:#f8fafc;
   padding:30px;
+  background:
+  linear-gradient(
+    135deg,
+    #eef2ff,
+    #f8fafc
+  );
 }
 
-/* Header */
+/* Topbar */
 
 .topbar{
   display:flex;
   justify-content:space-between;
   align-items:center;
-  margin-bottom:30px;
+  margin-bottom:40px;
 }
 
 .logo{
-  font-size:28px;
+  font-size:34px;
   font-weight:700;
   color:#2563eb;
 }
@@ -29,184 +38,162 @@
 .profile{
   background:#2563eb;
   color:white;
-  padding:12px 18px;
+  padding:15px 28px;
   border-radius:50px;
   font-weight:600;
 }
 
-/* Title */
+/* Heading */
 
 .dashboard-title{
-  font-size:38px;
-  font-weight:700;
+  font-size:60px;
+  font-weight:800;
   color:#0f172a;
 }
 
 .subtitle{
+  font-size:20px;
   color:#64748b;
-  margin-top:8px;
-  margin-bottom:30px;
+  margin-top:10px;
 }
 
 /* Stats */
 
 .stats{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
-  gap:20px;
-  margin-bottom:35px;
+  grid-template-columns:
+  repeat(auto-fit,minmax(250px,1fr));
+
+  gap:25px;
+  margin-top:40px;
 }
 
 .stat-card{
   background:white;
-  border-radius:20px;
-  padding:25px;
-  box-shadow:0 10px 25px rgba(0,0,0,0.05);
-  transition:0.3s;
+  padding:30px;
+  border-radius:24px;
+
+  box-shadow:
+  0 15px 35px rgba(
+  0,0,0,.08);
+
+  transition:.3s;
 }
 
 .stat-card:hover{
-  transform:translateY(-5px);
+  transform:
+  translateY(-6px);
 }
 
 .stat-card h3{
   color:#64748b;
-  font-size:15px;
 }
 
 .stat-card h2{
-  margin-top:12px;
-  font-size:34px;
-  color:#0f172a;
+  font-size:45px;
+  margin-top:15px;
+  color:#2563eb;
 }
 
-/* Actions */
+/* Action Cards */
 
 .action-cards{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
-  gap:20px;
-  margin-bottom:40px;
+  grid-template-columns:
+  repeat(auto-fit,minmax(280px,1fr));
+
+  gap:25px;
+
+  margin-top:40px;
 }
 
 .action-card{
   background:white;
-  padding:25px;
-  border-radius:20px;
+  border-radius:24px;
+  padding:35px;
+
   cursor:pointer;
-  box-shadow:0 10px 25px rgba(0,0,0,0.05);
-  transition:0.3s;
+
+  box-shadow:
+  0 15px 35px rgba(
+  0,0,0,.08);
+
+  transition:.3s;
 }
 
 .action-card:hover{
-  transform:translateY(-5px);
+  transform:
+  translateY(-6px);
+
+  background:#2563eb;
+  color:white;
 }
 
 .action-card h2{
-  color:#2563eb;
-  font-size:20px;
+  margin-bottom:12px;
 }
 
-.action-card p{
-  margin-top:10px;
-  color:#64748b;
-}
-
-/* Exam Section */
+/* Exams */
 
 .exam-section{
-  background:white;
-  border-radius:20px;
-  padding:25px;
-  box-shadow:0 10px 25px rgba(0,0,0,0.05);
+  margin-top:50px;
 }
 
 .exam-section h2{
-  color:#0f172a;
+  font-size:40px;
 }
 
 .section-subtitle{
   color:#64748b;
   margin-top:8px;
-  margin-bottom:25px;
 }
-
-/* Empty State */
-
-.empty-state{
-  text-align:center;
-  padding:60px 20px;
-}
-
-.book-icon{
-  font-size:60px;
-  margin-bottom:20px;
-}
-
-.empty-state h3{
-  margin-bottom:20px;
-  color:#0f172a;
-}
-
-.create-exam-btn{
-  background:#2563eb;
-  color:white;
-  border:none;
-  padding:14px 22px;
-  border-radius:12px;
-  cursor:pointer;
-  font-size:15px;
-}
-
-.create-exam-btn:hover{
-  background:#1d4ed8;
-}
-
-/* Exams */
 
 .exam-grid{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
-  gap:20px;
+  grid-template-columns:
+  repeat(auto-fit,minmax(350px,1fr));
+
+  gap:25px;
+
+  margin-top:30px;
 }
 
 .exam-card{
-  border:1px solid #e2e8f0;
-  border-radius:18px;
-  padding:20px;
-  transition:0.3s;
-}
+  background:white;
+  border-radius:24px;
+  padding:30px;
 
-.exam-card:hover{
-  border-color:#2563eb;
+  box-shadow:
+  0 15px 35px rgba(
+  0,0,0,.08);
 }
 
 .exam-card h3{
-  color:#0f172a;
+  font-size:26px;
   margin-bottom:15px;
 }
 
 .exam-card p{
-  margin-bottom:8px;
-  color:#475569;
+  margin-bottom:10px;
 }
 
 .status{
   display:inline-block;
-  padding:8px 12px;
-  border-radius:30px;
-  font-size:13px;
-  margin-top:10px;
-}
+  margin-top:15px;
 
-.status.draft{
-  background:#fef3c7;
-  color:#92400e;
+  padding:8px 16px;
+  border-radius:20px;
+  font-size:14px;
 }
 
 .status.published{
   background:#dcfce7;
-  color:#166534;
+  color:#15803d;
+}
+
+.status.draft{
+  background:#fee2e2;
+  color:#dc2626;
 }
 
 .card-buttons{
@@ -217,11 +204,12 @@
 
 .question-btn,
 .result-btn{
-  flex:1;
+
   border:none;
+  padding:12px 18px;
+  border-radius:12px;
+
   cursor:pointer;
-  padding:12px;
-  border-radius:10px;
   font-weight:600;
 }
 
@@ -232,4 +220,140 @@
 
 .result-btn{
   background:#e2e8f0;
+}
+
+/* Empty */
+
+.empty-state{
+  text-align:center;
+  padding:80px;
+}
+
+.book-icon{
+  font-size:80px;
+}
+
+.create-exam-btn{
+  margin-top:20px;
+
+  background:#2563eb;
+  color:white;
+
+  border:none;
+  padding:15px 25px;
+  border-radius:12px;
+}
+
+
+
+/* Search Bar */
+
+.search-box{
+  margin:30px 0;
+  display:flex;
+  justify-content:flex-end;
+}
+
+.search-box input{
+  width:350px;
+  padding:14px 20px;
+
+  border:none;
+  border-radius:15px;
+
+  font-size:16px;
+
+  background:white;
+
+  box-shadow:
+  0 10px 25px rgba(0,0,0,.08);
+
+  outline:none;
+}
+
+/* Publish Button */
+
+.publish-btn{
+  border:none;
+
+  background:#16a34a;
+  color:white;
+
+  padding:12px 18px;
+
+  border-radius:12px;
+
+  cursor:pointer;
+  font-weight:600;
+
+  transition:.3s;
+}
+
+.publish-btn:hover{
+  background:#15803d;
+}
+
+/* Delete Button */
+
+.delete-btn{
+  border:none;
+
+  background:#dc2626;
+  color:white;
+
+  padding:12px 18px;
+
+  border-radius:12px;
+
+  cursor:pointer;
+  font-weight:600;
+
+  transition:.3s;
+}
+
+.delete-btn:hover{
+  background:#b91c1c;
+}
+
+/* Card Hover */
+
+.exam-card{
+  transition:.3s;
+}
+
+.exam-card:hover{
+  transform:
+  translateY(-8px);
+
+  box-shadow:
+  0 20px 40px rgba(
+  37,99,235,.15);
+}
+
+/* Dashboard Header */
+
+.dashboard-title{
+  background:
+  linear-gradient(
+    90deg,
+    #2563eb,
+    #7c3aed
+  );
+
+  -webkit-background-clip:text;
+  color:transparent;
+}
+
+
+.view-btn{
+  background:#10b981;
+  color:white;
+  border:none;
+  padding:8px 14px;
+  border-radius:6px;
+  cursor:pointer;
+}
+
+.view-btn:hover{
+  background:#059669;
 }

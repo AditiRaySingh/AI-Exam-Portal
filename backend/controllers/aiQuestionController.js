@@ -3,181 +3,250 @@ import questionModel from "../models/QuestionModel.js";
 import examModel from "../models/examModel.js";
 
 export const generateQuestions = async (req, res) => {
-  try {
+try {
 
-    const groq = new Groq({
-      apiKey: process.env.GROQ_API_KEY,
-    });
 
-    const {
-      examId,
-      topic,
-      difficulty,
-      numberOfQuestions,
-    } = req.body;
+const groq = new Groq({
+  apiKey: process.env.GROQ_API_KEY
+});
 
-    // validation
-    if (
-      !examId ||
-      !topic ||
-      !difficulty ||
-      !numberOfQuestions
-    ) {
-      return res.status(400).json({
-        success: false,
-        message: "All fields are required",
-      });
-    }
+const {
+  examId,
+  topic,
+  difficulty,
+  questionType,
+  numberOfQuestions
+} = req.body;
 
-    // check exam
-    const exam =
-      await examModel.findById(examId);
+if (
+  !examId ||
+  !topic ||
+  !difficulty ||
+  !questionType ||
+  !numberOfQuestions
+) {
+  return res.status(400).json({
+    success: false,
+    message: "All fields are required"
+  });
+}
 
-    if (!exam) {
-      return res.status(404).json({
-        success: false,
-        message: "Exam not found",
-      });
-    }
+const exam =
+  await examModel.findById(examId);
 
-    // AI prompt
-    const prompt = `
-Generate ${numberOfQuestions} MCQ questions on topic "${topic}".
+if (!exam) {
+  return res.status(404).json({
+    success: false,
+    message: "Exam not found"
+  });
+}
+
+let prompt = "";
+
+if (questionType === "mcq") {
+
+  prompt = `
+
+
+Generate ${numberOfQuestions} MCQ questions on "${topic}"
 
 Difficulty: ${difficulty}
 
-Return ONLY valid JSON array.
-
-Each object must follow this format:
+Return ONLY JSON array.
 
 [
-  {
-    "question":"What is JavaScript?",
-    "options":[
-      "Programming Language",
-      "Database",
-      "Operating System",
-      "Browser"
-    ],
-    "correctAnswer":"Programming Language",
-    "marks":5,
-    "questionType":"mcq"
-  }
+{
+"question":"Question here",
+"options":["A","B","C","D"],
+"correctAnswer":"A",
+"marks":5,
+"questionType":"mcq"
+}
 ]
-
-Important:
-- Use exact key correctAnswer
-- Use exact key marks
-- Use exact key questionType
-- questionType must be mcq
-- Return ONLY JSON
-- No markdown
-- No explanation
-- No extra text
 `;
 
-    // Groq request
-    const response =
-      await groq.chat.completions.create({
-        model:
-          "llama-3.1-8b-instant",
 
-        messages: [
-          {
-            role: "user",
-            content: prompt,
-          },
-        ],
-      });
+}
 
-    // raw AI response
-    const aiResponse =
-      response.choices[0]
-        .message.content;
+else if (
+  questionType === "truefalse"
+) {
 
-    console.log(
-      "RAW AI:",
-      aiResponse
-    );
+  prompt = `
 
-    // clean AI response
-    const cleanedResponse =
-      aiResponse
-        .replace(/```json/g, "")
-        .replace(/```/g, "")
-        .replace(/\n/g, "")
-        .replace(/\r/g, "")
-        .trim();
 
-    console.log(
-      "CLEANED:",
-      cleanedResponse
-    );
+Generate ${numberOfQuestions} True False questions on "${topic}"
 
-    // parse JSON
-    const generatedQuestions =
-      JSON.parse(cleanedResponse);
+Difficulty: ${difficulty}
 
-    console.log(
-      generatedQuestions
-    );
+Return ONLY JSON array.
 
-    // save DB
-    const savedQuestions = [];
+[
+{
+"question":"Java is platform independent",
+"options":["True","False"],
+"correctAnswer":"True",
+"marks":2,
+"questionType":"truefalse"
+}
+]
+`;
 
-    for (
-      let question of generatedQuestions
-    ) {
 
-      const savedQuestion =
-        await questionModel.create({
-          examId,
+}
 
-          question:
-            question.question,
+else if (
+  questionType === "shortanswer"
+) {
 
-          options:
-            question.options || [],
+  prompt = `
 
-          correctAnswer:
-            question.correctAnswer ||
-            question.correctanswer,
 
-          marks:
-            question.marks || 5,
+Generate ${numberOfQuestions} Short Answer questions on "${topic}"
 
-          questionType:
-            (
-              question.questionType ||
-              "mcq"
-            ).toLowerCase(),
-        });
+Difficulty: ${difficulty}
 
-      savedQuestions.push(
-        savedQuestion
-      );
-    }
+Return ONLY JSON array.
 
-    return res.status(201).json({
-      success: true,
-      message:
-        "AI questions generated successfully",
-      totalQuestions:
-        savedQuestions.length,
-      questions:
-        savedQuestions,
+[
+{
+"question":"Explain polymorphism",
+"correctAnswer":"Polymorphism allows objects to take many forms.",
+"marks":5,
+"questionType":"shortanswer"
+}
+]
+`;
+
+
+}
+
+else if (
+  questionType ===
+  "veryshortanswer"
+) {
+
+  prompt = `
+
+
+Generate ${numberOfQuestions} Very Short Answer questions on "${topic}"
+
+Difficulty: ${difficulty}
+
+Return ONLY JSON array.
+
+[
+{
+"question":"What is JVM?",
+"correctAnswer":"Java Virtual Machine",
+"marks":1,
+"questionType":"veryshortanswer"
+}
+]
+`;
+
+
+}
+
+const response =
+  await groq.chat.completions.create({
+    model:
+      "llama-3.1-8b-instant",
+
+    messages: [
+      {
+        role: "user",
+        content: prompt
+      }
+    ]
+  });
+
+const aiResponse =
+  response.choices[0]
+    .message.content;
+
+console.log(
+  "RAW AI RESPONSE:",
+  aiResponse
+);
+
+const cleanedResponse =
+  aiResponse
+    .replace(/```json/g, "")
+    .replace(/```/g, "")
+    .trim();
+
+const generatedQuestions =
+  JSON.parse(cleanedResponse);
+
+const savedQuestions = [];
+
+for (
+  let question of generatedQuestions
+) {
+
+  const exists =
+    await questionModel.findOne({
+      examId,
+      question:
+        question.question
     });
 
-  } catch (error) {
+  if (exists) continue;
 
-    console.log(error);
+  const savedQuestion =
+    await questionModel.create({
+      examId,
+      topic,
 
-    return res.status(500).json({
-      success: false,
-      message:
-        "Internal server error",
-      error:
-        error.message,
+      question:
+        question.question,
+
+      options:
+        question.options || [],
+
+      correctAnswer:
+        question.correctAnswer,
+
+      marks:
+        question.marks || 5,
+
+      questionType:
+        question.questionType,
+
+      difficulty
     });
-  }
+
+  savedQuestions.push(
+    savedQuestion
+  );
+}
+
+return res.status(201).json({
+  success: true,
+  message:
+    "AI Questions Generated Successfully",
+  totalQuestions:
+    savedQuestions.length,
+  questions:
+    savedQuestions
+});
+
+
+}
+
+catch (error) {
+
+
+console.log(error);
+
+return res.status(500).json({
+  success: false,
+  message:
+    "Internal Server Error",
+  error: error.message
+});
+
+
+}
 };
