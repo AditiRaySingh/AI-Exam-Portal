@@ -26,6 +26,9 @@ from "./routes/dashboardRoutes.js";
 import aiMaterialRoutes
 from "./routes/aiMaterialRoutes.js";
 
+import resultRoutes
+from "./routes/resultRoutes.js";
+
 const app = express();
 
 app.use(cors());
@@ -52,15 +55,17 @@ app.get("/", (req, res) => {
 });
 
 
-app.use(
-  "/api/ai-material",
-  aiMaterialRoutes
-);
-
 
 app.use(
   "/api/ai",
   aiEvaluationRoutes
+);
+
+
+
+app.use(
+  "/api/result",
+  resultRoutes
 );
 
 const PORT = process.env.PORT || 9000;

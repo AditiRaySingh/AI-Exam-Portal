@@ -34,6 +34,7 @@ from "./pages/ManageQuestions";
 import EditQuestion from "./pages/EditQuestion";
 import GenerateFromMaterial
 from "./pages/GenerateFromMaterial";
+import StudentResults from "./pages/StudentResults";
 
 
 import SubjectiveEvaluation
@@ -124,6 +125,12 @@ function App() {
  element={<SubjectiveEvaluation/>}
 />
 
+
+
+<Route
+ path="/student-results"
+ element={<StudentResults />}
+/>
    </Routes>
 
 

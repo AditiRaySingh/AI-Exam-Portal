@@ -1,7 +1,7 @@
 import examModel from "../models/examModel.js";
 import ExamAttemptModel from "../models/ExamAttemptModel.js";
 import questionModel from "../models/QuestionModel.js";
-import { calculateResult } from "./resultController.js";
+
 
 // Start Exam
 export const startExam = async (req, res) => {
@@ -135,52 +135,30 @@ export const submitExam = async (req, res) => {
 
 
 
-// Get all exam results (Teacher)
-export const getExamResults = async (req, res) => {
+
+export const getStudentResults = async (req, res) => {
   try {
-    const { examId } = req.params;
 
-    // check exam exists
-    const exam = await examModel.findById(examId);
+    const studentId = req.user.id;
 
-    if (!exam) {
-      return res.status(404).json({
-        success: false,
-        message: "Exam not found",
-      });
-    }
-
-    // get all submitted attempts
     const results =
       await ExamAttemptModel.find({
-        examId,
-        status: "submitted",
-      }).populate(
-        "studentId",
-        "name email"
-      );
+        studentId,
+        status: "submitted"
+      })
+      .populate("examId", "title");
 
-    if (results.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message:
-          "No student has attempted this exam yet",
-      });
-    }
-
-    return res.status(200).json({
+    res.status(200).json({
       success: true,
-      examName: exam.title,
-      totalAttempts: results.length,
-      results,
+      results
     });
 
   } catch (error) {
-    return res.status(500).json({
+
+    res.status(500).json({
       success: false,
-      message:
-        "Internal server error",
-      error: error.message,
+      message: error.message
     });
+
   }
 };

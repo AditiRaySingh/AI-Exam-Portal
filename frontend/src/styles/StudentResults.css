@@ -1,0 +1,62 @@
+.results-page{
+  max-width:1200px;
+  margin:auto;
+  padding:30px;
+}
+
+.results-page h1{
+  text-align:center;
+  color:#2563eb;
+  margin-bottom:30px;
+}
+
+.result-card{
+  background:white;
+  border-radius:15px;
+  padding:25px;
+  margin-bottom:30px;
+  box-shadow:0 4px 15px rgba(0,0,0,0.1);
+
+  display:flex;
+  gap:40px;
+}
+
+.summary{
+  min-width:250px;
+}
+
+.summary h2{
+  margin-bottom:20px;
+}
+
+.summary p{
+  font-size:18px;
+  margin:10px 0;
+}
+
+.summary span{
+  font-weight:bold;
+  color:#2563eb;
+  margin-left:10px;
+}
+
+.evaluation-section{
+  flex:1;
+}
+
+.evaluation-section h3{
+  color:#16a34a;
+  margin-bottom:20px;
+}
+
+.answer-box{
+  background:#f8fafc;
+  border-left:5px solid #2563eb;
+  padding:15px;
+  border-radius:10px;
+  margin-bottom:15px;
+}
+
+.answer-box p{
+  margin:8px 0;
+}

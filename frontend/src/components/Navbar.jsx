@@ -1,65 +1,64 @@
 import "../styles/navbar.css";
+import { useNavigate } from "react-router-dom";
 
 function Navbar() {
 
- const user =
- JSON.parse(
-  localStorage.getItem(
-   "user"
-  )
- );
+  const navigate = useNavigate();
 
- return (
+  const user =
+    JSON.parse(
+      localStorage.getItem("user")
+    );
 
-  <nav className="navbar">
+  return (
 
-   {/* Left */}
-   <div className="nav-left">
+    <nav className="navbar">
 
-    <div className="logo-box">
-      🎓
-    </div>
+      <div className="nav-left">
 
-    <h2>
-      ExamPortal
-    </h2>
+        <div className="logo-box">
+          🎓
+        </div>
 
-   </div>
+        <h2>
+          ExamPortal
+        </h2>
 
-   {/* Center */}
-   <div className="nav-center">
+      </div>
 
-    <button
-     className="nav-btn active"
-    >
-      Dashboard
-    </button>
+      <div className="nav-center">
 
-    <button
-     className="nav-btn"
-    >
-      My Results
-    </button>
+        <button
+          className="nav-btn active"
+        >
+          Dashboard
+        </button>
 
-   </div>
+        <button
+          className="nav-btn"
+          onClick={() =>
+            navigate("/student-results")
+          }
+        >
+          My Results
+        </button>
 
-   {/* Right */}
-   <div className="nav-right">
+      </div>
 
-    <div className="profile-circle">
+      <div className="nav-right">
 
-      {user?.name?.charAt(0)}
+        <div className="profile-circle">
+          {user?.name?.charAt(0)}
+        </div>
 
-    </div>
+        <p>
+          {user?.name}
+        </p>
 
-    <p>
-      {user?.name}
-    </p>
+      </div>
 
-   </div>
-
-  </nav>
- );
+    </nav>
+  );
 }
 
 export default Navbar;
