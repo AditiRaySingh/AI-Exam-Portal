@@ -1,59 +1,66 @@
 import "../styles/resultCard.css";
 
 function ResultCard({
- title,
- date,
- percentage,
- marks
-}){
+  title,
+  date,
+  percentage,
+  marks
+}) {
 
- return(
+  const percent = parseFloat(percentage);
 
-  <div className="result-card">
+  return (
 
-   <div>
+    <div className="dashboard-result-card">
 
-    <h3>
-      {title}
-    </h3>
+      <div className="result-left">
 
-    <p>
-      Submitted
-      {date}
-    </p>
+        <div className="result-icon">
+          📝
+        </div>
 
-   </div>
+        <div>
 
-   <div className="result-right">
+          <h3>{title}</h3>
 
-    <div>
+          <p>
+            Submitted on {date}
+          </p>
 
-     <h2>
-      {percentage}
-     </h2>
+        </div>
 
-     <p>
-      {marks}
-     </p>
+      </div>
+
+      <div className="dashboard-result-right">
+
+        <div className="score-box">
+
+          <h2>{percentage}</h2>
+
+          <span>{marks}</span>
+
+        </div>
+
+        <div
+          className={
+            percent >= 40
+              ? "dashboard-badge pass"
+              : "dashboard-badge fail"
+          }
+        >
+          {percent >= 40 ? "Passed" : "Failed"}
+        </div>
+
+        <button className="dashboard-detail-btn">
+          View Details
+        </button>
+
+      </div>
 
     </div>
 
-    <span
-     className="badge"
-    >
-      Passed
-    </span>
+  );
 
-    <button
-     className="detail-btn"
-    >
-      View Details
-    </button>
-
-   </div>
-
-  </div>
- );
 }
 
 export default ResultCard;

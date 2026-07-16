@@ -35,21 +35,19 @@ try {
   const token =
     localStorage.getItem("token");
 
-  const res =
-    await api.get(
-      "/exam",
-      {
-        headers: {
-          Authorization:
-            `Bearer ${token}`
-        }
-      }
-    );
+const res = await api.get(
+  "/exams/teacher",
+  {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  }
+);
 
-  setExams(
-    res.data.exams || []
-  );
+console.log(res.data);
 
+setExams(res.data.exams);
+console.log(res.data);
 } catch (error) {
 
   console.log(error);
@@ -124,20 +122,16 @@ async (e) => {
       formData.numberOfQuestions
     );
 
-    const res =
-      await api.post(
-        "/ai-material/generate-from-material",
-        data,
-        {
-          headers: {
-            Authorization:
-              `Bearer ${token}`,
-            "Content-Type":
-              "multipart/form-data"
-          }
-        }
-      );
-
+    const res = await api.post(
+  "/ai/material/generate-from-material",
+  data,
+  {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "multipart/form-data"
+    }
+  }
+);
     alert(
       `${res.data.totalQuestions} Questions Generated Successfully`
     );

@@ -97,11 +97,6 @@ function App() {
 />
 
 
-<Route
-  path="/ai-generate"
-  element={<AIGenerate />}
-/>
-
 
 <Route
   path="/questions/:examId"
@@ -114,8 +109,14 @@ function App() {
   element={<EditQuestion />}
 />
 
+
 <Route
- path="/generate-material"
+ path="/ai-generate/:examId"
+ element={<AIGenerate />}
+/>
+
+<Route
+ path="/generate-material/:examId"
  element={<GenerateFromMaterial />}
 />
 

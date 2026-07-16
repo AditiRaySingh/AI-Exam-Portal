@@ -18,25 +18,18 @@ function ExamCard({
 
     try {
 
-      const token =
-        localStorage.getItem("token");
+      const token = localStorage.getItem("token");
 
-      const res = await api.post(
-        "/exam/start",
+      await api.post(
+        "/exams/start",
         {
           examId
         },
         {
           headers: {
-            Authorization:
-              `Bearer ${token}`
+            Authorization: `Bearer ${token}`
           }
         }
-      );
-
-      console.log(
-        "Exam Started:",
-        res.data
       );
 
       localStorage.setItem(
@@ -56,41 +49,104 @@ function ExamCard({
       );
 
     }
+
   };
 
   return (
 
     <div className="exam-card">
 
-      <h2>
-        {title}
-      </h2>
+      <div className="exam-header">
 
-      <p className="desc">
-        {description}
-      </p>
+        <span className="status">
+          Available
+        </span>
+
+        <h2>{title}</h2>
+
+        <p className="description">
+          {description}
+        </p>
+
+      </div>
 
       <div className="exam-info">
 
-        <p>
-          ⏱ Duration:
-          {duration}
-        </p>
+        <div className="info-card">
 
-        <p>
-          📄 Questions:
-          {questions}
-        </p>
+          <div className="icon">
+            ⏱
+          </div>
 
-        <p>
-          🏆 Total Marks:
-          {marks}
-        </p>
+          <div>
 
-        <p>
-          📅 Due:
-          {dueDate}
-        </p>
+            <h4>Duration</h4>
+
+            <p>
+              {duration} Minutes
+            </p>
+
+          </div>
+
+        </div>
+
+        <div className="info-card">
+
+          <div className="icon">
+            📄
+          </div>
+
+          <div>
+
+            <h4>Questions</h4>
+
+            <p>
+              {questions || 0}
+            </p>
+
+          </div>
+
+        </div>
+
+        <div className="info-card">
+
+          <div className="icon">
+            🏆
+          </div>
+
+          <div>
+
+            <h4>Total Marks</h4>
+
+            <p>
+              {marks}
+            </p>
+
+          </div>
+
+        </div>
+
+        <div className="info-card">
+
+          <div className="icon">
+            📅
+          </div>
+
+          <div>
+
+            <h4>Due Date</h4>
+
+            <p>
+              {dueDate
+                ? new Date(
+                    dueDate
+                  ).toLocaleDateString()
+                : "Not Set"}
+            </p>
+
+          </div>
+
+        </div>
 
       </div>
 
@@ -98,11 +154,13 @@ function ExamCard({
         className="start-btn"
         onClick={handleStartExam}
       >
-        ▶ Start Exam
+        Start Exam →
       </button>
 
     </div>
+
   );
+
 }
 
 export default ExamCard;

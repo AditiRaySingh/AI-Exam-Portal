@@ -61,6 +61,17 @@ export const userregistration = async (req, res) => {
   }
 };
 
+
+export const getProfile = async (req, res) => {
+  res.status(200).json({
+    success: true,
+    user: req.user
+  });
+};
+
+
+
+
 // login
 export const loginUser = async (req, res) => {
   try {
@@ -73,7 +84,13 @@ export const loginUser = async (req, res) => {
       });
     }
 
-    const user = await userModel.findOne({ email });
+   const user = await userModel
+  .findOne({ email })
+  .select("+password");
+
+  console.log("Email:", email);
+console.log("User:", user);
+console.log("Stored Password:", user.password);
 
     if (!user) {
       return res.status(400).json({
@@ -81,6 +98,9 @@ export const loginUser = async (req, res) => {
       });
     }
 
+    console.log("Request Body:", req.body);
+console.log("User Found:", user);
+console.log("Stored Password:", user.password);
     const isMatch = await bcrypt.compare(
       password,
       user.password

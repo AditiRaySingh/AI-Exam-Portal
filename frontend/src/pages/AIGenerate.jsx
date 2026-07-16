@@ -1,180 +1,90 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import api from "../services/api";
 
 function AIGenerate() {
 
-const navigate = useNavigate();
+  const navigate = useNavigate();
+  const { examId } = useParams();
 
-const [exams, setExams] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-const [formData, setFormData] = useState({
-examId: "",
-topic: "",
-difficulty: "easy",
-questionType: "mcq",
-numberOfQuestions: 5
-});
+  const [formData, setFormData] = useState({
+    examId: examId || "",
+    topic: "",
+    difficulty: "easy",
+    questionType: "mcq",
+    numberOfQuestions: 5,
+  });
 
-const [loading, setLoading] = useState(false);
-
-useEffect(() => {
-fetchExams();
-}, []);
-
-const fetchExams = async () => {
-try {
-
-
-  const token =
-    localStorage.getItem("token");
-
-  const res = await api.get(
-    "/exam",
-    {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
+  useEffect(() => {
+    if (examId) {
+      setFormData((prev) => ({
+        ...prev,
+        examId,
+      }));
     }
-  );
+  }, [examId]);
 
-  setExams(res.data.exams || []);
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
 
-} catch (error) {
-  console.log(error);
-}
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
+    try {
 
-};
+      setLoading(true);
 
-const handleChange = (e) => {
-setFormData({
-...formData,
-[e.target.name]:
-e.target.value
-});
-};
+      const token = localStorage.getItem("token");
 
-const generateQuestions = async (e) => {
+      const res = await api.post(
+        "/ai/question/generate",
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
+      alert(res.data.message);
 
-e.preventDefault();
+      navigate(`/questions/${formData.examId}`);
 
-try {
+    } catch (error) {
 
-  setLoading(true);
+      console.log(error);
 
-  const token =
-    localStorage.getItem("token");
+      alert(
+        error.response?.data?.message ||
+        "AI Generation Failed"
+      );
 
-  const res = await api.post(
-    "/question/ai-generate",
-    formData,
-    {
-      headers: {
-        Authorization:
-          `Bearer ${token}`
-      }
+    } finally {
+
+      setLoading(false);
+
     }
-  );
+  };
 
-  alert(
-    `${res.data.totalQuestions} Questions Generated Successfully`
-  );
-
-  navigate(
-    `/questions/${formData.examId}`
-  );
-
-} catch (error) {
-
-  console.log(error);
-
-  alert(
-    error.response?.data?.message ||
-    "Failed to generate questions"
-  );
-
-} finally {
-
-  setLoading(false);
-
-}
-
-
-};
-
-return (
-<div
-style={{
-minHeight: "100vh",
-background: "#f5f7fb",
-padding: "40px"
-}}
->
-
-```
-  <div
-    style={{
-      maxWidth: "700px",
-      margin: "auto",
-      background: "#fff",
-      padding: "30px",
-      borderRadius: "20px",
-      boxShadow:
-        "0 10px 30px rgba(0,0,0,0.1)"
-    }}
-  >
-
-    <h1>
-      🤖 AI Question Generator
-    </h1>
-
-    <p>
-      Generate Questions Automatically Using AI
-    </p>
-
-    <form
-      onSubmit={generateQuestions}
+  return (
+    <div
+      style={{
+        maxWidth: "700px",
+        margin: "40px auto",
+        padding: "30px",
+        background: "#fff",
+        borderRadius: "15px",
+      }}
     >
+      <h2>AI Question Generator</h2>
 
-      <div style={{ marginTop: "20px" }}>
-        <label>
-          Select Exam
-        </label>
-
-        <select
-          name="examId"
-          value={formData.examId}
-          onChange={handleChange}
-          required
-          style={{
-            width: "100%",
-            padding: "12px",
-            marginTop: "8px"
-          }}
-        >
-
-          <option value="">
-            Select Exam
-          </option>
-
-          {exams.map((exam) => (
-            <option
-              key={exam._id}
-              value={exam._id}
-            >
-              {exam.title}
-            </option>
-          ))}
-
-        </select>
-      </div>
-
-      <div style={{ marginTop: "20px" }}>
-        <label>
-          Topic
-        </label>
+      <form onSubmit={handleSubmit}>
 
         <input
           type="text"
@@ -186,15 +96,9 @@ padding: "40px"
           style={{
             width: "100%",
             padding: "12px",
-            marginTop: "8px"
+            marginTop: "20px",
           }}
         />
-      </div>
-
-      <div style={{ marginTop: "20px" }}>
-        <label>
-          Difficulty
-        </label>
 
         <select
           name="difficulty"
@@ -203,29 +107,13 @@ padding: "40px"
           style={{
             width: "100%",
             padding: "12px",
-            marginTop: "8px"
+            marginTop: "20px",
           }}
         >
-
-          <option value="easy">
-            Easy
-          </option>
-
-          <option value="medium">
-            Medium
-          </option>
-
-          <option value="hard">
-            Hard
-          </option>
-
+          <option value="easy">Easy</option>
+          <option value="medium">Medium</option>
+          <option value="hard">Hard</option>
         </select>
-      </div>
-
-      <div style={{ marginTop: "20px" }}>
-        <label>
-          Question Type
-        </label>
 
         <select
           name="questionType"
@@ -234,79 +122,49 @@ padding: "40px"
           style={{
             width: "100%",
             padding: "12px",
-            marginTop: "8px"
+            marginTop: "20px",
           }}
         >
-
-          <option value="mcq">
-            MCQ
-          </option>
-
-          <option value="shortanswer">
-            Short Answer
-          </option>
-
-          <option value="veryshortanswer">
-            Very Short Answer
-          </option>
-
-          <option value="truefalse">
-            True / False
-          </option>
-
+          <option value="mcq">MCQ</option>
+          <option value="truefalse">True False</option>
+          <option value="shortanswer">Short Answer</option>
+          <option value="veryshortanswer">Very Short Answer</option>
         </select>
-      </div>
-
-      <div style={{ marginTop: "20px" }}>
-        <label>
-          Number of Questions
-        </label>
 
         <input
           type="number"
           name="numberOfQuestions"
           min="1"
-          max="20"
+          max="50"
           value={formData.numberOfQuestions}
           onChange={handleChange}
           style={{
             width: "100%",
             padding: "12px",
-            marginTop: "8px"
+            marginTop: "20px",
           }}
         />
-      </div>
 
-      <button
-        type="submit"
-        disabled={loading}
-        style={{
-          width: "100%",
-          marginTop: "30px",
-          padding: "15px",
-          background: "#4f46e5",
-          color: "#fff",
-          border: "none",
-          borderRadius: "10px",
-          cursor: "pointer",
-          fontSize: "16px"
-        }}
-      >
+        <button
+          type="submit"
+          disabled={loading}
+          style={{
+            width: "100%",
+            marginTop: "25px",
+            padding: "15px",
+            border: "none",
+            borderRadius: "10px",
+            background: "#4f46e5",
+            color: "#fff",
+            cursor: "pointer",
+          }}
+        >
+          {loading ? "Generating..." : "Generate Questions"}
+        </button>
 
-        {loading
-          ? "Generating..."
-          : "Generate Questions"}
-
-      </button>
-
-    </form>
-
-  </div>
-
-</div>
-
-
-);
+      </form>
+    </div>
+  );
 }
 
 export default AIGenerate;

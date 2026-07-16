@@ -19,7 +19,7 @@ const examSchema=new mongoose.Schema({
     },
     totalMarks:{
         type:Number,
-        required:true
+        default:0
     },
     teacherId:{
      type:mongoose.Schema.Types.ObjectId,

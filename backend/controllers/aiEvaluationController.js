@@ -44,6 +44,9 @@ Return ONLY JSON:
       ]
     });
 
+    console.log("Student Answer:", studentAnswer);
+console.log("Correct Answer:", correctAnswer);
+console.log("AI Response:", response.choices[0].message.content);
   const text =
     response.choices[0].message.content
       .replace(/```json/g, "")

@@ -1,35 +1,33 @@
 import "../styles/statCard.css";
 
 function StatCard({
- title,
- value,
- icon
+  title,
+  value,
+  icon
 }) {
 
- return(
+  return (
 
-  <div className="stat-card">
+    <div className="stat-card">
 
-   <div>
+      <div className="stat-info">
 
-    <p>
-      {title}
-    </p>
+        <p>{title}</p>
 
-    <h2>
-      {value}
-    </h2>
+        <h2>{value}</h2>
 
-   </div>
+      </div>
 
-   <div className="stat-icon">
+      <div className="stat-icon">
 
-    {icon}
+        {icon}
 
-   </div>
+      </div>
 
-  </div>
- );
+    </div>
+
+  );
+
 }
 
 export default StatCard;

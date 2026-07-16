@@ -1,224 +1,540 @@
 import examModel from "../models/examModel.js";
-import {
-evaluateAnswer
-}
-from "./aiEvaluationController.js";
-// create the exam
-export const exam = async (req, res) => {
-    try {
+import questionModel from "../models/QuestionModel.js";
 
-        const {
-            title,
-            subject,
-            description,
-            duration,
-            totalMarks,
-            startTime,
-            endTime
-        } = req.body;
 
-        const teacherId = req.user.id;
 
-        if (
-            !title ||
-            !subject ||
-            !description ||
-            !duration ||
-            !totalMarks ||
-            !startTime ||
-            !endTime
-        ) {
-            return res.status(400).json({
-                message: "all field is required to fill"
-            });
-        }
+import ExamAttemptModel from "../models/ExamAttemptModel.js";
 
-        const newExam = await examModel.create({
-            title,
-            subject,
-            description,
-            duration,
-            totalMarks,
-            startTime,
-            endTime,
-            teacherId
-        });
+export const startExam = async (req, res) => {
 
-        return res.status(201).json({
-            message: "exam created successfully",
-            exam: newExam
-        });
+  try {
 
-    } catch (error) {
+    const { examId } = req.body;
 
-        return res.status(500).json({
-            message: "internal server error"
-        });
+    const exam = await examModel.findById(examId);
+
+    if (!exam) {
+      return res.status(404).json({
+        success: false,
+        message: "Exam not found"
+      });
     }
+
+    if (exam.status !== "published") {
+      return res.status(400).json({
+        success: false,
+        message: "Exam is not published"
+      });
+    }
+
+    const attempt = await ExamAttemptModel.create({
+      studentId: req.user._id,
+      examId,
+      status: "in-progress"
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Exam started",
+      attempt
+    });
+
+  } catch (error) {
+
+    return res.status(500).json({
+      success: false,
+      message: error.message
+    });
+
+  }
+
+};
+// ============================
+// CREATE EXAM
+// ============================
+
+export const createExam = async (req, res) => {
+  try {
+
+    const {
+      title,
+      subject,
+      description,
+      duration,
+       totalMarks,
+      startTime,
+      endTime,
+      instructions,
+      passingMarks,
+      negativeMarking,
+      negativeMarks,
+      shuffleQuestions,
+      shuffleOptions,
+      allowReview
+    } = req.body;
+
+    if (
+      !title ||
+      !subject ||
+      !description ||
+      !duration ||
+      !startTime ||
+      !endTime
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "All required fields must be filled."
+      });
+    }
+
+    if (new Date(startTime) >= new Date(endTime)) {
+      return res.status(400).json({
+        success: false,
+        message: "End time must be after start time."
+      });
+    }
+
+    const alreadyExists =
+      await examModel.findOne({
+        title: title.trim()
+      });
+
+    if (alreadyExists) {
+      return res.status(409).json({
+        success: false,
+        message: "Exam title already exists."
+      });
+    }
+
+    const exam =
+      await examModel.create({
+
+        title: title.trim(),
+
+        subject,
+
+        description,
+
+        duration,
+
+        teacherId: req.user._id,
+
+        startTime,
+
+        endTime,
+         totalMarks,
+
+        instructions,
+
+        passingMarks,
+
+        negativeMarking,
+
+        negativeMarks,
+
+        shuffleQuestions,
+
+        shuffleOptions,
+
+        allowReview,
+
+        status: "draft",
+
+        isPublished: false
+      });
+
+    return res.status(201).json({
+      success: true,
+      message: "Exam created successfully.",
+      exam
+    });
+
+  }
+
+  catch (error) {
+
+    return res.status(500).json({
+      success: false,
+      message: error.message
+    });
+
+  }
 };
 
-// get all exams
+// ============================
+// GET MY EXAMS
+// ============================
 
-export const getExam= async (req, res) => {
+export const getExam = async (req, res) => {
 
-    try {
+  try {
 
-      const exams = await examModel.find({
-  teacherId: req.user.id
-});
-
-        // fixed variable name
-        if (!exams || exams.length === 0) {
-            return res.status(404).json({
-                message: "No exams found"
-            });
-        }
-
-        return res.status(200).json({
-            message: "All exam fetched successfully",
-            exams
+    const exams =
+      await examModel
+        .find({
+          teacherId: req.user._id
+        })
+        .sort({
+          createdAt: -1
         });
 
-    } catch (error) {
+    return res.status(200).json({
+      success: true,
+      exams
+    });
 
-        return res.status(500).json({
-            message: "internal server error"
-        });
-    }
+  }
+
+  catch (error) {
+
+    return res.status(500).json({
+      success: false,
+      message: error.message
+    });
+
+  }
+
 };
 
-// delete exam
+// ============================
+// GET SINGLE EXAM
+// ============================
 
-export const deleteExam = async (req, res) => {
+export const getSingleExam = async (req, res) => {
 
-    try {
+  try {
 
-        const examId = req.params.id;
+    const exam =
+      await examModel
+        .findById(req.params.id)
+        .populate(
+          "teacherId",
+          "name email"
+        );
 
-        const exam = await examModel.findById(examId);
+    if (!exam) {
 
-        if (!exam) {
-            return res.status(404).json({
-                message: "exam not found"
-            });
-        }
+      return res.status(404).json({
+        success: false,
+        message: "Exam not found."
+      });
 
-        if (exam.teacherId.toString() !== req.user.id) {
-            return res.status(400).json({
-                message: "only teacher who created the exam can delete it"
-            });
-        }
-
-        await examModel.findByIdAndDelete(examId);
-
-        // fixed status + removed unreachable return
-        return res.status(200).json({
-            message: "exam deleted successfully"
-        });
-
-    } catch (error) {
-
-        return res.status(500).json({
-            message: "internal server error"
-        });
     }
+
+    return res.status(200).json({
+      success: true,
+      exam
+    });
+
+  }
+
+  catch (error) {
+
+    return res.status(500).json({
+      success: false,
+      message: error.message
+    });
+
+  }
+
 };
 
-// update exam
+// ============================
+// UPDATE EXAM
+// ============================
 
 export const updateExam = async (req, res) => {
 
-    try {
+  try {
 
-        const examId = req.params.id;
+    const exam =
+      await examModel.findById(
+        req.params.id
+      );
 
-        const exam = await examModel.findById(examId);
+    if (!exam) {
 
-        if (!exam) {
-            return res.status(404).json({
-                message: "exam not found"
-            });
-        }
+      return res.status(404).json({
+        success: false,
+        message: "Exam not found."
+      });
 
-        if (exam.teacherId.toString() !== req.user.id) {
-            return res.status(403).json({
-                message: "only teacher who created the exam can update it"
-            });
-        }
-
-        await examModel.findByIdAndUpdate(
-            examId,
-            req.body,
-            { new: true }
-        );
-
-        return res.status(200).json({
-            message: "exam updated successfully"
-        });
-
-    } catch (error) {
-
-        return res.status(500).json({
-            message: "internal server error"
-        });
     }
+
+    if (
+      exam.teacherId.toString() !==
+      req.user._id.toString()
+    ) {
+
+      return res.status(403).json({
+        success: false,
+        message: "Unauthorized."
+      });
+
+    }
+
+    if (
+      exam.status === "published"
+    ) {
+
+      return res.status(400).json({
+        success: false,
+        message:
+          "Published exams cannot be edited."
+      });
+
+    }
+
+    Object.assign(
+      exam,
+      req.body
+    );
+
+    await exam.save();
+
+    return res.status(200).json({
+
+      success: true,
+
+      message:
+        "Exam updated successfully.",
+
+      exam
+
+    });
+
+  }
+
+  catch (error) {
+
+    return res.status(500).json({
+
+      success: false,
+
+      message: error.message
+
+    });
+
+  }
+
 };
 
-export const publishExam = async (req, res) => {
-try {
+// ============================
+// DELETE EXAM
+// ============================
+
+export const deleteExam = async (req, res) => {
+
+  try {
+
+    const exam =
+      await examModel.findById(
+        req.params.id
+      );
+
+    if (!exam) {
+
+      return res.status(404).json({
+        success: false,
+        message: "Exam not found."
+      });
+
+    }
+
+    if (
+      exam.teacherId.toString() !==
+      req.user._id.toString()
+    ) {
+
+      return res.status(403).json({
+        success: false,
+        message: "Unauthorized."
+      });
+
+    }
+
+    await questionModel.deleteMany({
+      examId: exam._id
+    });
+
+    await exam.deleteOne();
+
+    return res.status(200).json({
+
+      success: true,
+
+      message:
+        "Exam deleted successfully."
+
+    });
+
+  }
+
+  catch (error) {
+
+    return res.status(500).json({
+
+      success: false,
+
+      message: error.message
+
+    });
+
+  }
+
+};
+
+// ============================
+// PUBLISH EXAM
+// ============================
+
+export const publishExam = async (
+  req,
+  res
+) => {
+
+  try {
+
+    const exam =
+      await examModel.findById(
+        req.params.id
+      );
+
+    if (!exam) {
+
+      return res.status(404).json({
+
+        success: false,
+
+        message: "Exam not found."
+
+      });
+
+    }
+
+    if (
+      exam.teacherId.toString() !==
+      req.user._id.toString()
+    ) {
+
+      return res.status(403).json({
+
+        success: false,
+
+        message: "Unauthorized."
+
+      });
+
+    }
+
+    if (
+      exam.status === "published"
+    ) {
+
+      return res.status(400).json({
+
+        success: false,
+
+        message:
+          "Exam already published."
+
+      });
+
+    }
+
+    const questions =
+      await questionModel.find({
+
+        examId: exam._id
+
+      });
+
+    if (
+      questions.length === 0
+    ) {
+
+      return res.status(400).json({
+
+        success: false,
+
+        message:
+          "Please add questions first."
+
+      });
+
+    }
+
+    const totalMarks =
+      questions.reduce(
+        (sum, q) => sum + q.marks,
+        0
+      );
+
+    exam.totalMarks =
+      totalMarks;
+
+    exam.status =
+      "published";
+
+    exam.isPublished =
+      true;
+
+    await exam.save();
+
+    return res.status(200).json({
+
+      success: true,
+
+      message:
+        "Exam published successfully.",
+
+      exam
+
+    });
+
+  }
+
+  catch (error) {
+
+    return res.status(500).json({
+
+      success: false,
+
+      message: error.message
+
+    });
+
+  }
+
+};
 
 
-const examId = req.params.id;
+// ============================
+// GET ALL PUBLISHED EXAMS
+// ============================
 
-const exam =
-  await examModel.findById(examId);
+export const getPublishedExams = async (req, res) => {
+  try {
 
-if (!exam) {
-  return res.status(404).json({
-    success: false,
-    message: "Exam not found"
-  });
-}
+    const exams = await examModel
+      .find({
+        isPublished: true
+      })
+      .sort({
+        createdAt: -1
+      });
 
-const questions =
-  await questionModel.find({
-    examId
-  });
+    return res.status(200).json({
+      success: true,
+      exams
+    });
 
-if (questions.length === 0) {
-  return res.status(400).json({
-    success: false,
-    message:
-      "Add at least one question before publishing"
-  });
-}
+  } catch (error) {
 
-let totalMarks = 0;
+    return res.status(500).json({
+      success: false,
+      message: error.message
+    });
 
-questions.forEach((q) => {
-  totalMarks += q.marks;
-});
-
-exam.totalMarks = totalMarks;
-exam.status = "published";
-
-await exam.save();
-
-return res.status(200).json({
-  success: true,
-  message:
-    "Exam published successfully",
-  exam
-});
-
-} catch (error) {
-
-
-return res.status(500).json({
-  success: false,
-  message: error.message
-});
-
-
-}
+  }
 };

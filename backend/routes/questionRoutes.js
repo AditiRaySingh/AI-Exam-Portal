@@ -1,20 +1,18 @@
 import express from "express";
 
 import {
-  questionDesign,
+  createQuestion,
   getQuestion,
+  getSingleQuestion,
+  getQuestionsByExam,
   updateQuestion,
   deleteQuestion,
-   getQuestionsByExam,
-   getSingleQuestion
+  getQuestionStatistics
 } from "../controllers/questionController.js";
 
 import {
-  generateQuestions
-} from "../controllers/aiQuestionController.js";
-
-import {
-  protect
+  protect,
+  authorizeRoles
 } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
@@ -22,13 +20,17 @@ const router = express.Router();
 router.post(
   "/create",
   protect,
-  questionDesign
+  authorizeRoles("teacher"),
+  createQuestion
 );
 
+router.get("/", protect, getQuestion);
+
 router.get(
-  "/",
+  "/statistics",
   protect,
-  getQuestion
+  authorizeRoles("teacher"),
+  getQuestionStatistics
 );
 
 router.get(
@@ -37,28 +39,24 @@ router.get(
   getQuestionsByExam
 );
 
+router.get(
+  "/:id",
+  protect,
+  getSingleQuestion
+);
+
 router.put(
   "/:id",
   protect,
+  authorizeRoles("teacher"),
   updateQuestion
 );
 
 router.delete(
   "/:id",
   protect,
+  authorizeRoles("teacher"),
   deleteQuestion
-);
-
-router.post(
-  "/ai-generate",
-  protect,
-  generateQuestions
-);
-
-router.get(
-  "/single/:id",
-  protect,
-  getSingleQuestion
 );
 
 export default router;

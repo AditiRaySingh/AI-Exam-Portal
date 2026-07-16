@@ -4,89 +4,84 @@ import api from "../services/api";
 import "../styles/TeacherDashboard.css";
 
 function TeacherDashboard() {
+
   const navigate = useNavigate();
 
-  const user = JSON.parse(
-    localStorage.getItem("user")
-  );
-
-  const [exams, setExams] = useState([]);
   const [dashboard, setDashboard] = useState(null);
 
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
+
     fetchDashboard();
-    fetchExams();
+
   }, []);
 
   const fetchDashboard = async () => {
+
     try {
-      const token =
-        localStorage.getItem("token");
+
+      const token = localStorage.getItem("token");
 
       const res = await api.get(
-        "/exam/dashboard",
+        "/dashboard/teacher",
         {
           headers: {
             Authorization: `Bearer ${token}`
           }
         }
       );
+
+ console.log("Dashboard Response:", res.data);
+console.log("Recent Exams:", res.data.recentExams);
 
       setDashboard(res.data);
-    } catch (error) {
-      console.log(error);
+
     }
+
+    catch (error) {
+
+      console.log(error);
+
+      alert("Unable to Load Dashboard");
+
+    }
+
+    finally {
+
+      setLoading(false);
+
+    }
+
   };
 
-  const fetchExams = async () => {
-    try {
-      const token =
-        localStorage.getItem("token");
-
-      const res = await api.get(
-        "/exam",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        }
-      );
-
-      setExams(res.data.exams || []);
-      console.log("EXAMS", exams);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-
-  const publishExam = async (examId) => {
+const publishExam = async (examId) => {
 
   try {
 
-    const token =
-      localStorage.getItem("token");
+    const token = localStorage.getItem("token");
 
-await api.put(
-  `/exam/publish/${examId}`,
-  {},
-  {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  }
-);
-
-    alert(
-      "Exam Published Successfully"
+    const res = await api.put(
+      `/exams/publish/${examId}`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
     );
 
-    fetchExams();
+    alert(res.data.message);
+
+    // Refresh dashboard after publishing
     fetchDashboard();
 
   } catch (error) {
- console.log("PUBLISH ERROR:", error.response?.data || error);
+
+    console.log(error);
+
     alert(
+      error.response?.data?.message ||
       "Failed to publish exam"
     );
 
@@ -94,190 +89,185 @@ await api.put(
 
 };
 
+
+
+  if (loading) {
+
+    return (
+
+      <div className="loading-screen">
+
+        <div className="loader"></div>
+
+        <h2>Loading Dashboard...</h2>
+
+      </div>
+
+    );
+
+  }
+
+
+    if (!dashboard) {
+
+    return (
+
+      <h2
+        style={{
+          textAlign: "center",
+          marginTop: "100px"
+        }}
+      >
+        No Dashboard Data Found
+      </h2>
+
+    );
+
+  }
+
   return (
+
     <div className="teacher-dashboard">
 
-      <div className="topbar">
-        <div className="logo">
-          AI Exam System
+      {/* Header */}
+
+      <div className="dashboard-header">
+
+        <div>
+
+          <h1>Teacher Dashboard</h1>
+
+          <p>Manage Exams, Questions and Student Performance</p>
+
         </div>
 
-        <div className="profile">
-          {user?.name}
-        </div>
+        <button
+          className="create-btn"
+          onClick={() => navigate("/create-exam")}
+        >
+          + Create Exam
+        </button>
+
       </div>
 
-      <h1 className="dashboard-title">
-        Teacher Dashboard
-      </h1>
+      {/* Statistics */}
 
-      <p className="subtitle">
-        Manage your examinations and track student performance
-      </p>
-
-      <div className="stats">
+      <div className="stats-grid">
 
         <div className="stat-card">
+
           <h3>Total Exams</h3>
-          <h2>
-            {dashboard?.totalExams || 0}
-          </h2>
+
+          <h2>{dashboard.totalExams}</h2>
+
         </div>
 
         <div className="stat-card">
-          <h3>Published Exams</h3>
-          <h2>
-            {dashboard?.publishedExams || 0}
-          </h2>
-        </div>
 
-        <div className="stat-card">
           <h3>Total Students</h3>
-          <h2>
-            {dashboard?.totalStudents || 0}
-          </h2>
+
+          <h2>{dashboard.totalStudents}</h2>
+
         </div>
 
         <div className="stat-card">
-          <h3>Total Questions</h3>
-          <h2>
-            {dashboard?.totalQuestions || 0}
-          </h2>
+
+          <h3>Total Attempts</h3>
+
+          <h2>{dashboard.totalAttempts}</h2>
+
+        </div>
+
+        <div className="stat-card">
+
+          <h3>Average Score</h3>
+
+          <h2>{dashboard.averageScore}%</h2>
+
         </div>
 
       </div>
 
-      <div className="action-cards">
-
-        <div
-          className="action-card"
-          onClick={() =>
-            navigate("/create-exam")
-          }
-        >
-          <h2>➕ Create New Exam</h2>
-          <p>Create and publish exams</p>
-        </div>
-
-        <div
-          className="action-card"
-          onClick={() =>
-            navigate("/ai-generate")
-          }
-        >
-          <h2>🤖 AI Questions</h2>
-
-          <p>
-            Generate questions using AI
-          </p>
-        </div>
-        <div className="action-card">
-          <h2>📊 Analytics</h2>
-          <p>Track student performance</p>
-        </div>
-     
-
-
-     <div
- className="action-card"
- onClick={() =>
-  navigate("/generate-material")
- }
->
- <h2>📄 Upload Notes</h2>
- <p>
-  Generate Questions From PDF
- </p>
-</div>
-
-
-
-
-
-      </div>
+      {/* Exam List */}
 
       <div className="exam-section">
 
-        <h2>Your Examinations</h2>
+        <h2>Your Exams</h2>
 
-        <p className="section-subtitle">
-          Manage and monitor all your exams
-        </p>
+        <table className="exam-table">
 
-        {exams.length === 0 ? (
+          <thead>
 
-          <div className="empty-state">
+            <tr>
 
-            <div className="book-icon">
-              📖
-            </div>
+              <th>Exam</th>
 
-            <h3>
-              No exams created yet
-            </h3>
+              <th>Subject</th>
 
-            <button
-              className="create-exam-btn"
-              onClick={() =>
-                navigate("/create-exam")
-              }
-            >
-              Create Your First Exam
-            </button>
+              <th>Duration</th>
 
-          </div>
+              <th>Total Marks</th>
 
-        ) : (
+              <th>Actions</th>
 
-          <div className="exam-grid">
+            </tr>
 
-            {exams.map((exam) => (
+          </thead>
 
-              <div
-                key={exam._id}
-                className="exam-card"
-              >
+          <tbody>
 
-                <h3>{exam.title}</h3>
+            {dashboard.recentExams?.map((exam) => (
 
-                <p>
-                  Subject: {exam.subject}
-                </p>
+              <tr key={exam._id}>
 
-                <p>
-                  Duration: {exam.duration} mins
-                </p>
+                <td>{exam.title}</td>
 
-                <p>
-                  Total Marks: {exam.totalMarks}
-                </p>
+                <td>{exam.subject}</td>
 
-                <span
-                  className={`status ${exam.status}`}
-                >
-                  {exam.status}
-                </span>
-<div className="card-buttons">
+                <td>{exam.duration} min</td>
+
+                <td>{exam.totalMarks}</td>
+
+               <td>
 
   <button
-    className="question-btn"
+    className="action-btn blue"
     onClick={() =>
       navigate(`/add-question/${exam._id}`)
     }
   >
     Add Questions
   </button>
-<button
-  className="view-btn"
-  onClick={() =>
-    navigate(`/questions/${exam._id}`)
-  }
->
-  View Questions
-</button>
 
   <button
-    className="result-btn"
+    className="ai-btn"
+    onClick={() =>
+      navigate(`/ai-generate/${exam._id}`)
+    }
+  >
+    AI Generate
+  </button>
+
+  <button
+    className="material-btn"
+    onClick={() =>
+      navigate(`/generate-material/${exam._id}`)
+    }
+  >
+    Upload Material
+  </button>
+
+  <button
+    className="action-btn green"
+    onClick={() =>
+      navigate(`/questions/${exam._id}`)
+    }
+  >
+    Manage
+  </button>
+
+  <button
+    className="action-btn purple"
     onClick={() =>
       navigate(`/teacher-results/${exam._id}`)
     }
@@ -287,29 +277,28 @@ await api.put(
 
   {exam.status === "draft" && (
     <button
-      className="publish-btn"
-      onClick={() =>
-        publishExam(exam._id)
-      }
+      className="action-btn orange"
+      onClick={() => publishExam(exam._id)}
     >
       Publish
     </button>
   )}
 
-</div>
-              </div>
+</td>
+              </tr>
 
             ))}
 
-          </div>
+          </tbody>
 
-        )}
+        </table>
 
       </div>
 
-
     </div>
+
   );
+
 }
 
 export default TeacherDashboard;

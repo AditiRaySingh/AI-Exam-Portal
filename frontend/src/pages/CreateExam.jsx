@@ -7,160 +7,186 @@ function CreateExam() {
 
   const navigate = useNavigate();
 
-  const [formData, setFormData] =
-    useState({
-      title: "",
-      subject: "",
-      description: "",
-      duration: "",
-      totalMarks: "",
-      startTime: "",
-      endTime: ""
-    });
+  const [formData, setFormData] = useState({
+    title: "",
+    subject: "",
+    description: "",
+    duration: "",
+    totalMarks: "",
+    startTime: "",
+    endTime: ""
+  });
 
   const handleChange = (e) => {
 
     setFormData({
       ...formData,
-      [e.target.name]:
-        e.target.value
+      [e.target.name]: e.target.value
     });
 
   };
 
-  const handleSubmit =
-    async (e) => {
+  const handleSubmit = async (e) => {
 
-      e.preventDefault();
+    e.preventDefault();
 
-      try {
+    try {
 
-        const token =
-          localStorage.getItem(
-            "token"
-          );
+      const token = localStorage.getItem("token");
 
-        const res =
-          await api.post(
-            "/exam/create",
-            formData,
-            {
-              headers: {
-                Authorization:
-                  `Bearer ${token}`
-              }
-            }
-          );
+      const res = await api.post(
+        "/exams/create",
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
 
-        alert(
-          res.data.message
-        );
+      alert(res.data.message);
 
-        navigate(
-          "/teacher-dashboard"
-        );
+      navigate("/teacher-dashboard");
 
-      } catch (error) {
+    } catch (error) {
 
-        console.log(error);
+      console.log(error);
 
-        alert(
-          error.response?.data?.message ||
-          "Failed to create exam"
-        );
+      alert(
+        error.response?.data?.message ||
+        "Failed to Create Exam"
+      );
 
-      }
-    };
+    }
+
+  };
 
   return (
 
-    <div className="create-exam-page">
+    <div className="create-page">
 
-      <div className="create-exam-card">
+      <div className="create-card">
 
-        <h1>
-          Create New Exam
-        </h1>
+        <h1>Create New Exam</h1>
 
         <p>
-          Create and publish your exam
+          Fill the information below to publish an online examination.
         </p>
 
-        <form
-          onSubmit={handleSubmit}
-        >
+        <form onSubmit={handleSubmit}>
 
-          <input
-            type="text"
-            name="title"
-            placeholder="Exam Title"
-            value={formData.title}
-            onChange={handleChange}
-            required
-          />
+          <div className="row">
 
-          <input
-            type="text"
-            name="subject"
-            placeholder="Subject"
-            value={formData.subject}
-            onChange={handleChange}
-            required
-          />
+            <div>
+
+              <label>Exam Title</label>
+
+              <input
+                type="text"
+                name="title"
+                placeholder="Java Programming"
+                value={formData.title}
+                onChange={handleChange}
+                required
+              />
+
+            </div>
+
+            <div>
+
+              <label>Subject</label>
+
+              <input
+                type="text"
+                name="subject"
+                placeholder="Core Java"
+                value={formData.subject}
+                onChange={handleChange}
+                required
+              />
+
+            </div>
+
+          </div>
+
+          <label>Description</label>
 
           <textarea
+            rows="5"
             name="description"
-            placeholder="Description"
+            placeholder="Enter Exam Description"
             value={formData.description}
             onChange={handleChange}
             required
           />
 
-          <input
-            type="number"
-            name="duration"
-            placeholder="Duration (minutes)"
-            value={formData.duration}
-            onChange={handleChange}
-            required
-          />
+          <div className="row">
 
-          <input
-            type="number"
-            name="totalMarks"
-            placeholder="Total Marks"
-            value={formData.totalMarks}
-            onChange={handleChange}
-            required
-          />
+            <div>
 
-          <label>
-            Start Time
-          </label>
+              <label>Duration (Minutes)</label>
 
-          <input
-            type="datetime-local"
-            name="startTime"
-            value={formData.startTime}
-            onChange={handleChange}
-            required
-          />
+              <input
+                type="number"
+                name="duration"
+                placeholder="60"
+                value={formData.duration}
+                onChange={handleChange}
+                required
+              />
 
-          <label>
-            End Time
-          </label>
+            </div>
 
-          <input
-            type="datetime-local"
-            name="endTime"
-            value={formData.endTime}
-            onChange={handleChange}
-            required
-          />
+            <div>
 
-          <button
-            type="submit"
-          >
+              <label>Total Marks</label>
+
+              <input
+                type="number"
+                name="totalMarks"
+                placeholder="100"
+                value={formData.totalMarks}
+                onChange={handleChange}
+                required
+              />
+
+            </div>
+
+          </div>
+
+          <div className="row">
+
+            <div>
+
+              <label>Start Time</label>
+
+              <input
+                type="datetime-local"
+                name="startTime"
+                value={formData.startTime}
+                onChange={handleChange}
+                required
+              />
+
+            </div>
+
+            <div>
+
+              <label>End Time</label>
+
+              <input
+                type="datetime-local"
+                name="endTime"
+                value={formData.endTime}
+                onChange={handleChange}
+                required
+              />
+
+            </div>
+
+          </div>
+
+          <button type="submit">
             Create Exam
           </button>
 
@@ -171,6 +197,7 @@ function CreateExam() {
     </div>
 
   );
+
 }
 
 export default CreateExam;

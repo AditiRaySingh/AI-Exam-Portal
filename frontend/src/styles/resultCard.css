@@ -1,4 +1,4 @@
-.result-card{
+.dashboard-result-card{
  border:1px solid #ddd;
  border-radius:18px;
  background:white;
@@ -9,21 +9,29 @@
  margin-top:20px;
 }
 
-.result-right{
+.dashboard-result-right{
  display:flex;
  align-items:center;
  gap:20px;
 }
 
-.badge{
- background:#030617;
- color:white;
+.dashboard-badge{
  padding:8px 15px;
  border-radius:10px;
+ color:white;
  font-size:14px;
+ font-weight:bold;
 }
 
-.detail-btn{
+.dashboard-badge.pass{
+ background:#22c55e;
+}
+
+.dashboard-badge.fail{
+ background:#ef4444;
+}
+
+.dashboard-detail-btn{
  padding:10px 18px;
  border:1px solid #ddd;
  background:white;

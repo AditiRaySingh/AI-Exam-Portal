@@ -43,6 +43,7 @@ export const studentDashboard = async (req, res) => {
       await ExamModel.find({
         status: "published"
       });
+      console.log("Published Exams:", exams);
 
     res.status(200).json({
       success: true,

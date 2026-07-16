@@ -1,0 +1,149 @@
+.ai-page{
+
+    min-height:100vh;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    background:#f5f7fb;
+
+    padding:40px;
+
+}
+
+.ai-card{
+
+    width:100%;
+
+    max-width:700px;
+
+    background:white;
+
+    padding:35px;
+
+    border-radius:20px;
+
+    box-shadow:0 15px 35px rgba(0,0,0,.08);
+
+}
+
+.ai-card h1{
+
+    color:#2563eb;
+
+    text-align:center;
+
+    margin-bottom:10px;
+
+}
+
+.ai-card p{
+
+    text-align:center;
+
+    color:#64748b;
+
+    margin-bottom:30px;
+
+}
+
+.ai-card form{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:18px;
+
+}
+
+.ai-card label{
+
+    font-weight:600;
+
+    color:#334155;
+
+}
+
+.ai-card input,
+.ai-card select{
+
+    padding:14px;
+
+    border:1px solid #d1d5db;
+
+    border-radius:10px;
+
+    font-size:15px;
+
+}
+
+.ai-card input:focus,
+.ai-card select:focus{
+
+    border-color:#2563eb;
+
+    outline:none;
+
+}
+
+.row{
+
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    gap:20px;
+
+}
+
+.ai-card button{
+
+    margin-top:10px;
+
+    padding:15px;
+
+    background:#2563eb;
+
+    color:white;
+
+    border:none;
+
+    border-radius:10px;
+
+    font-size:16px;
+
+    font-weight:bold;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+}
+
+.ai-card button:hover{
+
+    background:#1d4ed8;
+
+}
+
+.ai-card button:disabled{
+
+    background:#94a3b8;
+
+    cursor:not-allowed;
+
+}
+
+@media(max-width:700px){
+
+.row{
+
+grid-template-columns:1fr;
+
+}
+
+}

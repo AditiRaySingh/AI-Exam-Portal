@@ -1,11 +1,13 @@
 import express from "express";
+
 import {
   studentDashboard,
   getTeacherDashboard
 } from "../controllers/dashboardController.js";
 
 import {
-  protect
+  protect,
+  authorizeRoles
 } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
@@ -13,12 +15,14 @@ const router = express.Router();
 router.get(
   "/student",
   protect,
+  authorizeRoles("student"),
   studentDashboard
 );
 
 router.get(
   "/teacher",
   protect,
+  authorizeRoles("teacher"),
   getTeacherDashboard
 );
 
