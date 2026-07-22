@@ -408,25 +408,27 @@ console.log("================================");
     wrongCount++;
   }
 
-  evaluatedAnswers.push({
+ evaluatedAnswers.push({
 
-    questionId: question._id,
+  questionId: question._id,
 
-    selectedAnswer: studentAnswer.selectedAnswer,
+  selectedAnswer: studentAnswer.selectedAnswer,
 
-    isCorrect: isCorrect,
+  correctAnswer: question.correctAnswer,
 
-    obtainedMarks: obtainedMarks,
+  isCorrect: isCorrect,
 
-    aiScore: obtainedMarks,
+  obtainedMarks: obtainedMarks,
 
-    aiFeedback: isCorrect
-      ? "Correct Answer"
-      : "Incorrect Answer",
+  aiScore: obtainedMarks,
 
-    timeTaken: 0
+  aiFeedback: isCorrect
+    ? `Correct! Your answer "${studentAnswer.selectedAnswer}" is correct.`
+    : `Incorrect. Your answer "${studentAnswer.selectedAnswer}" is wrong. The correct answer is "${question.correctAnswer}".`,
 
-  });
+  timeTaken: 0
+
+});
 
 }
       // ==========================
@@ -716,10 +718,8 @@ async (req, res) => {
 
       })
 
-      .populate(
-        "studentId",
-        "name email"
-      )
+     .populate("studentId", "name email")
+.populate("examId", "title subject")
 
       .sort({
         score: -1

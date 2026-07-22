@@ -243,29 +243,64 @@ return (
 
       {/* MCQ */}
 
-      {question.questionType === "mcq" && (
+    {/* MCQ */}
 
-        <div className="options">
+{question.questionType === "mcq" && (
 
-          {question.options.map((option, index) => (
+  <div className="options">
 
-            <button
-              key={index}
-              className={
-                answers[question._id] === option
-                  ? "option selected"
-                  : "option"
-              }
-              onClick={() => handleAnswer(option)}
-            >
-              {option}
-            </button>
+    {question.options?.map((option, index) => (
 
-          ))}
+      <button
+        key={index}
+        className={
+          answers[question._id] === option
+            ? "option selected"
+            : "option"
+        }
+        onClick={() => handleAnswer(option)}
+      >
+        {option}
+      </button>
 
-        </div>
+    ))}
 
-      )}
+  </div>
+
+)}
+
+
+{/* TRUE / FALSE */}
+
+{question.questionType === "truefalse" && (
+
+  <div className="options">
+
+    <button
+      className={
+        answers[question._id] === "True"
+          ? "option selected"
+          : "option"
+      }
+      onClick={() => handleAnswer("True")}
+    >
+      True
+    </button>
+
+    <button
+      className={
+        answers[question._id] === "False"
+          ? "option selected"
+          : "option"
+      }
+      onClick={() => handleAnswer("False")}
+    >
+      False
+    </button>
+
+  </div>
+
+)}
 
       {/* Subjective */}
 

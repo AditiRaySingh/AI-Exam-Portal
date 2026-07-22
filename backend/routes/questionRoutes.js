@@ -10,6 +10,20 @@ import {
   getQuestionStatistics
 } from "../controllers/questionController.js";
 
+
+
+import {
+  startExam,
+  showQuestions,
+  submitExam,
+  getExamResults,
+  getAllExamResults,
+  getStudentHistory
+} from "../controllers/examAttemptController.js";
+
+
+
+
 import {
   protect,
   authorizeRoles
@@ -57,6 +71,29 @@ router.delete(
   protect,
   authorizeRoles("teacher"),
   deleteQuestion
+);
+
+
+
+router.get(
+  "/result/:examId",
+  protect,
+  authorizeRoles("student"),
+  getExamResults
+);
+
+router.get(
+  "/teacher/:examId",
+  protect,
+  authorizeRoles("teacher"),
+  getAllExamResults
+);
+
+router.get(
+  "/history",
+  protect,
+  authorizeRoles("student"),
+  getStudentHistory
 );
 
 export default router;

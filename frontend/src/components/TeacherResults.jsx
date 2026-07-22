@@ -177,25 +177,15 @@ return (
 
     </thead>
 
-    <tbody>
-
-      {leaderboard.map(
-        (student, index) => (
-
-          <tr key={student._id}>
-            <td>{index + 1}</td>
-            <td>
-              {student.studentId?.name}
-            </td>
-            <td>
-              {student.score}
-            </td>
-          </tr>
-
-        )
-      )}
-
-    </tbody>
+ <tbody>
+  {leaderboard.map((student) => (
+    <tr key={student.email}>
+      <td>{student.rank}</td>
+      <td>{student.studentName}</td>
+      <td>{student.score}</td>
+    </tr>
+  ))}
+</tbody>
 
   </table>
 

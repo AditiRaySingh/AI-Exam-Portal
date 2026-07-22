@@ -273,3 +273,12 @@ body{
     transform:translateY(-2px);
     opacity:.9;
 }
+
+.analytics{
+    background:#0ea5e9;
+    color:white;
+}
+
+.analytics:hover{
+    background:#0284c7;
+}

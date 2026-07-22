@@ -2,27 +2,16 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 import "../styles/TeacherDashboard.css";
-
 function TeacherDashboard() {
-
   const navigate = useNavigate();
-
   const [dashboard, setDashboard] = useState(null);
-
   const [loading, setLoading] = useState(true);
-
   useEffect(() => {
-
     fetchDashboard();
-
   }, []);
-
   const fetchDashboard = async () => {
-
     try {
-
       const token = localStorage.getItem("token");
-
       const res = await api.get(
         "/dashboard/teacher",
         {
@@ -31,36 +20,21 @@ function TeacherDashboard() {
           }
         }
       );
-
- console.log("Dashboard Response:", res.data);
-console.log("Recent Exams:", res.data.recentExams);
-
-      setDashboard(res.data);
-
+   console.log("Dashboard Response:", res.data);
+  console.log("Recent Exams:", res.data.recentExams);
+  setDashboard(res.data);
     }
-
     catch (error) {
-
       console.log(error);
-
       alert("Unable to Load Dashboard");
-
     }
-
     finally {
-
       setLoading(false);
-
     }
-
   };
-
 const publishExam = async (examId) => {
-
   try {
-
     const token = localStorage.getItem("token");
-
     const res = await api.put(
       `/exams/publish/${examId}`,
       {},
@@ -70,48 +44,27 @@ const publishExam = async (examId) => {
         }
       }
     );
-
     alert(res.data.message);
-
     // Refresh dashboard after publishing
     fetchDashboard();
-
   } catch (error) {
-
     console.log(error);
-
     alert(
       error.response?.data?.message ||
       "Failed to publish exam"
     );
-
   }
-
 };
-
-
-
   if (loading) {
-
-    return (
-
+ return (
       <div className="loading-screen">
-
         <div className="loader"></div>
-
         <h2>Loading Dashboard...</h2>
-
       </div>
-
     );
-
   }
-
-
     if (!dashboard) {
-
     return (
-
       <h2
         style={{
           textAlign: "center",
@@ -120,117 +73,67 @@ const publishExam = async (examId) => {
       >
         No Dashboard Data Found
       </h2>
-
     );
-
   }
-
   return (
-
     <div className="teacher-dashboard">
-
       {/* Header */}
-
       <div className="dashboard-header">
-
         <div>
-
           <h1>Teacher Dashboard</h1>
-
           <p>Manage Exams, Questions and Student Performance</p>
-
         </div>
-
         <button
           className="create-btn"
           onClick={() => navigate("/create-exam")}
         >
           + Create Exam
         </button>
-
       </div>
-
       {/* Statistics */}
-
       <div className="stats-grid">
-
         <div className="stat-card">
-
           <h3>Total Exams</h3>
-
           <h2>{dashboard.totalExams}</h2>
-
         </div>
-
         <div className="stat-card">
-
           <h3>Total Students</h3>
-
           <h2>{dashboard.totalStudents}</h2>
-
         </div>
-
         <div className="stat-card">
-
           <h3>Total Attempts</h3>
-
           <h2>{dashboard.totalAttempts}</h2>
-
         </div>
-
         <div className="stat-card">
-
           <h3>Average Score</h3>
-
           <h2>{dashboard.averageScore}%</h2>
-
         </div>
-
       </div>
-
       {/* Exam List */}
-
       <div className="exam-section">
-
         <h2>Your Exams</h2>
-
         <table className="exam-table">
-
           <thead>
-
             <tr>
-
               <th>Exam</th>
-
               <th>Subject</th>
-
               <th>Duration</th>
-
               <th>Total Marks</th>
-
               <th>Actions</th>
-
             </tr>
-
           </thead>
-
           <tbody>
-
             {dashboard.recentExams?.map((exam) => (
-
+              
               <tr key={exam._id}>
-
                 <td>{exam.title}</td>
-
                 <td>{exam.subject}</td>
-
                 <td>{exam.duration} min</td>
-
                 <td>{exam.totalMarks}</td>
-
                <td>
-
+                
   <button
+  
     className="action-btn blue"
     onClick={() =>
       navigate(`/add-question/${exam._id}`)
@@ -238,7 +141,6 @@ const publishExam = async (examId) => {
   >
     Add Questions
   </button>
-
   <button
     className="ai-btn"
     onClick={() =>
@@ -247,7 +149,6 @@ const publishExam = async (examId) => {
   >
     AI Generate
   </button>
-
   <button
     className="material-btn"
     onClick={() =>
@@ -256,7 +157,6 @@ const publishExam = async (examId) => {
   >
     Upload Material
   </button>
-
   <button
     className="action-btn green"
     onClick={() =>
@@ -265,7 +165,6 @@ const publishExam = async (examId) => {
   >
     Manage
   </button>
-
   <button
     className="action-btn purple"
     onClick={() =>
@@ -275,16 +174,32 @@ const publishExam = async (examId) => {
     Results
   </button>
 
+<button
+  className="action-btn analytics"
+  onClick={() =>
+    navigate(`/teacher-analytics/${exam._id}`)
+  }
+>
+  📊 Analytics
+</button>
+
+
   {exam.status === "draft" && (
+
+    
     <button
       className="action-btn orange"
       onClick={() => publishExam(exam._id)}
     >
       Publish
     </button>
-  )}
 
-</td>
+     
+
+
+
+  )}
+          </td>
               </tr>
 
             ))}
@@ -296,9 +211,6 @@ const publishExam = async (examId) => {
       </div>
 
     </div>
-
   );
-
 }
-
 export default TeacherDashboard;

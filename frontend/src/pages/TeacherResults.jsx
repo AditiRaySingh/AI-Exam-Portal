@@ -4,54 +4,76 @@ import api from "../services/api";
 import "../styles/TeacherResults.css";
 
 function TeacherResults() {
-
   const { examId } = useParams();
 
   const [results, setResults] = useState([]);
-  const [leaderboard, setLeaderboard] = useState([]);
-
-  const [analytics, setAnalytics] = useState({
-    totalAttempts: 0,
-    highestScore: 0,
-    lowestScore: 0,
-    averageScore: 0
-  });
+  const [filteredResults, setFilteredResults] = useState([]);
+  const [analytics, setAnalytics] = useState({});
+  const [exam, setExam] = useState({});
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     fetchResults();
   }, []);
 
-  const fetchResults = async () => {
-    try {
-
-      const token = localStorage.getItem("token");
-
-      const res = await api.get(
-        `/exam/teacher-results/${examId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        }
+  useEffect(() => {
+    if (search === "") {
+      setFilteredResults(results);
+    } else {
+      const data = results.filter((item) =>
+        item.examId?.title
+          ?.toLowerCase()
+          .includes(search.toLowerCase())
       );
 
-      setResults(res.data.results || []);
-      setLeaderboard(res.data.leaderboard || []);
-      setAnalytics(res.data.analytics || {});
+      setFilteredResults(data);
+    }
+  }, [search, results]);
 
+  const fetchResults = async () => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const res = await api.get(`/attempt/teacher/${examId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      setResults(res.data.results || []);
+      setFilteredResults(res.data.results || []);
+      setAnalytics(res.data.analytics || {});
+      setExam(res.data.exam || {});
     } catch (error) {
       console.log(error);
     }
   };
 
   return (
-
     <div className="teacher-results">
 
-      <h1>📊 Exam Analytics</h1>
+      <h1>Exam Results</h1>
+
+      <h2>{exam.title}</h2>
+      <p>
+        <b>Subject:</b> {exam.subject}
+      </p>
+
+      <br />
+
+      <input
+        type="text"
+        placeholder="Search by Exam Name..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        style={{
+          padding: "10px",
+          width: "300px",
+          marginBottom: "20px",
+        }}
+      />
 
       <div className="analytics-grid">
-
         <div className="analytics-card">
           <h3>Total Attempts</h3>
           <h2>{analytics.totalAttempts}</h2>
@@ -71,90 +93,55 @@ function TeacherResults() {
           <h3>Average Score</h3>
           <h2>{analytics.averageScore}</h2>
         </div>
-
       </div>
 
-      <div className="table-card">
+      <table
+        border="1"
+        cellPadding="10"
+        style={{
+          width: "100%",
+          marginTop: "20px",
+        }}
+      >
+        <thead>
+          <tr>
+            <th>Student</th>
+            <th>Email</th>
+            <th>Exam</th>
+            <th>Score</th>
+            <th>Total Marks</th>
+            <th>Percentage</th>
+            <th>Correct</th>
+            <th>Wrong</th>
+            <th>Result</th>
+          </tr>
+        </thead>
 
-        <h2>🏆 Leaderboard</h2>
+        <tbody>
+          {filteredResults.map((item) => (
+            <tr key={item._id}>
+              <td>{item.studentId?.name}</td>
 
-        <table>
+              <td>{item.studentId?.email}</td>
 
-          <thead>
+              <td>{item.examId?.title}</td>
 
-            <tr>
-              <th>Rank</th>
-              <th>Student</th>
-              <th>Score</th>
+              <td>{item.score}</td>
+
+              <td>{item.totalMarks}</td>
+
+              <td>{item.percentage}%</td>
+
+              <td>{item.correctCount}</td>
+
+              <td>{item.wrongCount}</td>
+
+              <td>{item.result}</td>
             </tr>
-
-          </thead>
-
-          <tbody>
-
-            {leaderboard.map((student, index) => (
-
-              <tr key={student._id}>
-                <td>#{index + 1}</td>
-                <td>{student.studentId?.name}</td>
-                <td>{student.score}</td>
-              </tr>
-
-            ))}
-
-          </tbody>
-
-        </table>
-
-      </div>
-
-      <div className="table-card">
-
-        <h2>👨‍🎓 Student Results</h2>
-
-        <table>
-
-          <thead>
-
-            <tr>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Score</th>
-              <th>Status</th>
-            </tr>
-
-          </thead>
-
-          <tbody>
-
-            {results.map((result) => (
-
-              <tr key={result._id}>
-
-                <td>{result.studentId?.name}</td>
-
-                <td>{result.studentId?.email}</td>
-
-                <td>{result.score}</td>
-
-                <td>
-                  <span className="status">
-                    {result.status}
-                  </span>
-                </td>
-
-              </tr>
-
-            ))}
-
-          </tbody>
-
-        </table>
-
-      </div>
-
+          ))}
+        </tbody>
+      </table>
     </div>
-
   );
 }
 

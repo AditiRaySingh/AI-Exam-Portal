@@ -40,6 +40,8 @@ import StudentResults from "./pages/StudentResults";
 import SubjectiveEvaluation
 from "./pages/SubjectiveEvaluation";
 
+import TeacherAnalytics from "./pages/TeacherAnalytics";
+
 function App() {
  return (
   <BrowserRouter>
@@ -132,7 +134,17 @@ function App() {
  path="/student-results"
  element={<StudentResults />}
 />
+
+
+
+
+   <Route
+  path="/teacher-analytics/:examId"
+  element={<TeacherAnalytics />}
+/>
+
    </Routes>
+
 
 
   </BrowserRouter>
