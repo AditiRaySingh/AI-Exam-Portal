@@ -50,6 +50,9 @@ function ManageQuestions() {
     catch (error) {
 
       console.log(error);
+      console.log("DELETE STATUS:", error.response?.status);
+  console.log("DELETE DATA:", error.response?.data);
+  console.log("DELETE MESSAGE:", error.response?.data?.message);
 
       alert("Unable to Load Questions");
 

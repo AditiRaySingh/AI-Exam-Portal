@@ -35,6 +35,11 @@ function Login() {
         "/auth/login",
         formData
       );
+     console.log("========== LOGIN ==========");
+console.log("EMAIL:", formData.email);
+console.log("FULL RESPONSE:", res.data);
+console.log("USER FROM BACKEND:", res.data.user);
+console.log("============================");
 
       localStorage.setItem(
         "token",

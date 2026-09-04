@@ -10,19 +10,11 @@ import {
   getQuestionStatistics
 } from "../controllers/questionController.js";
 
-
-
 import {
-  startExam,
-  showQuestions,
-  submitExam,
   getExamResults,
   getAllExamResults,
   getStudentHistory
 } from "../controllers/examAttemptController.js";
-
-
-
 
 import {
   protect,
@@ -31,6 +23,11 @@ import {
 
 const router = express.Router();
 
+
+// ==========================================
+// CREATE QUESTION
+// ==========================================
+
 router.post(
   "/create",
   protect,
@@ -38,7 +35,21 @@ router.post(
   createQuestion
 );
 
-router.get("/", protect, getQuestion);
+
+// ==========================================
+// ALL QUESTIONS
+// ==========================================
+
+router.get(
+  "/",
+  protect,
+  getQuestion
+);
+
+
+// ==========================================
+// STATISTICS
+// ==========================================
 
 router.get(
   "/statistics",
@@ -47,33 +58,21 @@ router.get(
   getQuestionStatistics
 );
 
+
+// ==========================================
+// QUESTIONS BY EXAM
+// ==========================================
+
 router.get(
   "/exam/:examId",
   protect,
   getQuestionsByExam
 );
 
-router.get(
-  "/:id",
-  protect,
-  getSingleQuestion
-);
 
-router.put(
-  "/:id",
-  protect,
-  authorizeRoles("teacher"),
-  updateQuestion
-);
-
-router.delete(
-  "/:id",
-  protect,
-  authorizeRoles("teacher"),
-  deleteQuestion
-);
-
-
+// ==========================================
+// RESULTS
+// ==========================================
 
 router.get(
   "/result/:examId",
@@ -82,6 +81,11 @@ router.get(
   getExamResults
 );
 
+
+// ==========================================
+// TEACHER RESULTS
+// ==========================================
+
 router.get(
   "/teacher/:examId",
   protect,
@@ -89,11 +93,52 @@ router.get(
   getAllExamResults
 );
 
+
+// ==========================================
+// STUDENT HISTORY
+// ==========================================
+
 router.get(
   "/history",
   protect,
   authorizeRoles("student"),
   getStudentHistory
 );
+
+
+// ==========================================
+// SINGLE QUESTION
+// ==========================================
+
+router.get(
+  "/:id",
+  protect,
+  getSingleQuestion
+);
+
+
+// ==========================================
+// UPDATE QUESTION
+// ==========================================
+
+router.put(
+  "/:id",
+  protect,
+  authorizeRoles("teacher"),
+  updateQuestion
+);
+
+
+// ==========================================
+// DELETE QUESTION
+// ==========================================
+
+router.delete(
+  "/:id",
+  protect,
+  authorizeRoles("teacher"),
+  deleteQuestion
+);
+
 
 export default router;

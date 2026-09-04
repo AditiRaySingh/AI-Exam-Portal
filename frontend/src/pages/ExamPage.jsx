@@ -7,163 +7,633 @@ function ExamPage() {
 
   const navigate = useNavigate();
 
-  const examId = localStorage.getItem("examId");
+  const examId =
+    localStorage.getItem("examId");
+
   console.log("Exam ID =", examId);
 
-  const [questions, setQuestions] = useState([]);
-  const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [answers, setAnswers] = useState({});
-  const [loading, setLoading] = useState(true);
-  const [submitting, setSubmitting] = useState(false);
 
-  // Default timer (1 hour)
-  const [timeLeft, setTimeLeft] = useState(3600);
+  // =====================================================
+  // STATE
+  // =====================================================
 
-  // Load Questions
-  useEffect(() => {
-    fetchQuestions();
-  }, []);
+  const [questions, setQuestions] =
+    useState([]);
+
+  const [currentQuestion, setCurrentQuestion] =
+    useState(0);
+
+  const [answers, setAnswers] =
+    useState({});
+
+  const [loading, setLoading] =
+    useState(true);
+
+  const [submitting, setSubmitting] =
+    useState(false);
+
+
+  // =====================================================
+  // EXAM TIMER
+  // =====================================================
+
+  const [timeLeft, setTimeLeft] =
+    useState(null);
+
+  const [examEndTime, setExamEndTime] =
+    useState(null);
+
+
+  // =====================================================
+  // LOAD EXAM DETAILS
+  // =====================================================
+
+  const fetchExamDetails = async () => {
+
+    try {
+
+      const token =
+        localStorage.getItem("token");
+
+
+      const res =
+        await api.get(
+          `/exams/${examId}`,
+          {
+            headers: {
+              Authorization:
+                `Bearer ${token}`
+            }
+          }
+        );
+
+
+      console.log(
+        "EXAM DETAILS:",
+        res.data
+      );
+
+
+      const exam =
+        res.data.exam;
+
+
+      if (!exam) {
+
+        alert(
+          "Exam details not found."
+        );
+
+        navigate(
+          "/student-dashboard"
+        );
+
+        return false;
+      }
+
+
+      // =================================================
+      // GET START AND END TIME
+      // =================================================
+
+      const startTime =
+        new Date(
+          exam.startTime
+        ).getTime();
+
+
+      const endTime =
+        new Date(
+          exam.endTime
+        ).getTime();
+
+
+      const currentTime =
+        Date.now();
+
+
+      console.log(
+        "Start Time:",
+        new Date(startTime)
+      );
+
+      console.log(
+        "End Time:",
+        new Date(endTime)
+      );
+
+      console.log(
+        "Current Time:",
+        new Date(currentTime)
+      );
+
+
+      // =================================================
+      // INVALID TIME
+      // =================================================
+
+      if (
+        Number.isNaN(startTime) ||
+        Number.isNaN(endTime)
+      ) {
+
+        alert(
+          "Exam timing is not configured correctly."
+        );
+
+        navigate(
+          "/student-dashboard"
+        );
+
+        return false;
+      }
+
+
+      // =================================================
+      // EXAM NOT STARTED
+      // =================================================
+
+      if (
+        currentTime < startTime
+      ) {
+
+        alert(
+          `Exam will start at ${new Date(
+            startTime
+          ).toLocaleString("en-IN")}`
+        );
+
+        navigate(
+          "/student-dashboard"
+        );
+
+        return false;
+      }
+
+
+      // =================================================
+      // EXAM ALREADY ENDED
+      // =================================================
+
+      if (
+        currentTime >= endTime
+      ) {
+
+        alert(
+          "This exam has already ended."
+        );
+
+        navigate(
+          "/student-dashboard"
+        );
+
+        return false;
+      }
+
+
+      // =================================================
+      // CALCULATE REMAINING TIME
+      // =================================================
+
+      const remainingSeconds =
+        Math.floor(
+          (endTime - currentTime) / 1000
+        );
+
+
+      console.log(
+        "Remaining Seconds:",
+        remainingSeconds
+      );
+
+
+      setExamEndTime(
+        endTime
+      );
+
+
+      setTimeLeft(
+        remainingSeconds
+      );
+
+
+      return true;
+
+    } catch (error) {
+
+      console.error(
+        "EXAM DETAILS ERROR:",
+        error
+      );
+
+
+      alert(
+        error.response?.data?.message ||
+        "Unable to load exam details."
+      );
+
+
+      navigate(
+        "/student-dashboard"
+      );
+
+
+      return false;
+    }
+  };
+
+
+  // =====================================================
+  // LOAD QUESTIONS
+  // =====================================================
 
   const fetchQuestions = async () => {
 
     try {
 
-      const token = localStorage.getItem("token");
+      const token =
+        localStorage.getItem("token");
 
-      const res = await api.get(`/questions/exam/${examId}`, {
-  headers: {
-    Authorization: `Bearer ${token}`
-  }
-});
 
-      setQuestions(res.data.questions || []);
+      const res =
+        await api.get(
+          `/questions/exam/${examId}`,
+          {
+            headers: {
+              Authorization:
+                `Bearer ${token}`
+            }
+          }
+        );
+
+
+      console.log(
+        "QUESTIONS:",
+        res.data.questions
+      );
+
+
+      setQuestions(
+        res.data.questions || []
+      );
+
 
     } catch (error) {
 
-      console.log(error);
+      console.error(
+        "QUESTIONS ERROR:",
+        error
+      );
 
-      alert("Unable to Load Questions");
 
-    } finally {
+      alert(
+        error.response?.data?.message ||
+        "Unable to load questions."
+      );
 
-      setLoading(false);
 
     }
-
   };
 
-  // Timer
+
+  // =====================================================
+  // INITIAL LOAD
+  // =====================================================
+
   useEffect(() => {
 
-    if (timeLeft <= 0) {
+    const loadExam = async () => {
+
+      try {
+
+        // First check exam timing
+        const examAllowed =
+          await fetchExamDetails();
+
+
+        // Only load questions
+        // if exam is currently active
+        if (examAllowed) {
+
+          await fetchQuestions();
+
+        }
+
+      } finally {
+
+        setLoading(false);
+
+      }
+
+    };
+
+
+    if (!examId) {
+
+      alert(
+        "Exam ID not found."
+      );
+
+      navigate(
+        "/student-dashboard"
+      );
+
+      return;
+    }
+
+
+    loadExam();
+
+  }, []);
+
+
+  // =====================================================
+  // TIMER
+  // =====================================================
+
+  useEffect(() => {
+
+    // Timer not ready
+    if (
+      timeLeft === null
+    ) {
+      return;
+    }
+
+
+    // Exam is submitting
+    if (
+      submitting
+    ) {
+      return;
+    }
+
+
+    // ===================================================
+    // TIME FINISHED
+    // ===================================================
+
+    if (
+      timeLeft <= 0
+    ) {
+
+      console.log(
+        "TIME FINISHED - AUTO SUBMIT"
+      );
+
 
       handleSubmit();
-      return;
 
+      return;
     }
 
-    const timer = setInterval(() => {
 
-      setTimeLeft(prev => prev - 1);
+    // ===================================================
+    // COUNTDOWN
+    // ===================================================
 
-    }, 1000);
+    const timer =
+      setInterval(() => {
 
-    return () => clearInterval(timer);
+        setTimeLeft(
+          previousTime => {
 
-  }, [timeLeft]);
+            if (
+              previousTime === null
+            ) {
+              return 0;
+            }
 
-  // Save Answer
-  const handleAnswer = (answer) => {
 
-    setAnswers(prev => ({
+            if (
+              previousTime <= 1
+            ) {
+              return 0;
+            }
 
-      ...prev,
 
-      [questions[currentQuestion]._id]: answer
+            return previousTime - 1;
 
-    }));
+          }
+        );
+
+      }, 1000);
+
+
+    // Cleanup timer
+    return () => {
+
+      clearInterval(
+        timer
+      );
+
+    };
+
+  }, [
+    timeLeft,
+    submitting
+  ]);
+
+
+  // =====================================================
+  // SAVE ANSWER
+  // =====================================================
+
+  const handleAnswer = (
+    answer
+  ) => {
+
+    setAnswers(
+      previousAnswers => ({
+
+        ...previousAnswers,
+
+        [
+          questions[
+            currentQuestion
+          ]._id
+        ]: answer
+
+      })
+    );
 
   };
 
-  // Previous Question
+
+  // =====================================================
+  // PREVIOUS QUESTION
+  // =====================================================
+
   const previousQuestion = () => {
 
-    if (currentQuestion > 0) {
+    if (
+      currentQuestion > 0
+    ) {
 
-      setCurrentQuestion(currentQuestion - 1);
+      setCurrentQuestion(
+        currentQuestion - 1
+      );
 
     }
 
   };
 
-  // Next Question
+
+  // =====================================================
+  // NEXT QUESTION
+  // =====================================================
+
   const nextQuestion = () => {
 
-    if (currentQuestion < questions.length - 1) {
+    if (
+      currentQuestion <
+      questions.length - 1
+    ) {
 
-      setCurrentQuestion(currentQuestion + 1);
+      setCurrentQuestion(
+        currentQuestion + 1
+      );
 
     }
 
   };
 
-  // Jump to Question
-  const jumpToQuestion = (index) => {
 
-    setCurrentQuestion(index);
+  // =====================================================
+  // JUMP TO QUESTION
+  // =====================================================
+
+  const jumpToQuestion = (
+    index
+  ) => {
+
+    setCurrentQuestion(
+      index
+    );
 
   };
 
-  // Submit Exam
+
+  // =====================================================
+  // SUBMIT EXAM
+  // =====================================================
+
   const handleSubmit = async () => {
+
+    // Prevent duplicate submission
+    if (
+      submitting
+    ) {
+      return;
+    }
+
 
     try {
 
-      setSubmitting(true);
-
-      const token = localStorage.getItem("token");
-
-      const formattedAnswers = Object.keys(answers).map(questionId => ({
-
-        questionId,
-
-        selectedAnswer: answers[questionId]
-
-      }));
-
-      await api.post(
-  "/attempt/submit",
-        {
-          examId,
-          answers: formattedAnswers
-        },
-
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        }
-
+      setSubmitting(
+        true
       );
 
-      navigate(`/result/${examId}`);
+
+      const token =
+        localStorage.getItem("token");
+
+
+      // =================================================
+      // CONVERT ANSWERS
+      // =================================================
+
+      const formattedAnswers =
+        Object.keys(
+          answers
+        ).map(
+          questionId => ({
+
+            questionId,
+
+            selectedAnswer:
+              answers[
+                questionId
+              ]
+
+          })
+        );
+
+
+      console.log(
+        "ANSWERS BEING SUBMITTED:",
+        formattedAnswers
+      );
+
+
+      // =================================================
+      // SUBMIT TO BACKEND
+      // =================================================
+
+      await api.post(
+        "/attempt/submit",
+        {
+          examId,
+
+          answers:
+            formattedAnswers
+        },
+        {
+          headers: {
+            Authorization:
+              `Bearer ${token}`
+          }
+        }
+      );
+
+
+      // =================================================
+      // GO TO RESULT
+      // =================================================
+
+      navigate(
+        `/result/${examId}`
+      );
+
 
     } catch (error) {
 
-      console.log(error);
+      console.error(
+        "SUBMIT ERROR:",
+        error
+      );
 
-      alert("Failed to Submit Exam");
 
-    } finally {
+      console.error(
+        "SERVER ERROR:",
+        error.response?.data
+      );
 
-      setSubmitting(false);
+
+      alert(
+        error.response?.data?.message ||
+        "Failed to Submit Exam"
+      );
+
+
+      // If submission failed,
+      // allow user to try again
+      setSubmitting(
+        false
+      );
 
     }
 
   };
 
-  // Loading Screen
-  if (loading) {
+
+  // =====================================================
+  // LOADING SCREEN
+  // =====================================================
+
+  if (
+    loading
+  ) {
 
     return (
 
@@ -171,7 +641,9 @@ function ExamPage() {
 
         <div className="loader"></div>
 
-        <h2>Loading Questions...</h2>
+        <h2>
+          Loading Exam...
+        </h2>
 
       </div>
 
@@ -179,231 +651,484 @@ function ExamPage() {
 
   }
 
-  const question = questions[currentQuestion];
 
-  const minutes = Math.floor(timeLeft / 60);
-  const seconds = timeLeft % 60;
-  if (!question) {
-  return (
-    <h2
-      style={{
-        textAlign: "center",
-        marginTop: "100px"
-      }}
-    >
-      No Questions Found
-    </h2>
-  );
-}
+  // =====================================================
+  // NO QUESTIONS
+  // =====================================================
 
-return (
+  if (
+    questions.length === 0
+  ) {
 
-  <div className="exam-container">
+    return (
 
-    {/* Header */}
-
-    <div className="exam-header">
-
-      <div>
-
-        <h1>Online Examination</h1>
-
-        <p>
-          Question {currentQuestion + 1} of {questions.length}
-        </p>
-
-      </div>
-
-      <div className="timer-box">
-
-        ⏰ {minutes}:{seconds.toString().padStart(2, "0")}
-
-      </div>
-
-    </div>
-
-    {/* Progress */}
-
-    <div className="progress-bar">
-
-      <div
-        className="progress-fill"
+      <h2
         style={{
-          width: `${((currentQuestion + 1) / questions.length) * 100}%`
+          textAlign:
+            "center",
+
+          marginTop:
+            "100px"
         }}
-      ></div>
-
-    </div>
-
-    {/* Question Card */}
-
-    <div className="question-card">
-
-      <h2>{question.question}</h2>
-
-      {/* MCQ */}
-
-    {/* MCQ */}
-
-{question.questionType === "mcq" && (
-
-  <div className="options">
-
-    {question.options?.map((option, index) => (
-
-      <button
-        key={index}
-        className={
-          answers[question._id] === option
-            ? "option selected"
-            : "option"
-        }
-        onClick={() => handleAnswer(option)}
       >
-        {option}
-      </button>
+        No Questions Found
+      </h2>
 
-    ))}
+    );
 
-  </div>
-
-)}
+  }
 
 
-{/* TRUE / FALSE */}
+  // =====================================================
+  // CURRENT QUESTION
+  // =====================================================
 
-{question.questionType === "truefalse" && (
+  const question =
+    questions[
+      currentQuestion
+    ];
 
-  <div className="options">
 
-    <button
-      className={
-        answers[question._id] === "True"
-          ? "option selected"
-          : "option"
-      }
-      onClick={() => handleAnswer("True")}
-    >
-      True
-    </button>
+  // =====================================================
+  // TIMER FORMAT
+  // =====================================================
 
-    <button
-      className={
-        answers[question._id] === "False"
-          ? "option selected"
-          : "option"
-      }
-      onClick={() => handleAnswer("False")}
-    >
-      False
-    </button>
+  const hours =
+    Math.floor(
+      (timeLeft || 0) /
+      3600
+    );
 
-  </div>
 
-)}
+  const minutes =
+    Math.floor(
+      ((timeLeft || 0) %
+        3600) /
+      60
+    );
 
-      {/* Subjective */}
 
-      {(question.questionType === "shortanswer" ||
-        question.questionType === "veryshortanswer") && (
+  const seconds =
+    (timeLeft || 0) %
+    60;
 
-    <textarea
-  rows="6"
-  placeholder="Write your answer..."
-  value={answers[question._id] || ""}
-  onChange={(e) => {
-    console.log(e.target.value);
-    handleAnswer(e.target.value);
-  }}
-/>
+
+  // =====================================================
+  // TIMER TEXT
+  // =====================================================
+
+  const formattedTime =
+    `${String(hours).padStart(
+      2,
+      "0"
+    )}:${String(minutes).padStart(
+      2,
+      "0"
+    )}:${String(seconds).padStart(
+      2,
+      "0"
+    )}`;
+
+
+  // =====================================================
+  // UI
+  // =====================================================
+
+  return (
+
+    <div className="exam-container">
+
+
+      {/* =================================================
+          HEADER
+      ================================================= */}
+
+      <div className="exam-header">
+
+        <div>
+
+          <h1>
+            Online Examination
+          </h1>
+
+          <p>
+            Question{" "}
+            {currentQuestion + 1}
+            {" "}
+            of{" "}
+            {questions.length}
+          </p>
+
+        </div>
+
+
+        {/* =================================================
+            TIMER
+        ================================================= */}
+
+        <div
+          className={
+            timeLeft !== null &&
+            timeLeft <= 300
+              ? "timer-box timer-warning"
+              : "timer-box"
+          }
+        >
+
+          ⏰{" "}
+
+          {formattedTime}
+
+        </div>
+
+      </div>
+
+
+      {/* =================================================
+          EXAM END INFORMATION
+      ================================================= */}
+
+      {examEndTime && (
+
+        <div className="exam-end-info">
+
+          Exam ends at{" "}
+
+          {new Date(
+            examEndTime
+          ).toLocaleTimeString(
+            "en-IN",
+            {
+              hour:
+                "2-digit",
+
+              minute:
+                "2-digit",
+
+              hour12:
+                true
+            }
+          )}
+
+        </div>
 
       )}
 
-    </div>
 
-    {/* Navigation */}
+      {/* =================================================
+          PROGRESS BAR
+      ================================================= */}
 
-    <div className="navigation">
+      <div className="progress-bar">
 
-      <button
+        <div
+          className="progress-fill"
+          style={{
+            width:
+              `${
+                (
+                  (
+                    currentQuestion + 1
+                  ) /
+                  questions.length
+                ) *
+                100
+              }%`
+          }}
+        ></div>
 
-        className="prev-btn"
+      </div>
 
-        disabled={currentQuestion === 0}
 
-        onClick={previousQuestion}
+      {/* =================================================
+          QUESTION CARD
+      ================================================= */}
 
-      >
-        Previous
-      </button>
+      <div className="question-card">
 
-      {currentQuestion !== questions.length - 1 ? (
+        <h2>
+          {question.question}
+        </h2>
 
-        <button
 
-          className="next-btn"
+        {/* =================================================
+            MCQ
+        ================================================= */}
 
-          onClick={nextQuestion}
+        {question.questionType ===
+          "mcq" && (
 
-        >
-          Next
-        </button>
+          <div className="options">
 
-      ) : (
+            {question.options?.map(
+              (
+                option,
+                index
+              ) => {
 
-        <button
+                const isSelected =
+                  answers[
+                    question._id
+                  ] === option;
 
-          className="submit-btn"
 
-          disabled={submitting}
+                return (
 
-          onClick={handleSubmit}
+                  <button
+                    key={index}
 
-        >
-          {submitting ? "Submitting..." : "Submit Exam"}
-        </button>
+                    type="button"
 
-      )}
+                    className={
+                      isSelected
+                        ? "option selected"
+                        : "option"
+                    }
 
-    </div>
+                    onClick={() =>
+                      handleAnswer(
+                        option
+                      )
+                    }
+                  >
 
-    {/* Question Palette */}
+                    {option}
 
-    <div className="question-palette">
+                  </button>
 
-      <h3>Questions</h3>
+                );
 
-      <div className="palette-grid">
+              }
+            )}
 
-        {questions.map((q, index) => (
+          </div>
 
-          <button
+        )}
 
-            key={q._id}
 
-            className={
-              currentQuestion === index
-                ? "palette-btn active"
-                : answers[q._id]
-                ? "palette-btn answered"
-                : "palette-btn"
+        {/* =================================================
+            TRUE / FALSE
+        ================================================= */}
+
+        {question.questionType ===
+          "truefalse" && (
+
+          <div className="options">
+
+            <button
+              type="button"
+
+              className={
+                answers[
+                  question._id
+                ] === "True"
+                  ? "option selected"
+                  : "option"
+              }
+
+              onClick={() =>
+                handleAnswer(
+                  "True"
+                )
+              }
+            >
+              True
+            </button>
+
+
+            <button
+              type="button"
+
+              className={
+                answers[
+                  question._id
+                ] === "False"
+                  ? "option selected"
+                  : "option"
+              }
+
+              onClick={() =>
+                handleAnswer(
+                  "False"
+                )
+              }
+            >
+              False
+            </button>
+
+          </div>
+
+        )}
+
+
+        {/* =================================================
+            SHORT ANSWER
+        ================================================= */}
+
+        {(
+          question.questionType ===
+            "shortanswer" ||
+
+          question.questionType ===
+            "veryshortanswer"
+
+        ) && (
+
+          <textarea
+            rows="6"
+
+            placeholder="Write your answer..."
+
+            value={
+              answers[
+                question._id
+              ] || ""
             }
 
-            onClick={() => jumpToQuestion(index)}
+            onChange={(event) =>
+              handleAnswer(
+                event.target.value
+              )
+            }
+          />
 
+        )}
+
+      </div>
+
+
+      {/* =================================================
+          NAVIGATION
+      ================================================= */}
+
+      <div className="navigation">
+
+
+        {/* PREVIOUS */}
+
+        <button
+          type="button"
+
+          className="prev-btn"
+
+          disabled={
+            currentQuestion === 0
+          }
+
+          onClick={
+            previousQuestion
+          }
+        >
+          Previous
+        </button>
+
+
+        {/* NEXT */}
+
+        {currentQuestion !==
+          questions.length - 1 ? (
+
+          <button
+            type="button"
+
+            className="next-btn"
+
+            onClick={
+              nextQuestion
+            }
           >
-            {index + 1}
+            Next
           </button>
 
-        ))}
+        ) : (
+
+          <button
+            type="button"
+
+            className="submit-btn"
+
+            disabled={
+              submitting
+            }
+
+            onClick={
+              handleSubmit
+            }
+          >
+
+            {submitting
+              ? "Submitting..."
+              : "Submit Exam"}
+
+          </button>
+
+        )}
+
+      </div>
+
+
+      {/* =================================================
+          QUESTION PALETTE
+      ================================================= */}
+
+      <div className="question-palette">
+
+        <h3>
+          Questions
+        </h3>
+
+
+        <div className="palette-grid">
+
+          {questions.map(
+            (
+              q,
+              index
+            ) => (
+
+              <button
+                type="button"
+
+                key={q._id}
+
+                className={
+
+                  currentQuestion ===
+                    index
+
+                    ? "palette-btn active"
+
+                    : answers[
+                        q._id
+                      ]
+
+                    ? "palette-btn answered"
+
+                    : "palette-btn"
+
+                }
+
+                onClick={() =>
+                  jumpToQuestion(
+                    index
+                  )
+                }
+              >
+
+                {index + 1}
+
+              </button>
+
+            )
+          )}
+
+        </div>
 
       </div>
 
     </div>
 
-  </div>
-
-);
+  );
 
 }
 

@@ -4,9 +4,160 @@ import questionModel from "../models/QuestionModel.js";
 import { evaluateAnswer } from "./aiEvaluationController.js";
 
 
-// ==========================================
+// ============================================================
+// HELPER FUNCTIONS
+// ============================================================
+
+// Convert any answer into a clean string
+const cleanAnswer = (answer) => {
+  if (answer === null || answer === undefined) {
+    return "";
+  }
+
+  return String(answer)
+    .trim()
+    .replace(/\s+/g, " ");
+};
+
+
+// ============================================================
+// GET ACTUAL OPTION TEXT
+//
+// Examples:
+//
+// correctAnswer = "B"
+// options = ["7","8","9","10"]
+//
+// returns "8"
+//
+// correctAnswer = "B) 8"
+// returns "8"
+//
+// correctAnswer = "8"
+// returns "8"
+// ============================================================
+
+const resolveAnswer = (answer, options = []) => {
+
+  let value = cleanAnswer(answer);
+
+  if (!value) {
+    return "";
+  }
+
+  // ----------------------------------------------------------
+  // Case 1:
+  // "B) 8"
+  // "C. 10"
+  // "A - 7"
+  // ----------------------------------------------------------
+
+  const optionWithTextMatch =
+    value.match(/^([A-Da-d])\s*[\)\.\-:]\s*(.+)$/);
+
+  if (optionWithTextMatch) {
+
+    const letter =
+      optionWithTextMatch[1].toUpperCase();
+
+    const index =
+      letter.charCodeAt(0) - 65;
+
+    if (
+      Array.isArray(options) &&
+      options[index] !== undefined
+    ) {
+
+      return cleanAnswer(options[index]);
+    }
+
+    return cleanAnswer(optionWithTextMatch[2]);
+  }
+
+
+  // ----------------------------------------------------------
+  // Case 2:
+  // Only option letter
+  //
+  // "A"
+  // "B"
+  // "C"
+  // "D"
+  // ----------------------------------------------------------
+
+  const onlyLetterMatch =
+    value.match(/^[A-Da-d]$/);
+
+  if (onlyLetterMatch) {
+
+    const letter =
+      value.toUpperCase();
+
+    const index =
+      letter.charCodeAt(0) - 65;
+
+    if (
+      Array.isArray(options) &&
+      options[index] !== undefined
+    ) {
+
+      return cleanAnswer(options[index]);
+    }
+  }
+
+
+  // ----------------------------------------------------------
+  // Case 3:
+  // Already actual option text
+  //
+  // "8"
+  // "10"
+  // "Rs 3"
+  // "Java"
+  // ----------------------------------------------------------
+
+  return value;
+};
+
+
+// ============================================================
+// COMPARE ANSWERS
+// ============================================================
+
+const answersMatch = (
+  studentAnswer,
+  correctAnswer,
+  options = []
+) => {
+
+  const student =
+    resolveAnswer(
+      studentAnswer,
+      options
+    );
+
+  const correct =
+    resolveAnswer(
+      correctAnswer,
+      options
+    );
+
+  console.log("Student raw:", studentAnswer);
+  console.log("Correct raw:", correctAnswer);
+
+  console.log("Student resolved:", student);
+  console.log("Correct resolved:", correct);
+
+  return (
+    student.toLowerCase() ===
+    correct.toLowerCase()
+  );
+};
+
+
+// ============================================================
 // START EXAM
-// ==========================================
+// ============================================================
 
 export const startExam = async (req, res) => {
 
@@ -16,41 +167,75 @@ export const startExam = async (req, res) => {
 
     const studentId = req.user._id;
 
+
+    // --------------------------------------------------------
+    // VALIDATION
+    // --------------------------------------------------------
+
     if (!examId) {
 
       return res.status(400).json({
+
         success: false,
-        message: "Exam Id is required."
+
+        message:
+          "Exam Id is required."
+
       });
 
     }
+
+
+    // --------------------------------------------------------
+    // FIND EXAM
+    // --------------------------------------------------------
 
     const exam =
       await examModel.findById(examId);
 
+
     if (!exam) {
 
       return res.status(404).json({
+
         success: false,
-        message: "Exam not found."
+
+        message:
+          "Exam not found."
+
       });
 
     }
 
-    // Published Check
 
-    if (exam.status !== "published") {
+    // --------------------------------------------------------
+    // PUBLISHED CHECK
+    // --------------------------------------------------------
+
+    if (
+      exam.status !== "published"
+    ) {
 
       return res.status(400).json({
+
         success: false,
-        message: "Exam is not published."
+
+        message:
+          "Exam is not published."
+
       });
 
     }
 
-    // Start Time Check
 
-    if (new Date() < new Date(exam.startTime)) {
+    // --------------------------------------------------------
+    // START TIME CHECK
+    // --------------------------------------------------------
+
+    if (
+      exam.startTime &&
+      new Date() < new Date(exam.startTime)
+    ) {
 
       return res.status(400).json({
 
@@ -63,9 +248,15 @@ export const startExam = async (req, res) => {
 
     }
 
-    // End Time Check
 
-    if (new Date() > new Date(exam.endTime)) {
+    // --------------------------------------------------------
+    // END TIME CHECK
+    // --------------------------------------------------------
+
+    if (
+      exam.endTime &&
+      new Date() > new Date(exam.endTime)
+    ) {
 
       return res.status(400).json({
 
@@ -78,29 +269,46 @@ export const startExam = async (req, res) => {
 
     }
 
-    // Already Attempted
 
-    console.log("Student ID:", studentId.toString());
-console.log("Exam ID:", examId);
+    // --------------------------------------------------------
+    // CHECK EXISTING ATTEMPT
+    // --------------------------------------------------------
 
-   const alreadyAttempt = await ExamAttemptModel.findOne({
-  studentId,
-  examId
-});
+    const alreadyAttempt =
+      await ExamAttemptModel.findOne({
 
-console.log("Already Attempt:", alreadyAttempt);
+        studentId,
 
-if (alreadyAttempt) {
-  return res.status(400).json({
-    success: false,
-    message: "You have already attempted this exam."
-  });
-}
+        examId
+
+      });
+
+
+    if (alreadyAttempt) {
+
+      return res.status(400).json({
+
+        success: false,
+
+        message:
+          "You have already attempted this exam."
+
+      });
+
+    }
+
+
+    // --------------------------------------------------------
+    // QUESTION COUNT
+    // --------------------------------------------------------
 
     const totalQuestions =
       await questionModel.countDocuments({
+
         examId
+
       });
+
 
     if (totalQuestions === 0) {
 
@@ -115,6 +323,11 @@ if (alreadyAttempt) {
 
     }
 
+
+    // --------------------------------------------------------
+    // CREATE ATTEMPT
+    // --------------------------------------------------------
+
     const examAttempt =
       await ExamAttemptModel.create({
 
@@ -122,11 +335,14 @@ if (alreadyAttempt) {
 
         examId,
 
-        status: "in-progress",
+        status:
+          "in-progress",
 
-        startedAt: Date.now()
+        startedAt:
+          new Date()
 
       });
+
 
     return res.status(201).json({
 
@@ -137,7 +353,8 @@ if (alreadyAttempt) {
 
       examAttempt,
 
-      duration: exam.duration,
+      duration:
+        exam.duration,
 
       totalQuestions
 
@@ -145,34 +362,46 @@ if (alreadyAttempt) {
 
   }
 
- catch (error) {
+  catch (error) {
 
-  console.log("START EXAM ERROR:");
-  console.log(error);
+    console.error(
+      "START EXAM ERROR:",
+      error
+    );
 
-  return res.status(500).json({
-    success: false,
-    message: error.message
-  });
+    return res.status(500).json({
 
-}
+      success: false,
+
+      message:
+        error.message
+
+    });
+
+  }
 
 };
 
 
-
-// ==========================================
+// ============================================================
 // SHOW QUESTIONS
-// ==========================================
+// ============================================================
 
 export const showQuestions = async (req, res) => {
 
   try {
 
-    const { examId } = req.params;
+    const { examId } =
+      req.params;
+
+
+    // --------------------------------------------------------
+    // FIND EXAM
+    // --------------------------------------------------------
 
     const exam =
       await examModel.findById(examId);
+
 
     if (!exam) {
 
@@ -180,13 +409,21 @@ export const showQuestions = async (req, res) => {
 
         success: false,
 
-        message: "Exam not found."
+        message:
+          "Exam not found."
 
       });
 
     }
 
-    if (exam.status !== "published") {
+
+    // --------------------------------------------------------
+    // PUBLISHED CHECK
+    // --------------------------------------------------------
+
+    if (
+      exam.status !== "published"
+    ) {
 
       return res.status(400).json({
 
@@ -199,20 +436,28 @@ export const showQuestions = async (req, res) => {
 
     }
 
+
+    // --------------------------------------------------------
+    // GET QUESTIONS
+    //
+    // VERY IMPORTANT:
+    // correctAnswer is NOT sent to student.
+    // --------------------------------------------------------
+
     const questions =
       await questionModel
+        .find({
+          examId
+        })
+        .select("-correctAnswer")
+        .sort({
+          createdAt: 1
+        });
 
-      .find({
-        examId
-      })
 
-      .select("-correctAnswer")
-
-      .sort({
-        createdAt: 1
-      });
-
-    if (questions.length === 0) {
+    if (
+      questions.length === 0
+    ) {
 
       return res.status(404).json({
 
@@ -224,6 +469,7 @@ export const showQuestions = async (req, res) => {
       });
 
     }
+
 
     return res.status(200).json({
 
@@ -240,11 +486,17 @@ export const showQuestions = async (req, res) => {
 
   catch (error) {
 
+    console.error(
+      "SHOW QUESTIONS ERROR:",
+      error
+    );
+
     return res.status(500).json({
 
       success: false,
 
-      message: error.message
+      message:
+        error.message
 
     });
 
@@ -253,287 +505,624 @@ export const showQuestions = async (req, res) => {
 };
 
 
-
-// ==========================================
+// ============================================================
 // SUBMIT EXAM
-// ==========================================
+// ============================================================
 
 export const submitExam = async (req, res) => {
 
   try {
 
-    const { examId, answers } = req.body;
+    const {
+      examId,
+      answers
+    } = req.body;
 
-    const studentId = req.user._id;
+    const studentId =
+      req.user._id;
 
-    if (!examId || !answers) {
+
+    // --------------------------------------------------------
+    // VALIDATION
+    // --------------------------------------------------------
+
+    if (
+      !examId ||
+      !Array.isArray(answers)
+    ) {
 
       return res.status(400).json({
+
         success: false,
-        message: "Exam ID and answers are required."
+
+        message:
+          "Exam ID and answers are required."
+
       });
 
     }
 
-    const exam = await examModel.findById(examId);
+
+    // --------------------------------------------------------
+    // FIND EXAM
+    // --------------------------------------------------------
+
+    const exam =
+      await examModel.findById(examId);
+
 
     if (!exam) {
 
       return res.status(404).json({
+
         success: false,
-        message: "Exam not found."
+
+        message:
+          "Exam not found."
+
       });
 
     }
 
-    const examAttempt = await ExamAttemptModel.findOne({
-      studentId,
-      examId
-    });
+
+    // --------------------------------------------------------
+    // FIND ATTEMPT
+    // --------------------------------------------------------
+
+    const examAttempt =
+      await ExamAttemptModel.findOne({
+
+        studentId,
+
+        examId
+
+      });
+
 
     if (!examAttempt) {
 
       return res.status(404).json({
+
         success: false,
-        message: "Exam attempt not found."
+
+        message:
+          "Exam attempt not found."
+
       });
 
     }
 
-    if (examAttempt.status === "submitted") {
+
+    // --------------------------------------------------------
+    // ALREADY SUBMITTED
+    // --------------------------------------------------------
+
+    if (
+      examAttempt.status === "submitted"
+    ) {
 
       return res.status(400).json({
+
         success: false,
-        message: "Exam already submitted."
+
+        message:
+          "Exam already submitted."
+
       });
 
     }
 
-    const questions = await questionModel.find({ examId });
+
+    // --------------------------------------------------------
+    // GET QUESTIONS
+    // --------------------------------------------------------
+
+    const questions =
+      await questionModel
+        .find({
+          examId
+        })
+        .sort({
+          createdAt: 1
+        });
+
+
+    if (
+      questions.length === 0
+    ) {
+
+      return res.status(400).json({
+
+        success: false,
+
+        message:
+          "No questions found."
+
+      });
+
+    }
+
+
+    // --------------------------------------------------------
+    // SCORE VARIABLES
+    // --------------------------------------------------------
 
     let score = 0;
+
     let correctCount = 0;
+
     let wrongCount = 0;
+
     let totalMarks = 0;
 
     const evaluatedAnswers = [];
 
-    for (const question of questions) {
 
-      totalMarks += question.marks;
+    // ========================================================
+    // CHECK EVERY QUESTION
+    // ========================================================
 
-      const studentAnswer = answers.find(
-        ans => ans.questionId.toString() === question._id.toString()
-      );
+    for (
+      const question of questions
+    ) {
 
-      // ==========================
+
+      totalMarks +=
+        Number(question.marks) || 0;
+
+
+      // ------------------------------------------------------
+      // FIND STUDENT ANSWER
+      // ------------------------------------------------------
+
+      const studentAnswer =
+        answers.find(
+
+          ans =>
+
+            String(ans.questionId) ===
+            String(question._id)
+
+        );
+
+
+      // ======================================================
       // NOT ATTEMPTED
-      // ==========================
+      // ======================================================
 
       if (!studentAnswer) {
 
         wrongCount++;
 
+
         evaluatedAnswers.push({
 
-          questionId: question._id,
+          questionId:
+            question._id,
 
-          selectedAnswer: "",
+          selectedAnswer:
+            "",
 
-          isCorrect: false,
+          correctAnswer:
+            resolveAnswer(
+              question.correctAnswer,
+              question.options
+            ),
 
-          obtainedMarks: 0,
+          isCorrect:
+            false,
 
-          aiScore: 0,
+          obtainedMarks:
+            0,
 
-          aiFeedback: "Not Attempted",
+          aiScore:
+            0,
 
-          timeTaken: 0
+          aiFeedback:
+            "Not Attempted",
+
+          timeTaken:
+            0
 
         });
+
 
         continue;
 
       }
-      // ==========================
-      // MCQ & TRUE FALSE
-      // ==========================
-
-// ==========================
-// MCQ & TRUE FALSE
-// ==========================
-
-if (
-  question.questionType === "mcq" ||
-  question.questionType === "truefalse"
-) {
 
 
+      // ======================================================
+      // MCQ / TRUE FALSE
+      // ======================================================
+
+      if (
+
+        question.questionType ===
+          "mcq" ||
+
+        question.questionType ===
+          "truefalse"
+
+      ) {
 
 
-      console.log("================================");
-console.log("Question:", question.question);
-console.log("Options:", JSON.stringify(question.options));
-console.log("Correct Answer:", JSON.stringify(question.correctAnswer));
-console.log("Student Answer:", JSON.stringify(studentAnswer.selectedAnswer));
-
-console.log(
-  "Correct Length:",
-  String(question.correctAnswer).length
-);
-
-console.log(
-  "Student Length:",
-  String(studentAnswer.selectedAnswer).length
-);
-
-const isCorrect =
-  String(studentAnswer.selectedAnswer).trim() ===
-  String(question.correctAnswer).trim();
-
-console.log("Matched:", isCorrect);
-console.log("================================");
+        const rawStudentAnswer =
+          studentAnswer.selectedAnswer;
 
 
+        const rawCorrectAnswer =
+          question.correctAnswer;
 
-  const obtainedMarks = isCorrect
-    ? question.marks
-    : 0;
 
-  score += obtainedMarks;
+        // ----------------------------------------------------
+        // RESOLVE BOTH ANSWERS TO ACTUAL OPTION TEXT
+        // ----------------------------------------------------
 
-  if (isCorrect) {
-    correctCount++;
-  } else {
-    wrongCount++;
-  }
+        const resolvedStudentAnswer =
+          resolveAnswer(
 
- evaluatedAnswers.push({
+            rawStudentAnswer,
 
-  questionId: question._id,
+            question.options
 
-  selectedAnswer: studentAnswer.selectedAnswer,
+          );
 
-  correctAnswer: question.correctAnswer,
 
-  isCorrect: isCorrect,
+        const resolvedCorrectAnswer =
+          resolveAnswer(
 
-  obtainedMarks: obtainedMarks,
+            rawCorrectAnswer,
 
-  aiScore: obtainedMarks,
+            question.options
 
-  aiFeedback: isCorrect
-    ? `Correct! Your answer "${studentAnswer.selectedAnswer}" is correct.`
-    : `Incorrect. Your answer "${studentAnswer.selectedAnswer}" is wrong. The correct answer is "${question.correctAnswer}".`,
+          );
 
-  timeTaken: 0
 
-});
+        // ----------------------------------------------------
+        // COMPARE
+        // ----------------------------------------------------
 
-}
-      // ==========================
-      // SUBJECTIVE AI
-      // ==========================
-       else {
+        const isCorrect =
+          resolvedStudentAnswer
+            .toLowerCase() ===
+          resolvedCorrectAnswer
+            .toLowerCase();
 
-  const aiResult = await evaluateAnswer(
 
-    question.question,
+        // ----------------------------------------------------
+        // DEBUG
+        // ----------------------------------------------------
 
-    question.correctAnswer,
+        console.log(
+          "========================================"
+        );
 
-    studentAnswer.selectedAnswer,
+        console.log(
+          "Question:",
+          question.question
+        );
 
-    question.marks
+        console.log(
+          "Options:",
+          JSON.stringify(
+            question.options
+          )
+        );
 
-  );
+        console.log(
+          "Raw Correct:",
+          JSON.stringify(
+            rawCorrectAnswer
+          )
+        );
 
-  const aiScore = Number(aiResult.score) || 0;
+        console.log(
+          "Raw Student:",
+          JSON.stringify(
+            rawStudentAnswer
+          )
+        );
 
-  score += aiScore;
+        console.log(
+          "Resolved Correct:",
+          JSON.stringify(
+            resolvedCorrectAnswer
+          )
+        );
 
-  if (aiScore >= question.marks / 2) {
+        console.log(
+          "Resolved Student:",
+          JSON.stringify(
+            resolvedStudentAnswer
+          )
+        );
 
-    correctCount++;
+        console.log(
+          "Matched:",
+          isCorrect
+        );
 
-  } else {
+        console.log(
+          "========================================"
+        );
 
-    wrongCount++;
 
-  }
+        // ----------------------------------------------------
+        // MARKS
+        // ----------------------------------------------------
 
-  evaluatedAnswers.push({
+        const obtainedMarks =
+          isCorrect
+            ? Number(question.marks)
+            : 0;
 
-    questionId: question._id,
 
-    selectedAnswer: studentAnswer.selectedAnswer,
+        score +=
+          obtainedMarks;
 
-    isCorrect: aiScore === question.marks,
 
-    obtainedMarks: aiScore,
+        if (isCorrect) {
 
-    aiScore: aiScore,
+          correctCount++;
 
-    aiFeedback: aiResult.feedback,
+        }
 
-    timeTaken: 0
+        else {
 
-  });
+          wrongCount++;
 
-}
+        }
+
+
+        // ----------------------------------------------------
+        // SAVE ANSWER
+        // ----------------------------------------------------
+
+        evaluatedAnswers.push({
+
+          questionId:
+            question._id,
+
+          selectedAnswer:
+            resolvedStudentAnswer,
+
+          correctAnswer:
+            resolvedCorrectAnswer,
+
+          isCorrect:
+            isCorrect,
+
+          obtainedMarks:
+            obtainedMarks,
+
+          aiScore:
+            obtainedMarks,
+
+          aiFeedback:
+
+            isCorrect
+
+              ? `Correct! Your answer "${resolvedStudentAnswer}" is correct.`
+
+              : `Incorrect. Your answer "${resolvedStudentAnswer}" is wrong. The correct answer is "${resolvedCorrectAnswer}".`,
+
+          timeTaken:
+            studentAnswer.timeTaken || 0
+
+        });
+
+
+      }
+
+
+      // ======================================================
+      // SUBJECTIVE
+      // ======================================================
+
+      else {
+
+
+        const aiResult =
+          await evaluateAnswer(
+
+            question.question,
+
+            question.correctAnswer,
+
+            studentAnswer.selectedAnswer,
+
+            question.marks
+
+          );
+
+
+        const aiScore =
+          Number(aiResult.score) || 0;
+
+
+        score +=
+          aiScore;
+
+
+        if (
+          aiScore >=
+          Number(question.marks) / 2
+        ) {
+
+          correctCount++;
+
+        }
+
+        else {
+
+          wrongCount++;
+
+        }
+
+
+        evaluatedAnswers.push({
+
+          questionId:
+            question._id,
+
+          selectedAnswer:
+            studentAnswer.selectedAnswer,
+
+          correctAnswer:
+            question.correctAnswer,
+
+          isCorrect:
+            aiScore ===
+            Number(question.marks),
+
+          obtainedMarks:
+            aiScore,
+
+          aiScore:
+            aiScore,
+
+          aiFeedback:
+            aiResult.feedback,
+
+          timeTaken:
+            studentAnswer.timeTaken || 0
+
+        });
+
+      }
 
     }
 
 
+    // ========================================================
+    // PERCENTAGE
+    // ========================================================
 
-const percentage = Number(
-  ((score / totalMarks) * 100).toFixed(2)
-);
+    const percentage =
+      totalMarks === 0
 
-const resultStatus =
-  percentage >= 40 ? "Pass" : "Fail";
+        ? 0
 
-// ==========================
-// SAVE RESULT
-// ==========================
+        : Number(
 
-examAttempt.answers = evaluatedAnswers;
+            (
+              (score / totalMarks) *
+              100
 
-examAttempt.score = score;
+            ).toFixed(2)
 
-examAttempt.totalMarks = totalMarks;
+          );
 
-examAttempt.percentage = percentage;
 
-examAttempt.correctCount = correctCount;
+    // ========================================================
+    // PASS / FAIL
+    // ========================================================
 
-examAttempt.wrongCount = wrongCount;
+    const passingMarks =
+      exam.passingMarks || 40;
 
-examAttempt.result = resultStatus;
 
-examAttempt.status = "submitted";
+    const resultStatus =
+      percentage >= passingMarks
+        ? "Pass"
+        : "Fail";
 
-examAttempt.submittedAt = new Date();
 
-// ==========================
-// DEBUG
-// ==========================
+    // ========================================================
+    // SAVE RESULT
+    // ========================================================
 
-console.log("Final Score:", score);
+    examAttempt.answers =
+      evaluatedAnswers;
 
-console.log("Evaluated Answers:");
-console.log(JSON.stringify(evaluatedAnswers, null, 2));
+    examAttempt.score =
+      score;
 
-await examAttempt.save();
+    examAttempt.totalMarks =
+      totalMarks;
 
-const savedAttempt =
-  await ExamAttemptModel.findById(examAttempt._id);
+    examAttempt.percentage =
+      percentage;
 
-console.log("Saved Score:", savedAttempt.score);
+    examAttempt.correctCount =
+      correctCount;
 
-console.log("Saved Answers:");
-console.log(JSON.stringify(savedAttempt.answers, null, 2));
+    examAttempt.wrongCount =
+      wrongCount;
 
+    examAttempt.result =
+      resultStatus;
+
+    examAttempt.status =
+      "submitted";
+
+    examAttempt.submittedAt =
+      new Date();
+
+
+    // ========================================================
+    // DEBUG FINAL RESULT
+    // ========================================================
+
+    console.log(
+      "========================================"
+    );
+
+    console.log(
+      "FINAL SCORE:",
+      score
+    );
+
+    console.log(
+      "TOTAL MARKS:",
+      totalMarks
+    );
+
+    console.log(
+      "PERCENTAGE:",
+      percentage
+    );
+
+    console.log(
+      "CORRECT:",
+      correctCount
+    );
+
+    console.log(
+      "WRONG:",
+      wrongCount
+    );
+
+    console.log(
+      "EVALUATED ANSWERS:"
+    );
+
+    console.log(
+
+      JSON.stringify(
+        evaluatedAnswers,
+        null,
+        2
+      )
+
+    );
+
+    console.log(
+      "========================================"
+    );
+
+
+    // ========================================================
+    // SAVE TO DATABASE
+    // ========================================================
+
+    await examAttempt.save();
+
+
+    // ========================================================
+    // RESPONSE
+    // ========================================================
 
     return res.status(200).json({
 
@@ -569,13 +1158,17 @@ console.log(JSON.stringify(savedAttempt.answers, null, 2));
 
   catch (error) {
 
-    console.log(error);
+    console.error(
+      "SUBMIT EXAM ERROR:",
+      error
+    );
 
     return res.status(500).json({
 
       success: false,
 
-      message: error.message
+      message:
+        error.message
 
     });
 
@@ -584,40 +1177,97 @@ console.log(JSON.stringify(savedAttempt.answers, null, 2));
 };
 
 
-
-// ==========================================
+// ============================================================
 // STUDENT RESULT
-// ==========================================
+// ============================================================
 
-export const getExamResults = async (req, res) => {
+export const getExamResults = async (
+  req,
+  res
+) => {
 
   try {
 
-    const { examId } = req.params;
+    const { examId } =
+      req.params;
 
-    const studentId = req.user._id;
+    const studentId =
+      req.user._id;
+
+
+    // --------------------------------------------------------
+    // FIND ATTEMPT
+    // --------------------------------------------------------
 
     const examAttempt =
       await ExamAttemptModel.findOne({
+
         studentId,
+
         examId,
-        status: "submitted"
+
+        status:
+          "submitted"
+
       });
+
 
     if (!examAttempt) {
 
       return res.status(404).json({
+
         success: false,
-        message: "Result not found."
+
+        message:
+          "Result not found."
+
       });
 
     }
 
+
+    // --------------------------------------------------------
+    // FIND EXAM
+    // --------------------------------------------------------
+
     const exam =
-      await examModel.findById(examId);
-      console.log("GET RESULT");
-console.log("Score:", examAttempt.score);
-console.log("Answers:", JSON.stringify(examAttempt.answers, null, 2));
+      await examModel.findById(
+        examId
+      );
+
+
+    if (!exam) {
+
+      return res.status(404).json({
+
+        success: false,
+
+        message:
+          "Exam not found."
+
+      });
+
+    }
+
+
+    console.log(
+      "GET RESULT"
+    );
+
+    console.log(
+      "Score:",
+      examAttempt.score
+    );
+
+    console.log(
+      "Answers:",
+      JSON.stringify(
+        examAttempt.answers,
+        null,
+        2
+      )
+    );
+
 
     return res.status(200).json({
 
@@ -625,28 +1275,37 @@ console.log("Answers:", JSON.stringify(examAttempt.answers, null, 2));
 
       exam: {
 
-        title: exam.title,
+        title:
+          exam.title,
 
-        subject: exam.subject,
+        subject:
+          exam.subject,
 
-        duration: exam.duration
+        duration:
+          exam.duration
 
       },
 
       result: {
 
-        score: examAttempt.score,
+        score:
+          examAttempt.score,
 
-        totalMarks: examAttempt.totalMarks,
+        totalMarks:
+          examAttempt.totalMarks,
 
-        percentage: examAttempt.percentage,
+        percentage:
+          examAttempt.percentage,
 
         correctAnswers:
           examAttempt.correctCount,
 
         wrongAnswers:
           examAttempt.wrongCount,
-status: examAttempt.result,
+
+        status:
+          examAttempt.result,
+
         submittedAt:
           examAttempt.submittedAt
 
@@ -661,19 +1320,17 @@ status: examAttempt.result,
 
   catch (error) {
 
-    console.log("GET RESULT");
-
-console.log("Score:", examAttempt.score);
-
-console.log("Answers:");
-
-console.log(JSON.stringify(examAttempt.answers, null, 2));
+    console.error(
+      "GET RESULT ERROR:",
+      error
+    );
 
     return res.status(500).json({
 
       success: false,
 
-      message: error.message
+      message:
+        error.message
 
     });
 
@@ -682,20 +1339,24 @@ console.log(JSON.stringify(examAttempt.answers, null, 2));
 };
 
 
-
-// ==========================================
+// ============================================================
 // TEACHER ANALYTICS
-// ==========================================
+// ============================================================
 
 export const getAllExamResults =
 async (req, res) => {
 
   try {
 
-    const { examId } = req.params;
+    const { examId } =
+      req.params;
+
 
     const exam =
-      await examModel.findById(examId);
+      await examModel.findById(
+        examId
+      );
+
 
     if (!exam) {
 
@@ -703,29 +1364,42 @@ async (req, res) => {
 
         success: false,
 
-        message: "Exam not found."
+        message:
+          "Exam not found."
 
       });
 
     }
+
 
     const results =
       await ExamAttemptModel.find({
 
         examId,
 
-        status: "submitted"
+        status:
+          "submitted"
 
       })
 
-     .populate("studentId", "name email")
-.populate("examId", "title subject")
+      .populate(
+        "studentId",
+        "name email"
+      )
+
+      .populate(
+        "examId",
+        "title subject"
+      )
 
       .sort({
         score: -1
       });
 
-    if (results.length === 0) {
+
+    if (
+      results.length === 0
+    ) {
 
       return res.status(200).json({
 
@@ -740,8 +1414,10 @@ async (req, res) => {
 
     }
 
+
     const totalAttempts =
       results.length;
+
 
     let highestScore = 0;
 
@@ -754,67 +1430,117 @@ async (req, res) => {
 
     let failCount = 0;
 
-    results.forEach((item) => {
 
-      totalScore += item.score;
+    results.forEach(
+      item => {
 
-      if (item.score > highestScore)
-        highestScore = item.score;
+        totalScore +=
+          item.score;
 
-      if (item.score < lowestScore)
-        lowestScore = item.score;
 
-      if (item.percentage >= 40)
-        passCount++;
-      else
-        failCount++;
+        if (
+          item.score >
+          highestScore
+        ) {
 
-    });
+          highestScore =
+            item.score;
+
+        }
+
+
+        if (
+          item.score <
+          lowestScore
+        ) {
+
+          lowestScore =
+            item.score;
+
+        }
+
+
+        if (
+          item.percentage >=
+          40
+        ) {
+
+          passCount++;
+
+        }
+
+        else {
+
+          failCount++;
+
+        }
+
+      }
+    );
+
 
     const averageScore =
       Number(
+
         (
           totalScore /
           totalAttempts
+
         ).toFixed(2)
+
       );
+
 
     const passPercentage =
       Number(
+
         (
           (passCount /
             totalAttempts) *
           100
+
         ).toFixed(2)
+
       );
+
 
     const failPercentage =
       Number(
+
         (
           (failCount /
             totalAttempts) *
           100
+
         ).toFixed(2)
+
       );
 
+
     const leaderboard =
-      results.map((student, index) => ({
+      results.map(
 
-        rank: index + 1,
+        (student, index) => ({
 
-        studentName:
-          student.studentId.name,
+          rank:
+            index + 1,
 
-        email:
-          student.studentId.email,
+          studentName:
+            student.studentId.name,
 
-        score:
-          student.score,
+          email:
+            student.studentId.email,
 
-        percentage:
-          student.percentage
+          score:
+            student.score,
 
-      }));
+          percentage:
+            student.percentage
+
+        })
+
+      );
+
 
     return res.status(200).json({
 
@@ -860,11 +1586,17 @@ async (req, res) => {
 
   catch (error) {
 
+    console.error(
+      "ANALYTICS ERROR:",
+      error
+    );
+
     return res.status(500).json({
 
       success: false,
 
-      message: error.message
+      message:
+        error.message
 
     });
 
@@ -873,35 +1605,66 @@ async (req, res) => {
 };
 
 
-
-// ==========================================
+// ============================================================
 // STUDENT HISTORY
-// ==========================================
+// ============================================================
 
-export const getStudentHistory = async (req, res) => {
+export const getStudentHistory =
+async (req, res) => {
 
   try {
 
-    const studentId = req.user._id;
+    const studentId =
+      req.user._id;
 
-    const history = await ExamAttemptModel.find({
-      studentId,
-      status: "submitted"
-    })
-    .populate("examId", "title subject duration")
-    .sort({ submittedAt: -1 });
 
-    res.status(200).json({
+    const history =
+      await ExamAttemptModel.find({
+
+        studentId,
+
+        status:
+          "submitted"
+
+      })
+
+      .populate(
+        "examId",
+        "title subject duration"
+      )
+
+      .sort({
+        submittedAt: -1
+      });
+
+
+    return res.status(200).json({
+
       success: true,
-      total: history.length,
+
+      total:
+        history.length,
+
       history
+
     });
 
-  } catch (error) {
+  }
 
-    res.status(500).json({
+  catch (error) {
+
+    console.error(
+      "STUDENT HISTORY ERROR:",
+      error
+    );
+
+    return res.status(500).json({
+
       success: false,
-      message: error.message
+
+      message:
+        error.message
+
     });
 
   }

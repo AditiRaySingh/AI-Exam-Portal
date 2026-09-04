@@ -2,16 +2,22 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 import "../styles/TeacherDashboard.css";
+import Navbar from "../components/Navbar";
+
 function TeacherDashboard() {
   const navigate = useNavigate();
+
   const [dashboard, setDashboard] = useState(null);
   const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     fetchDashboard();
   }, []);
+
   const fetchDashboard = async () => {
     try {
       const token = localStorage.getItem("token");
+
       const res = await api.get(
         "/dashboard/teacher",
         {
@@ -20,50 +26,64 @@ function TeacherDashboard() {
           }
         }
       );
-   console.log("Dashboard Response:", res.data);
-  console.log("Recent Exams:", res.data.recentExams);
-  setDashboard(res.data);
-    }
-    catch (error) {
-      console.log(error);
-      alert("Unable to Load Dashboard");
-    }
-    finally {
+
+      console.log("Dashboard Response:", res.data);
+      console.log("Recent Exams:", res.data.recentExams);
+
+      setDashboard(res.data);
+
+    } catch (error) {
+      console.log("TEACHER DASHBOARD ERROR:", error);
+
+      alert(
+        error.response?.data?.message ||
+        "Unable to Load Dashboard"
+      );
+
+    } finally {
       setLoading(false);
     }
   };
-const publishExam = async (examId) => {
-  try {
-    const token = localStorage.getItem("token");
-    const res = await api.put(
-      `/exams/publish/${examId}`,
-      {},
-      {
-        headers: {
-          Authorization: `Bearer ${token}`
+
+  const publishExam = async (examId) => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const res = await api.put(
+        `/exams/publish/${examId}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
         }
-      }
-    );
-    alert(res.data.message);
-    // Refresh dashboard after publishing
-    fetchDashboard();
-  } catch (error) {
-    console.log(error);
-    alert(
-      error.response?.data?.message ||
-      "Failed to publish exam"
-    );
-  }
-};
+      );
+
+      alert(res.data.message);
+
+      // Refresh dashboard after publishing
+      fetchDashboard();
+
+    } catch (error) {
+      console.log("PUBLISH EXAM ERROR:", error);
+
+      alert(
+        error.response?.data?.message ||
+        "Failed to publish exam"
+      );
+    }
+  };
+
   if (loading) {
- return (
+    return (
       <div className="loading-screen">
         <div className="loader"></div>
         <h2>Loading Dashboard...</h2>
       </div>
     );
   }
-    if (!dashboard) {
+
+  if (!dashboard) {
     return (
       <h2
         style={{
@@ -75,44 +95,68 @@ const publishExam = async (examId) => {
       </h2>
     );
   }
+
   return (
     <div className="teacher-dashboard">
-      {/* Header */}
+
+      {/* ================= NAVBAR ================= */}
+      <Navbar />
+
+
+      {/* ================= DASHBOARD HEADER ================= */}
       <div className="dashboard-header">
+
         <div>
           <h1>Teacher Dashboard</h1>
-          <p>Manage Exams, Questions and Student Performance</p>
+
+          <p>
+            Manage Exams, Questions and Student Performance
+          </p>
         </div>
+
         <button
           className="create-btn"
           onClick={() => navigate("/create-exam")}
         >
           + Create Exam
         </button>
+
       </div>
-      {/* Statistics */}
+
+
+      {/* ================= STATISTICS ================= */}
       <div className="stats-grid">
+
         <div className="stat-card">
           <h3>Total Exams</h3>
-          <h2>{dashboard.totalExams}</h2>
+          <h2>{dashboard.totalExams || 0}</h2>
         </div>
+
         <div className="stat-card">
           <h3>Total Students</h3>
-          <h2>{dashboard.totalStudents}</h2>
+          <h2>{dashboard.totalStudents || 0}</h2>
         </div>
+
         <div className="stat-card">
           <h3>Total Attempts</h3>
-          <h2>{dashboard.totalAttempts}</h2>
+          <h2>{dashboard.totalAttempts || 0}</h2>
         </div>
+
         <div className="stat-card">
           <h3>Average Score</h3>
-          <h2>{dashboard.averageScore}%</h2>
+          <h2>{dashboard.averageScore || 0}%</h2>
         </div>
+
       </div>
-      {/* Exam List */}
+
+
+      {/* ================= EXAM LIST ================= */}
       <div className="exam-section">
+
         <h2>Your Exams</h2>
+
         <table className="exam-table">
+
           <thead>
             <tr>
               <th>Exam</th>
@@ -122,87 +166,143 @@ const publishExam = async (examId) => {
               <th>Actions</th>
             </tr>
           </thead>
+
           <tbody>
-            {dashboard.recentExams?.map((exam) => (
-              
-              <tr key={exam._id}>
-                <td>{exam.title}</td>
-                <td>{exam.subject}</td>
-                <td>{exam.duration} min</td>
-                <td>{exam.totalMarks}</td>
-               <td>
-                
-  <button
-  
-    className="action-btn blue"
-    onClick={() =>
-      navigate(`/add-question/${exam._id}`)
-    }
-  >
-    Add Questions
-  </button>
-  <button
-    className="ai-btn"
-    onClick={() =>
-      navigate(`/ai-generate/${exam._id}`)
-    }
-  >
-    AI Generate
-  </button>
-  <button
-    className="material-btn"
-    onClick={() =>
-      navigate(`/generate-material/${exam._id}`)
-    }
-  >
-    Upload Material
-  </button>
-  <button
-    className="action-btn green"
-    onClick={() =>
-      navigate(`/questions/${exam._id}`)
-    }
-  >
-    Manage
-  </button>
-  <button
-    className="action-btn purple"
-    onClick={() =>
-      navigate(`/teacher-results/${exam._id}`)
-    }
-  >
-    Results
-  </button>
 
-<button
-  className="action-btn analytics"
-  onClick={() =>
-    navigate(`/teacher-analytics/${exam._id}`)
-  }
->
-  📊 Analytics
-</button>
+            {dashboard.recentExams &&
+            dashboard.recentExams.length > 0 ? (
+
+              dashboard.recentExams.map((exam) => (
+
+                <tr key={exam._id}>
+
+                  <td>{exam.title}</td>
+
+                  <td>{exam.subject}</td>
+
+                  <td>
+                    {exam.duration} min
+                  </td>
+
+                  <td>
+                    {exam.totalMarks}
+                  </td>
+
+                  <td>
+
+                    {/* Add Questions */}
+                    <button
+                      className="action-btn blue"
+                      onClick={() =>
+                        navigate(
+                          `/add-question/${exam._id}`
+                        )
+                      }
+                    >
+                      Add Questions
+                    </button>
 
 
-  {exam.status === "draft" && (
+                    {/* AI Generate */}
+                    <button
+                      className="ai-btn"
+                      onClick={() =>
+                        navigate(
+                          `/ai-generate/${exam._id}`
+                        )
+                      }
+                    >
+                      AI Generate
+                    </button>
 
-    
-    <button
-      className="action-btn orange"
-      onClick={() => publishExam(exam._id)}
-    >
-      Publish
-    </button>
 
-     
+                    {/* Upload Material */}
+                    <button
+                      className="material-btn"
+                      onClick={() =>
+                        navigate(
+                          `/generate-material/${exam._id}`
+                        )
+                      }
+                    >
+                      Upload Material
+                    </button>
 
 
+                    {/* Manage Questions */}
+                    <button
+                      className="action-btn green"
+                      onClick={() =>
+                        navigate(
+                          `/questions/${exam._id}`
+                        )
+                      }
+                    >
+                      Manage
+                    </button>
 
-  )}
-          </td>
+
+                    {/* Results */}
+                    <button
+                      className="action-btn purple"
+                      onClick={() =>
+                        navigate(
+                          `/teacher-results/${exam._id}`
+                        )
+                      }
+                    >
+                      Results
+                    </button>
+
+
+                    {/* Analytics */}
+                    <button
+                      className="action-btn analytics"
+                      onClick={() =>
+                        navigate(
+                          `/teacher-analytics/${exam._id}`
+                        )
+                      }
+                    >
+                      📊 Analytics
+                    </button>
+
+
+                    {/* Publish */}
+                    {exam.status === "draft" && (
+
+                      <button
+                        className="action-btn orange"
+                        onClick={() =>
+                          publishExam(exam._id)
+                        }
+                      >
+                        Publish
+                      </button>
+
+                    )}
+
+                  </td>
+
+                </tr>
+
+              ))
+
+            ) : (
+
+              <tr>
+                <td
+                  colSpan="5"
+                  style={{
+                    textAlign: "center",
+                    padding: "30px"
+                  }}
+                >
+                  No Exams Found
+                </td>
               </tr>
 
-            ))}
+            )}
 
           </tbody>
 
@@ -213,4 +313,5 @@ const publishExam = async (examId) => {
     </div>
   );
 }
+
 export default TeacherDashboard;

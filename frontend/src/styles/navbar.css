@@ -1,109 +1,203 @@
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-.navbar{
-    height:75px;
-    background:#ffffff;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:0 40px;
-    box-shadow:0 5px 20px rgba(0,0,0,.08);
-    position:sticky;
-    top:0;
-    z-index:1000;
+.navbar {
+    min-height: 75px;
+    background: #ffffff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 40px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
 }
 
-.navbar-logo{
-    display:flex;
-    align-items:center;
-    gap:15px;
+/* ================= LOGO ================= */
+
+.navbar-logo {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-shrink: 0;
 }
 
-.logo-circle{
-    width:50px;
-    height:50px;
-    background:#2563eb;
-    border-radius:50%;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    font-size:24px;
-    color:white;
+.logo-circle {
+    width: 50px;
+    height: 50px;
+    min-width: 50px;
+    background: #2563eb;
+    border-radius: 50%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    font-size: 24px;
+    color: white;
 }
 
-.navbar-logo h2{
-    font-size:22px;
-    color:#1e293b;
+.navbar-logo h2 {
+    font-size: 22px;
+    color: #1e293b;
+    white-space: nowrap;
 }
 
-.navbar-logo p{
-    font-size:12px;
-    color:#64748b;
+.navbar-logo p {
+    font-size: 12px;
+    color: #64748b;
+    white-space: nowrap;
 }
 
-.navbar-links{
-    display:flex;
-    gap:30px;
+
+/* ================= LINKS ================= */
+
+.navbar-links {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    margin-left: auto;
+    margin-right: 45px;
 }
 
-.navbar-links a{
-    text-decoration:none;
-    color:#334155;
-    font-weight:600;
-    transition:.3s;
+.navbar-links a {
+    text-decoration: none;
+    color: #334155;
+    font-weight: 600;
+    white-space: nowrap;
+    transition: 0.3s;
 }
 
-.navbar-links a:hover{
-    color:#2563eb;
+.navbar-links a:hover {
+    color: #2563eb;
 }
 
-.active{
-    color:#2563eb !important;
+.active {
+    color: #2563eb !important;
 }
 
-.navbar-profile{
-    display:flex;
-    align-items:center;
-    gap:15px;
+
+/* ================= PROFILE ================= */
+
+.navbar-profile {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-shrink: 0;
 }
 
-.profile-avatar{
-    width:45px;
-    height:45px;
-    border-radius:50%;
-    background:#2563eb;
-    color:white;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    font-size:20px;
-    font-weight:bold;
+.profile-avatar {
+    width: 45px;
+    height: 45px;
+    min-width: 45px;
+
+    border-radius: 50%;
+    background: #2563eb;
+    color: white;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    font-size: 20px;
+    font-weight: bold;
 }
 
-.profile-info h4{
-    color:#1e293b;
+.profile-info {
+    min-width: 65px;
 }
 
-.profile-info span{
-    color:gray;
-    font-size:13px;
-    text-transform:capitalize;
+.profile-info h4 {
+    color: #1e293b;
+    white-space: nowrap;
 }
 
-.logout-btn{
-    padding:10px 18px;
-    border:none;
-    border-radius:8px;
-    background:#ef4444;
-    color:white;
-    cursor:pointer;
-    transition:.3s;
+.profile-info span {
+    color: gray;
+    font-size: 13px;
+    text-transform: capitalize;
+    white-space: nowrap;
 }
 
-.logout-btn:hover{
-    background:#dc2626;
+
+/* ================= LOGOUT ================= */
+
+.logout-btn {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 8px;
+
+    background: #ef4444;
+    color: white;
+
+    cursor: pointer;
+    white-space: nowrap;
+
+    transition: 0.3s;
+}
+
+.logout-btn:hover {
+    background: #dc2626;
+}
+
+
+/* ================= TABLET ================= */
+
+@media (max-width: 1000px) {
+
+    .navbar {
+        padding: 0 20px;
+    }
+
+    .navbar-links {
+        gap: 18px;
+        margin-right: 20px;
+    }
+
+    .navbar-logo h2 {
+        font-size: 19px;
+    }
+
+    .navbar-logo p {
+        font-size: 11px;
+    }
+
+}
+
+
+/* ================= MOBILE ================= */
+
+@media (max-width: 767px) {
+
+    .navbar {
+        height: auto;
+        min-height: 75px;
+        padding: 12px 15px;
+
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .navbar-logo {
+        width: auto;
+    }
+
+    .navbar-links {
+        order: 3;
+        width: 100%;
+
+        justify-content: center;
+
+        margin: 0;
+        gap: 25px;
+    }
+
+    .navbar-profile {
+        margin-left: auto;
+    }
+
 }

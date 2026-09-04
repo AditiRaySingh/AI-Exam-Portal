@@ -1,13 +1,21 @@
 import "../styles/resultCard.css";
+import { useNavigate } from "react-router-dom";
 
 function ResultCard({
+  examId,
   title,
   date,
   percentage,
   marks
 }) {
 
+  const navigate = useNavigate();
+
   const percent = parseFloat(percentage);
+
+  const handleViewDetails = () => {
+    navigate(`/result/${examId}`);
+  };
 
   return (
 
@@ -51,7 +59,10 @@ function ResultCard({
           {percent >= 40 ? "Passed" : "Failed"}
         </div>
 
-        <button className="dashboard-detail-btn">
+        <button
+          className="dashboard-detail-btn"
+          onClick={handleViewDetails}
+        >
           View Details
         </button>
 
@@ -60,7 +71,6 @@ function ResultCard({
     </div>
 
   );
-
 }
 
 export default ResultCard;

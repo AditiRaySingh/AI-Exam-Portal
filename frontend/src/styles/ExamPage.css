@@ -118,3 +118,22 @@
   background: #16a34a;
   color: white;
 }
+
+.option {
+  width: 100%;
+  padding: 15px;
+  margin: 10px 0;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  background: white;
+  cursor: pointer;
+  text-align: left;
+  font-size: 16px;
+}
+
+/* Selected answer */
+.option.selected {
+  background-color: #22c55e;
+  border-color: #16a34a;
+  color: white;
+}

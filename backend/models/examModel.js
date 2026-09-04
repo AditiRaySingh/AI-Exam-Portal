@@ -23,7 +23,7 @@ const examSchema=new mongoose.Schema({
     },
     teacherId:{
      type:mongoose.Schema.Types.ObjectId,
-     ref:"user"
+     ref:"User"
     },
     status:{
         type:String,
