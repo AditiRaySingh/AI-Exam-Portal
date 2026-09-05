@@ -1,83 +1,142 @@
-.stat-card{
+/* =========================
+   STAT CARD
+========================= */
 
-    background:#fff;
+.stat-card {
+    width: 100%;
+    min-width: 0;
 
-    border-radius:18px;
+    background: #ffffff;
 
-    padding:25px;
+    border-radius: 18px;
 
-    display:flex;
+    padding: 25px;
 
-    justify-content:space-between;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 
-    align-items:center;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, .08);
 
-    box-shadow:0 10px 25px rgba(0,0,0,.08);
-
-    transition:.3s;
-
+    transition: .3s;
 }
 
-.stat-card:hover{
+.stat-card:hover {
+    transform: translateY(-5px);
 
-    transform:translateY(-8px);
-
-    box-shadow:0 20px 40px rgba(37,99,235,.18);
-
+    box-shadow: 0 20px 40px rgba(37, 99, 235, .18);
 }
 
-.stat-info p{
 
-    color:#64748b;
+/* =========================
+   STAT INFORMATION
+========================= */
 
-    font-size:15px;
-
+.stat-info {
+    min-width: 0;
 }
 
-.stat-info h2{
+.stat-info p {
+    color: #64748b;
+    font-size: 17px;
 
-    margin-top:10px;
-
-    color:#1e293b;
-
-    font-size:34px;
-
+    white-space: nowrap;
 }
 
-.stat-icon{
+.stat-info h2 {
+    margin-top: 10px;
 
-    width:65px;
+    color: #2563eb;
 
-    height:65px;
+    font-size: 36px;
 
-    border-radius:50%;
+    font-weight: 600;
 
-    background:#2563eb;
-
-    color:white;
-
-    display:flex;
-
-    justify-content:center;
-
-    align-items:center;
-
-    font-size:30px;
-
+    word-break: break-word;
 }
 
-@media(max-width:768px){
 
-.stat-card{
+/* =========================
+   ICON
+========================= */
 
-padding:20px;
+.stat-icon {
+    width: 65px;
+    height: 65px;
 
+    min-width: 65px;
+
+    border-radius: 50%;
+
+    background: #2563eb;
+
+    color: white;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    font-size: 30px;
 }
 
-.stat-info h2{
 
-font-size:28px;
+/* =========================
+   MOBILE
+========================= */
 
+@media (max-width: 768px) {
+
+    .stat-card {
+        width: 100%;
+
+        padding: 22px;
+
+        min-height: 145px;
+    }
+
+    .stat-info p {
+        font-size: 17px;
+    }
+
+    .stat-info h2 {
+        font-size: 32px;
+    }
+
+    .stat-icon {
+        width: 62px;
+        height: 62px;
+        min-width: 62px;
+
+        font-size: 28px;
+    }
 }
 
+
+/* =========================
+   SMALL MOBILE
+========================= */
+
+@media (max-width: 480px) {
+
+    .stat-card {
+        padding: 20px;
+
+        min-height: 135px;
+    }
+
+    .stat-info p {
+        font-size: 16px;
+    }
+
+    .stat-info h2 {
+        font-size: 30px;
+    }
+
+    .stat-icon {
+        width: 58px;
+        height: 58px;
+        min-width: 58px;
+
+        font-size: 26px;
+    }
 }
