@@ -1,179 +1,239 @@
-.exam-card{
+/* =========================
+   EXAM CARD
+========================= */
 
-    background:#fff;
+.exam-card {
+    width: 100%;
+    min-width: 0;
 
-    border-radius:18px;
+    background: #ffffff;
 
-    padding:25px;
+    border-radius: 18px;
 
-    box-shadow:0 10px 25px rgba(0,0,0,.08);
+    padding: 25px;
 
-    transition:.3s;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, .08);
 
-    display:flex;
+    transition: .3s;
 
-    flex-direction:column;
+    display: flex;
+    flex-direction: column;
 
-    gap:25px;
-
+    gap: 25px;
 }
 
-.exam-card:hover{
+.exam-card:hover {
+    transform: translateY(-5px);
 
-    transform:translateY(-8px);
-
-    box-shadow:0 20px 40px rgba(37,99,235,.18);
-
+    box-shadow: 0 20px 40px rgba(37, 99, 235, .18);
 }
 
-.exam-header{
 
-    display:flex;
+/* =========================
+   HEADER
+========================= */
 
-    flex-direction:column;
-
-    gap:10px;
-
+.exam-header {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
-.status{
+.status {
+    width: max-content;
 
-    width:max-content;
+    background: #dcfce7;
+    color: #166534;
 
-    background:#dcfce7;
+    padding: 6px 14px;
 
-    color:#166534;
+    border-radius: 30px;
 
-    padding:6px 14px;
-
-    border-radius:30px;
-
-    font-size:13px;
-
-    font-weight:600;
-
+    font-size: 13px;
+    font-weight: 600;
 }
 
-.exam-header h2{
+.exam-header h2 {
+    color: #1e293b;
+    font-size: 24px;
 
-    color:#1e293b;
-
-    font-size:24px;
-
+    word-break: break-word;
 }
 
-.description{
+.description {
+    color: #64748b;
 
-    color:#64748b;
+    line-height: 1.6;
 
-    line-height:1.6;
-
+    word-break: break-word;
 }
 
-.exam-info{
 
-    display:grid;
+/* =========================
+   EXAM INFORMATION
+========================= */
 
-    grid-template-columns:repeat(2,1fr);
+.exam-info {
+    display: grid;
 
-    gap:18px;
+    grid-template-columns: repeat(2, 1fr);
 
+    gap: 18px;
 }
 
-.info-card{
+.info-card {
+    display: flex;
 
-    display:flex;
+    align-items: center;
 
-    align-items:center;
+    gap: 15px;
 
-    gap:15px;
+    padding: 15px;
 
-    padding:15px;
+    border-radius: 12px;
 
-    border-radius:12px;
+    background: #f8fafc;
 
-    background:#f8fafc;
-
+    min-width: 0;
 }
 
-.icon{
+.icon {
+    width: 50px;
+    height: 50px;
 
-    width:50px;
+    min-width: 50px;
 
-    height:50px;
+    border-radius: 50%;
 
-    border-radius:50%;
+    background: #2563eb;
 
-    background:#2563eb;
+    color: white;
 
-    color:white;
+    display: flex;
 
-    display:flex;
+    justify-content: center;
+    align-items: center;
 
-    justify-content:center;
-
-    align-items:center;
-
-    font-size:22px;
-
+    font-size: 22px;
 }
 
-.info-card h4{
+.info-card h4 {
+    color: #334155;
 
-    color:#334155;
-
-    margin-bottom:4px;
-
+    margin-bottom: 4px;
 }
 
-.info-card p{
+.info-card p {
+    color: #64748b;
 
-    color:#64748b;
-
+    word-break: break-word;
 }
 
-.start-btn{
 
-    width:100%;
+/* =========================
+   START BUTTON
+========================= */
 
-    padding:15px;
+.start-btn {
+    width: 100%;
 
-    border:none;
+    padding: 15px;
 
-    border-radius:12px;
+    border: none;
 
-    background:#2563eb;
+    border-radius: 12px;
 
-    color:white;
+    background: #2563eb;
 
-    font-size:17px;
+    color: white;
 
-    font-weight:600;
+    font-size: 17px;
 
-    cursor:pointer;
+    font-weight: 600;
 
-    transition:.3s;
+    cursor: pointer;
 
+    transition: .3s;
 }
 
-.start-btn:hover{
-
-    background:#1d4ed8;
-
+.start-btn:hover {
+    background: #1d4ed8;
 }
 
-@media(max-width:768px){
 
-.exam-info{
+/* =========================
+   MOBILE
+========================= */
 
-grid-template-columns:1fr;
+@media (max-width: 768px) {
 
+    .exam-card {
+        width: 100%;
+
+        padding: 20px;
+
+        gap: 20px;
+    }
+
+    .exam-header h2 {
+        font-size: 22px;
+    }
+
+    .exam-info {
+        grid-template-columns: 1fr;
+
+        gap: 12px;
+    }
+
+    .info-card {
+        padding: 13px;
+    }
+
+    .icon {
+        width: 45px;
+        height: 45px;
+
+        min-width: 45px;
+
+        font-size: 20px;
+    }
+
+    .start-btn {
+        padding: 14px;
+        font-size: 16px;
+    }
 }
 
-.exam-card{
 
-padding:18px;
+/* =========================
+   SMALL MOBILE
+========================= */
 
-}
+@media (max-width: 480px) {
 
+    .exam-card {
+        padding: 16px;
+
+        border-radius: 15px;
+    }
+
+    .exam-header h2 {
+        font-size: 20px;
+    }
+
+    .description {
+        font-size: 14px;
+    }
+
+    .info-card {
+        gap: 12px;
+    }
+
+    .info-card h4 {
+        font-size: 14px;
+    }
+
+    .info-card p {
+        font-size: 14px;
+    }
 }
