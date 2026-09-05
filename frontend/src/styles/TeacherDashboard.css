@@ -9,11 +9,15 @@ body {
     font-family: Arial, Helvetica, sans-serif;
 }
 
+/* ================= DASHBOARD ================= */
+
 .teacher-dashboard {
     max-width: 1300px;
     margin: 40px auto;
     padding: 20px;
 }
+
+/* ================= HEADER ================= */
 
 .dashboard-header {
     display: flex;
@@ -35,6 +39,8 @@ body {
     font-size: 16px;
 }
 
+/* ================= CREATE BUTTON ================= */
+
 .create-btn {
     background: linear-gradient(135deg, #2563eb, #4f46e5);
     color: white;
@@ -44,7 +50,15 @@ body {
     cursor: pointer;
     font-size: 16px;
     font-weight: bold;
+    transition: 0.3s;
+    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.25);
 }
+
+.create-btn:hover {
+    transform: translateY(-3px);
+}
+
+/* ================= STATISTICS ================= */
 
 .stats-grid {
     display: grid;
@@ -57,7 +71,12 @@ body {
     background: white;
     border-radius: 18px;
     padding: 25px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, .08);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    transition: 0.3s;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
 }
 
 .stat-card h3 {
@@ -71,12 +90,16 @@ body {
     font-size: 32px;
 }
 
+/* ================= EXAM SECTION ================= */
+
 .exam-section {
     background: white;
     border-radius: 20px;
     padding: 30px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, .08);
-    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+
+    /* Prevent the whole page from becoming wider */
+    max-width: 100%;
 }
 
 .exam-section h2 {
@@ -84,9 +107,28 @@ body {
     margin-bottom: 25px;
 }
 
-/* TABLE */
+/* ================= TABLE WRAPPER ================= */
+
+/*
+   This is the important part for mobile.
+   Only the table scrolls horizontally.
+*/
+
+.table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+
+    -webkit-overflow-scrolling: touch;
+
+    scrollbar-width: thin;
+}
+
+/* ================= TABLE ================= */
+
 .exam-table {
     width: 100%;
+    min-width: 850px;
     border-collapse: collapse;
 }
 
@@ -107,11 +149,43 @@ body {
     vertical-align: middle;
 }
 
+/* Keep important columns readable */
+
+.exam-table th:nth-child(1),
+.exam-table td:nth-child(1) {
+    min-width: 180px;
+}
+
+.exam-table th:nth-child(2),
+.exam-table td:nth-child(2) {
+    min-width: 150px;
+}
+
+.exam-table th:nth-child(3),
+.exam-table td:nth-child(3) {
+    min-width: 120px;
+    white-space: nowrap;
+}
+
+.exam-table th:nth-child(4),
+.exam-table td:nth-child(4) {
+    min-width: 130px;
+    white-space: nowrap;
+}
+
+.exam-table th:nth-child(5),
+.exam-table td:nth-child(5) {
+    min-width: 450px;
+}
+
+/* ================= TABLE HOVER ================= */
+
 .exam-table tr:hover {
     background: #f8fafc;
 }
 
-/* BUTTONS */
+/* ================= ACTION BUTTONS ================= */
+
 .action-btn,
 .ai-btn,
 .material-btn {
@@ -122,7 +196,14 @@ body {
     cursor: pointer;
     margin: 4px;
     font-size: 14px;
+    transition: 0.3s;
+
+    /* Important */
+    white-space: nowrap;
+    display: inline-block;
 }
+
+/* ================= BUTTON COLORS ================= */
 
 .blue {
     background: #2563eb;
@@ -152,14 +233,17 @@ body {
     background: #0ea5e9;
 }
 
+/* ================= BUTTON HOVER ================= */
+
 .action-btn:hover,
 .ai-btn:hover,
 .material-btn:hover {
     transform: translateY(-2px);
-    opacity: .9;
+    opacity: 0.9;
 }
 
-/* LOADING */
+/* ================= LOADING ================= */
+
 .loading-screen {
     height: 100vh;
     display: flex;
@@ -188,10 +272,12 @@ body {
     }
 }
 
-/* TABLE WRAPPER ON SMALL SCREENS */
+/* ================= TABLET ================= */
+
 @media (max-width: 992px) {
-    .exam-section {
-        overflow-x: auto;
+
+    .teacher-dashboard {
+        width: 100%;
     }
 
     .exam-table {
@@ -199,58 +285,141 @@ body {
     }
 }
 
-/* MOBILE */
+/* ================= MOBILE ================= */
+
 @media (max-width: 768px) {
 
     .teacher-dashboard {
-        margin: 20px auto;
+        width: 100%;
+        margin: 20px 0;
         padding: 10px;
     }
+
+    /* Header */
 
     .dashboard-header {
         flex-direction: column;
         align-items: flex-start;
+        gap: 15px;
     }
 
     .dashboard-header h1 {
         font-size: 28px;
     }
 
+    .dashboard-header p {
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
     .create-btn {
         width: 100%;
     }
 
+    /* Statistics */
+
     .stats-grid {
         grid-template-columns: 1fr;
+        gap: 15px;
+        margin-bottom: 25px;
     }
+
+    .stat-card {
+        padding: 20px;
+    }
+
+    .stat-card h2 {
+        font-size: 28px;
+    }
+
+    /* Exam section */
 
     .exam-section {
+        width: 100%;
         padding: 15px;
-        overflow-x: auto;
+        border-radius: 15px;
+
+        /* Do NOT scroll here */
+        overflow: hidden;
     }
 
-    /*
-       Keep the table wide enough.
-       User can scroll left/right on phone.
-    */
+    .exam-section h2 {
+        font-size: 22px;
+        margin-bottom: 20px;
+    }
+
+    /* Table scroll */
+
+    .table-wrapper {
+        width: 100%;
+        overflow-x: auto;
+        overflow-y: hidden;
+
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Keep table wide */
+
     .exam-table {
+        width: 850px;
         min-width: 850px;
     }
 
-    /*
-       IMPORTANT:
-       Do NOT make action buttons 100% width.
-    */
+    /* Table spacing */
+
+    .exam-table th,
+    .exam-table td {
+        padding: 12px;
+        font-size: 14px;
+    }
+
+    /* Actions */
+
     .action-btn,
     .ai-btn,
     .material-btn {
         width: auto;
         display: inline-block;
         white-space: nowrap;
+        margin: 4px;
+    }
+}
+
+/* ================= SMALL PHONE ================= */
+
+@media (max-width: 480px) {
+
+    .teacher-dashboard {
+        padding: 8px;
+    }
+
+    .exam-section {
+        padding: 12px;
+    }
+
+    .dashboard-header h1 {
+        font-size: 25px;
+    }
+
+    .dashboard-header p {
+        font-size: 13px;
+    }
+
+    .exam-table {
+        width: 850px;
+        min-width: 850px;
     }
 
     .exam-table th,
     .exam-table td {
-        padding: 12px;
+        padding: 10px;
+        font-size: 13px;
+    }
+
+    .action-btn,
+    .ai-btn,
+    .material-btn {
+        padding: 9px 12px;
+        font-size: 13px;
     }
 }
