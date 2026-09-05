@@ -34,15 +34,21 @@ function CreateExam() {
 
       const token = localStorage.getItem("token");
 
-      const res = await api.post(
-        "/exams/create",
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        }
-      );
+    const dataToSend = {
+  ...formData,
+  startTime: new Date(formData.startTime).toISOString(),
+  endTime: new Date(formData.endTime).toISOString()
+};
+
+const res = await api.post(
+  "/exams/create",
+  dataToSend,
+  {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  }
+);
 
       alert(res.data.message);
 
