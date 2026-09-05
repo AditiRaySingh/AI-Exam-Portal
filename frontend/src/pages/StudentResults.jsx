@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import api from "../services/api";
-import "../styles/studentResults.css";
+import "../styles/StudentResults.css";
 
 import {
   ResponsiveContainer,
