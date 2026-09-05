@@ -18,28 +18,23 @@ function TeacherDashboard() {
     try {
       const token = localStorage.getItem("token");
 
-      const res = await api.get(
-        "/dashboard/teacher",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        }
-      );
+      const res = await api.get("/dashboard/teacher", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       console.log("Dashboard Response:", res.data);
       console.log("Recent Exams:", res.data.recentExams);
 
       setDashboard(res.data);
-
     } catch (error) {
       console.log("TEACHER DASHBOARD ERROR:", error);
 
       alert(
         error.response?.data?.message ||
-        "Unable to Load Dashboard"
+          "Unable to Load Dashboard"
       );
-
     } finally {
       setLoading(false);
     }
@@ -54,25 +49,25 @@ function TeacherDashboard() {
         {},
         {
           headers: {
-            Authorization: `Bearer ${token}`
-          }
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
 
       alert(res.data.message);
 
-      // Refresh dashboard after publishing
       fetchDashboard();
-
     } catch (error) {
       console.log("PUBLISH EXAM ERROR:", error);
 
       alert(
         error.response?.data?.message ||
-        "Failed to publish exam"
+          "Failed to publish exam"
       );
     }
   };
+
+  /* ================= LOADING ================= */
 
   if (loading) {
     return (
@@ -83,12 +78,14 @@ function TeacherDashboard() {
     );
   }
 
+  /* ================= NO DATA ================= */
+
   if (!dashboard) {
     return (
       <h2
         style={{
           textAlign: "center",
-          marginTop: "100px"
+          marginTop: "100px",
         }}
       >
         No Dashboard Data Found
@@ -100,10 +97,11 @@ function TeacherDashboard() {
     <div className="teacher-dashboard">
 
       {/* ================= NAVBAR ================= */}
+
       <Navbar />
 
-
       {/* ================= DASHBOARD HEADER ================= */}
+
       <div className="dashboard-header">
 
         <div>
@@ -123,8 +121,8 @@ function TeacherDashboard() {
 
       </div>
 
-
       {/* ================= STATISTICS ================= */}
+
       <div className="stats-grid">
 
         <div className="stat-card">
@@ -144,169 +142,192 @@ function TeacherDashboard() {
 
         <div className="stat-card">
           <h3>Average Score</h3>
-          <h2>{dashboard.averageScore || 0}%</h2>
+          <h2>
+            {dashboard.averageScore || 0}%
+          </h2>
         </div>
 
       </div>
 
-
       {/* ================= EXAM LIST ================= */}
+
       <div className="exam-section">
 
         <h2>Your Exams</h2>
 
-        <table className="exam-table">
+        {/* IMPORTANT MOBILE WRAPPER */}
 
-          <thead>
-            <tr>
-              <th>Exam</th>
-              <th>Subject</th>
-              <th>Duration</th>
-              <th>Total Marks</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
+        <div className="table-wrapper">
 
-          <tbody>
+          <table className="exam-table">
 
-            {dashboard.recentExams &&
-            dashboard.recentExams.length > 0 ? (
+            <thead>
+              <tr>
+                <th>Exam</th>
+                <th>Subject</th>
+                <th>Duration</th>
+                <th>Total Marks</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
 
-              dashboard.recentExams.map((exam) => (
+            <tbody>
 
-                <tr key={exam._id}>
+              {dashboard.recentExams &&
+              dashboard.recentExams.length > 0 ? (
 
-                  <td>{exam.title}</td>
+                dashboard.recentExams.map((exam) => (
 
-                  <td>{exam.subject}</td>
+                  <tr key={exam._id}>
 
-                  <td>
-                    {exam.duration} min
-                  </td>
+                    {/* EXAM */}
 
-                  <td>
-                    {exam.totalMarks}
-                  </td>
+                    <td>
+                      {exam.title}
+                    </td>
 
-                  <td>
+                    {/* SUBJECT */}
 
-                    {/* Add Questions */}
-                    <button
-                      className="action-btn blue"
-                      onClick={() =>
-                        navigate(
-                          `/add-question/${exam._id}`
-                        )
-                      }
-                    >
-                      Add Questions
-                    </button>
+                    <td>
+                      {exam.subject}
+                    </td>
 
+                    {/* DURATION */}
 
-                    {/* AI Generate */}
-                    <button
-                      className="ai-btn"
-                      onClick={() =>
-                        navigate(
-                          `/ai-generate/${exam._id}`
-                        )
-                      }
-                    >
-                      AI Generate
-                    </button>
+                    <td>
+                      {exam.duration} min
+                    </td>
 
+                    {/* TOTAL MARKS */}
 
-                    {/* Upload Material */}
-                    <button
-                      className="material-btn"
-                      onClick={() =>
-                        navigate(
-                          `/generate-material/${exam._id}`
-                        )
-                      }
-                    >
-                      Upload Material
-                    </button>
+                    <td>
+                      {exam.totalMarks}
+                    </td>
 
+                    {/* ACTIONS */}
 
-                    {/* Manage Questions */}
-                    <button
-                      className="action-btn green"
-                      onClick={() =>
-                        navigate(
-                          `/questions/${exam._id}`
-                        )
-                      }
-                    >
-                      Manage
-                    </button>
+                    <td className="actions-cell">
 
-
-                    {/* Results */}
-                    <button
-                      className="action-btn purple"
-                      onClick={() =>
-                        navigate(
-                          `/teacher-results/${exam._id}`
-                        )
-                      }
-                    >
-                      Results
-                    </button>
-
-
-                    {/* Analytics */}
-                    <button
-                      className="action-btn analytics"
-                      onClick={() =>
-                        navigate(
-                          `/teacher-analytics/${exam._id}`
-                        )
-                      }
-                    >
-                      📊 Analytics
-                    </button>
-
-
-                    {/* Publish */}
-                    {exam.status === "draft" && (
+                      {/* ADD QUESTIONS */}
 
                       <button
-                        className="action-btn orange"
+                        className="action-btn blue"
                         onClick={() =>
-                          publishExam(exam._id)
+                          navigate(
+                            `/add-question/${exam._id}`
+                          )
                         }
                       >
-                        Publish
+                        Add Questions
                       </button>
 
-                    )}
+                      {/* AI GENERATE */}
 
+                      <button
+                        className="ai-btn"
+                        onClick={() =>
+                          navigate(
+                            `/ai-generate/${exam._id}`
+                          )
+                        }
+                      >
+                        AI Generate
+                      </button>
+
+                      {/* UPLOAD MATERIAL */}
+
+                      <button
+                        className="material-btn"
+                        onClick={() =>
+                          navigate(
+                            `/generate-material/${exam._id}`
+                          )
+                        }
+                      >
+                        Upload Material
+                      </button>
+
+                      {/* MANAGE */}
+
+                      <button
+                        className="action-btn green"
+                        onClick={() =>
+                          navigate(
+                            `/questions/${exam._id}`
+                          )
+                        }
+                      >
+                        Manage
+                      </button>
+
+                      {/* RESULTS */}
+
+                      <button
+                        className="action-btn purple"
+                        onClick={() =>
+                          navigate(
+                            `/teacher-results/${exam._id}`
+                          )
+                        }
+                      >
+                        Results
+                      </button>
+
+                      {/* ANALYTICS */}
+
+                      <button
+                        className="action-btn analytics"
+                        onClick={() =>
+                          navigate(
+                            `/teacher-analytics/${exam._id}`
+                          )
+                        }
+                      >
+                        📊 Analytics
+                      </button>
+
+                      {/* PUBLISH */}
+
+                      {exam.status === "draft" && (
+                        <button
+                          className="action-btn orange"
+                          onClick={() =>
+                            publishExam(exam._id)
+                          }
+                        >
+                          Publish
+                        </button>
+                      )}
+
+                    </td>
+
+                  </tr>
+
+                ))
+
+              ) : (
+
+                <tr>
+
+                  <td
+                    colSpan="5"
+                    style={{
+                      textAlign: "center",
+                      padding: "30px",
+                    }}
+                  >
+                    No Exams Found
                   </td>
 
                 </tr>
 
-              ))
+              )}
 
-            ) : (
+            </tbody>
 
-              <tr>
-                <td
-                  colSpan="5"
-                  style={{
-                    textAlign: "center",
-                    padding: "30px"
-                  }}
-                >
-                  No Exams Found
-                </td>
-              </tr>
+          </table>
 
-            )}
-
-          </tbody>
-
-        </table>
+        </div>
 
       </div>
 
