@@ -25,7 +25,7 @@ const app = express();
 app.use(cors({
     origin: [
         "http://localhost:5173",
-        "https://ai-exam-portal-frontend.onrender.com"
+        "https://ai-exam-portal-2.onrender.com"
     ],
     credentials: true
 }));
