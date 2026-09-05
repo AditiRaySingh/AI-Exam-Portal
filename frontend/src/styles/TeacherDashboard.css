@@ -9,8 +9,6 @@ body {
     font-family: Arial, Helvetica, sans-serif;
 }
 
-/* ================= DASHBOARD ================= */
-
 .teacher-dashboard {
     max-width: 1300px;
     margin: 40px auto;
@@ -39,8 +37,6 @@ body {
     font-size: 16px;
 }
 
-/* ================= CREATE BUTTON ================= */
-
 .create-btn {
     background: linear-gradient(135deg, #2563eb, #4f46e5);
     color: white;
@@ -50,15 +46,9 @@ body {
     cursor: pointer;
     font-size: 16px;
     font-weight: bold;
-    transition: 0.3s;
-    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.25);
 }
 
-.create-btn:hover {
-    transform: translateY(-3px);
-}
-
-/* ================= STATISTICS ================= */
+/* ================= STATS ================= */
 
 .stats-grid {
     display: grid;
@@ -71,12 +61,7 @@ body {
     background: white;
     border-radius: 18px;
     padding: 25px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-    transition: 0.3s;
-}
-
-.stat-card:hover {
-    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, .08);
 }
 
 .stat-card h3 {
@@ -96,10 +81,7 @@ body {
     background: white;
     border-radius: 20px;
     padding: 30px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-
-    /* Prevent the whole page from becoming wider */
-    max-width: 100%;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, .08);
 }
 
 .exam-section h2 {
@@ -107,33 +89,19 @@ body {
     margin-bottom: 25px;
 }
 
-/* ================= TABLE WRAPPER ================= */
-
-/*
-   This is the important part for mobile.
-   Only the table scrolls horizontally.
-*/
+/* ================= TABLE ================= */
 
 .table-wrapper {
     width: 100%;
-    overflow-x: auto;
-    overflow-y: hidden;
-
-    -webkit-overflow-scrolling: touch;
-
-    scrollbar-width: thin;
 }
-
-/* ================= TABLE ================= */
 
 .exam-table {
     width: 100%;
-    min-width: 850px;
     border-collapse: collapse;
 }
 
 .exam-table thead {
-    background: #2563eb;
+    background: #4f46e5;
     color: white;
 }
 
@@ -149,42 +117,11 @@ body {
     vertical-align: middle;
 }
 
-/* Keep important columns readable */
-
-.exam-table th:nth-child(1),
-.exam-table td:nth-child(1) {
-    min-width: 180px;
-}
-
-.exam-table th:nth-child(2),
-.exam-table td:nth-child(2) {
-    min-width: 150px;
-}
-
-.exam-table th:nth-child(3),
-.exam-table td:nth-child(3) {
-    min-width: 120px;
-    white-space: nowrap;
-}
-
-.exam-table th:nth-child(4),
-.exam-table td:nth-child(4) {
-    min-width: 130px;
-    white-space: nowrap;
-}
-
-.exam-table th:nth-child(5),
-.exam-table td:nth-child(5) {
-    min-width: 450px;
-}
-
-/* ================= TABLE HOVER ================= */
-
 .exam-table tr:hover {
     background: #f8fafc;
 }
 
-/* ================= ACTION BUTTONS ================= */
+/* ================= BUTTONS ================= */
 
 .action-btn,
 .ai-btn,
@@ -196,14 +133,9 @@ body {
     cursor: pointer;
     margin: 4px;
     font-size: 14px;
-    transition: 0.3s;
-
-    /* Important */
     white-space: nowrap;
-    display: inline-block;
+    transition: .3s;
 }
-
-/* ================= BUTTON COLORS ================= */
 
 .blue {
     background: #2563eb;
@@ -233,13 +165,11 @@ body {
     background: #0ea5e9;
 }
 
-/* ================= BUTTON HOVER ================= */
-
 .action-btn:hover,
 .ai-btn:hover,
 .material-btn:hover {
     transform: translateY(-2px);
-    opacity: 0.9;
+    opacity: .9;
 }
 
 /* ================= LOADING ================= */
@@ -272,20 +202,9 @@ body {
     }
 }
 
-/* ================= TABLET ================= */
-
-@media (max-width: 992px) {
-
-    .teacher-dashboard {
-        width: 100%;
-    }
-
-    .exam-table {
-        min-width: 850px;
-    }
-}
-
-/* ================= MOBILE ================= */
+/* ================================================= */
+/* ================= MOBILE ======================== */
+/* ================================================= */
 
 @media (max-width: 768px) {
 
@@ -295,7 +214,7 @@ body {
         padding: 10px;
     }
 
-    /* Header */
+    /* HEADER */
 
     .dashboard-header {
         flex-direction: column;
@@ -309,14 +228,13 @@ body {
 
     .dashboard-header p {
         font-size: 14px;
-        line-height: 1.5;
     }
 
     .create-btn {
         width: 100%;
     }
 
-    /* Statistics */
+    /* STATS */
 
     .stats-grid {
         grid-template-columns: 1fr;
@@ -328,64 +246,120 @@ body {
         padding: 20px;
     }
 
-    .stat-card h2 {
-        font-size: 28px;
-    }
-
-    /* Exam section */
+    /* EXAM SECTION */
 
     .exam-section {
         width: 100%;
-        padding: 15px;
-        border-radius: 15px;
-
-        /* Do NOT scroll here */
-        overflow: hidden;
+        padding: 20px;
+        border-radius: 18px;
     }
 
     .exam-section h2 {
-        font-size: 22px;
+        font-size: 26px;
         margin-bottom: 20px;
     }
 
-    /* Table scroll */
+    /* REMOVE HORIZONTAL TABLE */
 
     .table-wrapper {
         width: 100%;
-        overflow-x: auto;
-        overflow-y: hidden;
-
-        -webkit-overflow-scrolling: touch;
+        overflow: visible;
     }
 
-    /* Keep table wide */
+    /* HIDE TABLE HEADER */
+
+    .exam-table thead {
+        display: none;
+    }
+
+    /* TABLE BECOMES CARDS */
+
+    .exam-table,
+    .exam-table tbody,
+    .exam-table tr,
+    .exam-table td {
+        display: block;
+        width: 100%;
+    }
 
     .exam-table {
-        width: 850px;
-        min-width: 850px;
+        border-collapse: separate;
     }
 
-    /* Table spacing */
+    .exam-table tr {
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 14px;
+        margin-bottom: 20px;
+        padding: 8px 0;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, .06);
+    }
 
-    .exam-table th,
     .exam-table td {
-        padding: 12px;
-        font-size: 14px;
+        border: none;
+        padding: 12px 15px;
+        text-align: left;
+        min-width: 0 !important;
     }
 
-    /* Actions */
+    /* LABELS */
+
+    .exam-table td:nth-child(1)::before {
+        content: "Exam";
+    }
+
+    .exam-table td:nth-child(2)::before {
+        content: "Subject";
+    }
+
+    .exam-table td:nth-child(3)::before {
+        content: "Duration";
+    }
+
+    .exam-table td:nth-child(4)::before {
+        content: "Total Marks";
+    }
+
+    .exam-table td:nth-child(5)::before {
+        content: "Actions";
+    }
+
+    .exam-table td::before {
+        display: block;
+        color: #2563eb;
+        font-size: 13px;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    /* EXAM TITLE */
+
+    .exam-table td:nth-child(1) {
+        font-size: 17px;
+        font-weight: bold;
+    }
+
+    /* ACTIONS */
+
+    .actions-cell {
+        padding-top: 15px !important;
+    }
 
     .action-btn,
     .ai-btn,
     .material-btn {
-        width: auto;
-        display: inline-block;
-        white-space: nowrap;
-        margin: 4px;
+        width: 100%;
+        display: block;
+        margin: 7px 0;
+        padding: 12px;
+        font-size: 14px;
+        white-space: normal;
     }
 }
 
-/* ================= SMALL PHONE ================= */
+/* ================================================= */
+/* ================= SMALL PHONE =================== */
+/* ================================================= */
 
 @media (max-width: 480px) {
 
@@ -394,32 +368,21 @@ body {
     }
 
     .exam-section {
-        padding: 12px;
+        padding: 15px;
     }
 
-    .dashboard-header h1 {
-        font-size: 25px;
+    .exam-section h2 {
+        font-size: 24px;
     }
 
-    .dashboard-header p {
-        font-size: 13px;
-    }
-
-    .exam-table {
-        width: 850px;
-        min-width: 850px;
-    }
-
-    .exam-table th,
     .exam-table td {
-        padding: 10px;
-        font-size: 13px;
+        padding: 10px 12px;
     }
 
     .action-btn,
     .ai-btn,
     .material-btn {
-        padding: 9px 12px;
+        padding: 11px;
         font-size: 13px;
     }
 }
