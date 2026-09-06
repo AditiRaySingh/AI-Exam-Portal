@@ -1,111 +1,442 @@
-/* =========================
-   MAIN DASHBOARD
-========================= */
+/* =========================================================
+   STUDENT DASHBOARD
+========================================================= */
 
 .dashboard {
-    background: #f8fafc;
     min-height: 100vh;
     width: 100%;
+    background: #f5f7fb;
+    color: #172033;
+    overflow-x: hidden;
 }
 
 .dashboard-content {
-    max-width: 1400px;
-    margin: auto;
-    padding: 40px;
+    width: 100%;
+    max-width: 1320px;
+    margin: 0 auto;
+    padding: 40px 32px 60px;
 }
 
+
+/* =========================================================
+   DASHBOARD HEADER
+========================================================= */
+
 .dashboard-content > h1 {
-    font-size: 42px;
-    color: #111827;
-    margin-bottom: 8px;
+    margin: 0;
+    font-size: 36px;
+    font-weight: 750;
+    letter-spacing: -0.8px;
+    color: #172033;
 }
 
 .subtitle {
-    color: #64748b;
-    margin-top: 8px;
-    font-size: 18px;
+    margin: 8px 0 0;
+    color: #718096;
+    font-size: 16px;
+    line-height: 1.6;
 }
 
 
-/* =========================
+/* =========================================================
    STATISTICS
-========================= */
+========================================================= */
 
 .stats-row {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 20px;
+    gap: 18px;
     margin-top: 30px;
 }
 
-
-/* =========================
-   EXAMS
-========================= */
-
-.exam-row {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 25px;
-    margin-top: 25px;
+.stats-row > * {
+    min-width: 0;
 }
 
+
+/* =========================================================
+   STAT CARD
+   Works with most existing stat-card structures
+========================================================= */
+
+.stat-card {
+    position: relative;
+    background: #ffffff;
+    border: 1px solid #e8edf5;
+    border-radius: 16px;
+    padding: 22px;
+    min-height: 120px;
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+    border-color: #d9e2f1;
+    box-shadow: 0 10px 28px rgba(15, 23, 42, 0.08);
+}
+
+.stat-card h3 {
+    margin: 0 0 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #718096;
+}
+
+.stat-card h2,
+.stat-card h1 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 750;
+    color: #172033;
+}
+
+
+/* =========================================================
+   SECTION TITLE
+========================================================= */
+
 .section-title {
-    margin-top: 50px;
+    margin-top: 46px;
+    margin-bottom: 18px;
 }
 
 .section-title h2 {
-    font-size: 28px;
-    color: #1e293b;
+    margin: 0;
+    font-size: 24px;
+    font-weight: 700;
+    color: #172033;
+}
+
+.section-title p {
+    margin-top: 6px;
+    color: #718096;
+    font-size: 14px;
 }
 
 
-/* =========================
+/* =========================================================
+   EXAM GRID
+========================================================= */
+
+.exam-row {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 22px;
+    margin-top: 20px;
+}
+
+
+/* =========================================================
+   EXAM CARD
+========================================================= */
+
+.exam-card {
+    position: relative;
+    width: 100%;
+    background: #ffffff;
+    border: 1px solid #e6ebf2;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 5px 20px rgba(15, 23, 42, 0.05);
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease,
+        border-color 0.25s ease;
+}
+
+.exam-card:hover {
+    transform: translateY(-5px);
+    border-color: #d8e2f1;
+    box-shadow: 0 16px 35px rgba(15, 23, 42, 0.10);
+}
+
+
+/* =========================================================
+   EXAM CARD TOP
+========================================================= */
+
+.exam-card-header {
+    padding: 22px 22px 18px;
+    border-bottom: 1px solid #edf1f6;
+}
+
+.exam-card-header h3 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 700;
+    color: #172033;
+}
+
+.exam-card-header p {
+    margin: 5px 0 0;
+    color: #718096;
+    font-size: 14px;
+}
+
+
+/* =========================================================
+   COMPLETED BADGE
+========================================================= */
+
+.completed,
+.exam-status {
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+    padding: 6px 11px;
+    border-radius: 999px;
+    background: #eafaf1;
+    color: #16834b;
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+
+
+/* =========================================================
+   EXAM INFORMATION
+========================================================= */
+
+.exam-details {
+    padding: 18px 22px;
+    display: grid;
+    gap: 10px;
+}
+
+
+/* Individual information item */
+
+.exam-detail {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    min-height: 66px;
+    padding: 13px 14px;
+    background: #f8fafc;
+    border: 1px solid #eef2f7;
+    border-radius: 12px;
+}
+
+
+/* Icon */
+
+.exam-detail-icon {
+    flex: 0 0 42px;
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #eef4ff;
+    color: #2563eb;
+    font-size: 18px;
+}
+
+
+/* Text */
+
+.exam-detail-content {
+    min-width: 0;
+}
+
+.exam-detail-content span {
+    display: block;
+    margin-bottom: 3px;
+    color: #7a8799;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.exam-detail-content strong {
+    display: block;
+    color: #202b3d;
+    font-size: 14px;
+    font-weight: 650;
+}
+
+
+/* =========================================================
+   ALTERNATIVE CLASS NAMES
+   Useful if your JSX uses separate classes
+========================================================= */
+
+.exam-info {
+    padding: 18px 22px;
+    display: grid;
+    gap: 10px;
+}
+
+.exam-info > div {
+    padding: 13px 14px;
+    background: #f8fafc;
+    border: 1px solid #eef2f7;
+    border-radius: 12px;
+}
+
+.exam-info span {
+    display: block;
+    margin-bottom: 4px;
+    color: #7a8799;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.exam-info p {
+    margin: 0;
+    color: #202b3d;
+    font-size: 14px;
+    font-weight: 650;
+}
+
+
+/* =========================================================
+   EXAM TITLE / SUBJECT
+========================================================= */
+
+.exam-title {
+    margin: 0;
+    font-size: 21px;
+    font-weight: 750;
+    color: #172033;
+}
+
+.exam-subject {
+    margin-top: 5px;
+    color: #718096;
+    font-size: 14px;
+}
+
+
+/* =========================================================
+   EXAM DATE / TIME / DURATION
+========================================================= */
+
+.exam-date,
+.exam-time,
+.exam-duration,
+.exam-questions,
+.exam-marks {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+
+/* =========================================================
+   VIEW RESULT BUTTON
+========================================================= */
+
+.dashboard-detail-btn {
+    width: calc(100% - 44px);
+    margin: 0 22px 22px;
+    padding: 13px 18px;
+
+    border: none;
+    border-radius: 11px;
+
+    background: #2563eb;
+    color: #ffffff;
+
+    font-size: 14px;
+    font-weight: 650;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.dashboard-detail-btn:hover {
+    background: #1d4ed8;
+    transform: translateY(-1px);
+    box-shadow: 0 7px 18px rgba(37, 99, 235, 0.22);
+}
+
+.dashboard-detail-btn:active {
+    transform: translateY(0);
+}
+
+
+/* =========================================================
    RESULT CARD
-========================= */
+========================================================= */
 
 .dashboard-result-card {
-    border: 1px solid #ddd;
-    background: white;
-    padding: 25px;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    margin-top: 20px;
-    border-radius: 18px;
+    justify-content: space-between;
+    gap: 20px;
+
+    width: 100%;
+    margin-top: 18px;
+    padding: 20px 22px;
+
+    background: #ffffff;
+    border: 1px solid #e6ebf2;
+    border-radius: 16px;
+
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.dashboard-result-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
 }
 
 .dashboard-result-right {
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 14px;
 }
 
 .dashboard-badge {
-    background: #030617;
-    color: white;
-    padding: 8px 15px;
-    border-radius: 10px;
-    font-size: 14px;
+    padding: 7px 12px;
+    border-radius: 8px;
+    background: #eef4ff;
+    color: #2563eb;
+    font-size: 13px;
+    font-weight: 650;
 }
 
 .dashboard-detail-btn {
-    padding: 10px 18px;
-    border: 1px solid #ddd;
-    background: white;
-    border-radius: 10px;
-    cursor: pointer;
+    white-space: nowrap;
 }
 
 
-/* =========================
-   TABLET
-========================= */
+/* =========================================================
+   EMPTY STATE
+========================================================= */
 
-@media (max-width: 1000px) {
+.no-exams {
+    margin-top: 25px;
+    padding: 50px 25px;
+    text-align: center;
+    background: #ffffff;
+    border: 1px dashed #d9e1ec;
+    border-radius: 16px;
+    color: #718096;
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 1100px) {
 
     .dashboard-content {
-        padding: 30px;
+        padding: 35px 25px 50px;
     }
 
     .stats-row {
@@ -113,113 +444,242 @@
     }
 
     .exam-row {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
+
 }
 
 
-/* =========================
+/* =========================================================
    MOBILE
-========================= */
+========================================================= */
 
 @media (max-width: 768px) {
 
     .dashboard {
-        width: 100%;
-        overflow-x: hidden;
+        min-height: 100vh;
     }
 
     .dashboard-content {
         width: 100%;
-        padding: 30px 20px;
+        padding: 24px 16px 40px;
     }
 
+
+    /* HEADER */
+
     .dashboard-content > h1 {
-        font-size: 34px;
-        line-height: 1.2;
+        font-size: 28px;
+        line-height: 1.25;
+        letter-spacing: -0.4px;
     }
 
     .subtitle {
-        font-size: 16px;
+        margin-top: 7px;
+        font-size: 14px;
         line-height: 1.5;
     }
 
 
-    /* STAT CARDS */
+    /* STATS */
 
     .stats-row {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 18px;
-        margin-top: 25px;
-        width: 100%;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+        margin-top: 22px;
+    }
+
+    .stat-card {
+        min-height: 105px;
+        padding: 17px;
+        border-radius: 14px;
+    }
+
+    .stat-card h3 {
+        font-size: 12px;
+    }
+
+    .stat-card h1,
+    .stat-card h2 {
+        font-size: 24px;
     }
 
 
-    /* EXAM CARDS */
-
-    .exam-row {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 20px;
-        width: 100%;
-        margin-top: 20px;
-    }
-
-
-    /* SECTIONS */
+    /* SECTION */
 
     .section-title {
-        margin-top: 40px;
+        margin-top: 35px;
+        margin-bottom: 15px;
     }
 
     .section-title h2 {
-        font-size: 25px;
+        font-size: 21px;
     }
 
 
-    /* RESULTS */
+    /* EXAMS */
+
+    .exam-row {
+        grid-template-columns: 1fr;
+        gap: 16px;
+        margin-top: 15px;
+    }
+
+
+    /* EXAM CARD */
+
+    .exam-card {
+        border-radius: 16px;
+    }
+
+
+    .exam-card-header {
+        padding: 18px 18px 15px;
+    }
+
+    .exam-card-header h3 {
+        font-size: 19px;
+    }
+
+
+    /* EXAM DETAILS */
+
+    .exam-details,
+    .exam-info {
+        padding: 14px 18px;
+        gap: 8px;
+    }
+
+    .exam-detail {
+        min-height: 58px;
+        padding: 10px 12px;
+        gap: 11px;
+        border-radius: 10px;
+    }
+
+    .exam-detail-icon {
+        width: 38px;
+        height: 38px;
+        flex-basis: 38px;
+        border-radius: 10px;
+        font-size: 16px;
+    }
+
+    .exam-detail-content span {
+        font-size: 11px;
+    }
+
+    .exam-detail-content strong {
+        font-size: 13px;
+    }
+
+
+    /* BUTTON */
+
+    .dashboard-detail-btn {
+        width: calc(100% - 36px);
+        margin: 0 18px 18px;
+        padding: 12px 16px;
+        border-radius: 10px;
+    }
+
+
+    /* RESULT */
 
     .dashboard-result-card {
-        width: 100%;
-        padding: 18px;
+        padding: 17px;
         flex-direction: column;
         align-items: flex-start;
         gap: 15px;
+        border-radius: 14px;
     }
 
     .dashboard-result-right {
         width: 100%;
         justify-content: space-between;
-        gap: 10px;
-        flex-wrap: wrap;
     }
 
-    .dashboard-detail-btn {
-        width: 100%;
-    }
 }
 
 
-/* =========================
+/* =========================================================
    SMALL MOBILE
-========================= */
+========================================================= */
 
 @media (max-width: 480px) {
 
     .dashboard-content {
-        padding: 25px 15px;
+        padding: 20px 13px 35px;
     }
 
     .dashboard-content > h1 {
-        font-size: 30px;
+        font-size: 25px;
     }
 
     .subtitle {
-        font-size: 15px;
+        font-size: 13px;
     }
 
-    .section-title {
-        margin-top: 35px;
+
+    /* TWO COMPACT STAT CARDS */
+
+    .stats-row {
+        gap: 10px;
     }
+
+    .stat-card {
+        padding: 14px;
+        min-height: 95px;
+    }
+
+    .stat-card h3 {
+        font-size: 11px;
+    }
+
+    .stat-card h1,
+    .stat-card h2 {
+        font-size: 22px;
+    }
+
+
+    /* SECTION */
+
+    .section-title {
+        margin-top: 30px;
+    }
+
+    .section-title h2 {
+        font-size: 20px;
+    }
+
+
+    /* EXAM */
+
+    .exam-row {
+        gap: 14px;
+    }
+
+    .exam-card-header {
+        padding: 16px;
+    }
+
+    .exam-card-header h3 {
+        font-size: 18px;
+    }
+
+    .exam-details,
+    .exam-info {
+        padding: 12px 16px;
+    }
+
+
+    /* RESULT BUTTON */
+
+    .dashboard-detail-btn {
+        width: calc(100% - 32px);
+        margin-left: 16px;
+        margin-right: 16px;
+        margin-bottom: 16px;
+    }
+
 }
