@@ -1,328 +1,437 @@
-* {
-  box-sizing: border-box;
-}
+/* =========================
+   NAVBAR
+========================= */
 
 .navbar {
-  width: 100%;
-  max-width: 1400px;
-  margin: 0 auto 30px;
-  padding: 18px 28px;
+    width: 100%;
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 22px 28px;
 
-  background: #ffffff;
-  border-radius: 18px;
+    background: #ffffff;
+    border-radius: 18px;
 
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 25px;
-
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
-}
-
-/* ================= LOGO ================= */
-
-.navbar-logo {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  flex-shrink: 0;
-}
-
-.logo-circle {
-  width: 58px;
-  height: 58px;
-
-  background: #2563eb;
-  border-radius: 50%;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  font-size: 28px;
-}
-
-.navbar-logo h2 {
-  margin: 0;
-  color: #1e293b;
-  font-size: 25px;
-  font-weight: 700;
-}
-
-.navbar-logo p {
-  margin: 3px 0 0;
-  color: #64748b;
-  font-size: 13px;
-}
-
-/* ================= LINKS ================= */
-
-.navbar-links {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-}
-
-.navbar-links a {
-  text-decoration: none;
-  color: #334155;
-
-  padding: 10px 18px;
-  border-radius: 10px;
-
-  font-size: 16px;
-  font-weight: 600;
-
-  transition: 0.2s;
-}
-
-.navbar-links a:hover {
-  background: #eff6ff;
-  color: #2563eb;
-}
-
-.navbar-links a.active {
-  background: #eff6ff;
-  color: #2563eb;
-}
-
-/* ================= PROFILE ================= */
-
-.navbar-profile {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-shrink: 0;
-}
-
-.profile-avatar {
-  width: 52px;
-  height: 52px;
-
-  border-radius: 50%;
-  background: #2563eb;
-  color: white;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  font-size: 22px;
-  font-weight: 600;
-}
-
-.profile-info {
-  min-width: 100px;
-}
-
-.profile-info h4 {
-  margin: 0;
-  color: #1e293b;
-  font-size: 16px;
-  font-weight: 600;
-}
-
-.profile-info span {
-  display: block;
-  margin-top: 3px;
-
-  color: #64748b;
-  font-size: 13px;
-  text-transform: capitalize;
-}
-
-.logout-btn {
-  border: none;
-  background: #ef4444;
-  color: white;
-
-  padding: 11px 18px;
-  border-radius: 10px;
-
-  font-size: 14px;
-  font-weight: 600;
-
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-.logout-btn:hover {
-  background: #dc2626;
-  transform: translateY(-1px);
-}
-
-/* ================= TABLET ================= */
-
-@media (max-width: 1050px) {
-
-  .navbar {
-    padding: 18px 20px;
-    gap: 15px;
-  }
-
-  .navbar-logo h2 {
-    font-size: 21px;
-  }
-
-  .navbar-logo p {
-    font-size: 12px;
-  }
-
-  .logo-circle {
-    width: 50px;
-    height: 50px;
-    font-size: 24px;
-  }
-
-  .navbar-links a {
-    padding: 9px 12px;
-    font-size: 15px;
-  }
-
-  .profile-info {
-    display: none;
-  }
-
-}
-
-/* ================= MOBILE ================= */
-
-@media (max-width: 768px) {
-
-  .navbar {
-    width: calc(100% - 24px);
-
-    margin: 12px auto 25px;
-    padding: 16px;
-
-    border-radius: 16px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
 
     display: grid;
     grid-template-columns: 1fr auto;
-    gap: 18px;
-  }
+    grid-template-areas:
+        "logo profile"
+        "links links";
 
-  /* LOGO */
+    gap: 20px;
 
-  .navbar-logo {
-    gap: 10px;
-  }
+    align-items: center;
+}
 
-  .logo-circle {
-    width: 48px;
-    height: 48px;
-    font-size: 23px;
-  }
 
-  .navbar-logo h2 {
-    font-size: 19px;
-  }
+/* =========================
+   LOGO
+========================= */
 
-  .navbar-logo p {
-    font-size: 11px;
-  }
+.navbar-logo {
+    grid-area: logo;
 
-  /* PROFILE */
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
 
-  .navbar-profile {
-    gap: 8px;
-  }
+.logo-circle {
+    width: 80px;
+    height: 80px;
 
-  .profile-avatar {
-    width: 46px;
-    height: 46px;
-    font-size: 20px;
-  }
+    border-radius: 50%;
 
-  .profile-info {
-    display: block;
-    min-width: auto;
-  }
-
-  .profile-info h4 {
-    font-size: 14px;
-    white-space: nowrap;
-  }
-
-  .profile-info span {
-    font-size: 11px;
-  }
-
-  .logout-btn {
-    padding: 9px 12px;
-    font-size: 13px;
-  }
-
-  /* LINKS */
-
-  .navbar-links {
-    grid-column: 1 / -1;
-
-    width: 100%;
+    background: #2563eb;
 
     display: flex;
     justify-content: center;
+    align-items: center;
 
-    border-top: 1px solid #e5e7eb;
-    padding-top: 12px;
-  }
+    font-size: 38px;
 
-  .navbar-links a {
-    flex: 1;
-
-    text-align: center;
-
-    padding: 9px 8px;
-
-    font-size: 15px;
-    border-radius: 9px;
-  }
-
+    flex-shrink: 0;
 }
 
-/* ================= SMALL MOBILE ================= */
+.navbar-logo h2 {
+    margin: 0;
+
+    color: #1e293b;
+
+    font-size: 30px;
+    font-weight: 700;
+}
+
+.navbar-logo p {
+    margin-top: 3px;
+
+    color: #64748b;
+
+    font-size: 16px;
+}
+
+
+/* =========================
+   PROFILE
+========================= */
+
+.navbar-profile {
+    grid-area: profile;
+
+    display: flex;
+    align-items: center;
+    gap: 14px;
+
+    white-space: nowrap;
+}
+
+.profile-avatar {
+    width: 62px;
+    height: 62px;
+
+    border-radius: 50%;
+
+    background: #2563eb;
+    color: white;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 27px;
+    font-weight: 600;
+
+    flex-shrink: 0;
+}
+
+.profile-info {
+    min-width: 0;
+}
+
+.profile-info h4 {
+    margin: 0;
+
+    color: #1e293b;
+
+    font-size: 21px;
+    font-weight: 600;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.profile-info span {
+    display: block;
+
+    margin-top: 3px;
+
+    color: #64748b;
+
+    font-size: 15px;
+
+    text-transform: capitalize;
+}
+
+
+/* =========================
+   LOGOUT
+========================= */
+
+.logout-btn {
+    border: none;
+
+    background: #ef4444;
+    color: white;
+
+    padding: 13px 22px;
+
+    border-radius: 10px;
+
+    font-size: 16px;
+
+    cursor: pointer;
+
+    transition: 0.3s;
+
+    flex-shrink: 0;
+}
+
+.logout-btn:hover {
+    background: #dc2626;
+    transform: translateY(-2px);
+}
+
+
+/* =========================
+   NAVIGATION LINKS
+========================= */
+
+.navbar-links {
+    grid-area: links;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    gap: 45px;
+
+    border-top: 1px solid #e5e7eb;
+
+    padding-top: 18px;
+}
+
+.navbar-links a {
+    text-decoration: none;
+
+    color: #1e293b;
+
+    font-size: 18px;
+    font-weight: 500;
+
+    padding: 10px 25px;
+
+    border-radius: 10px;
+
+    transition: 0.3s;
+}
+
+.navbar-links a:hover {
+    color: #2563eb;
+    background: #eff6ff;
+}
+
+.navbar-links a.active {
+    color: #2563eb;
+
+    background: #eff6ff;
+
+    font-weight: 600;
+}
+
+
+/* =========================
+   TABLET
+========================= */
+
+@media (max-width: 768px) {
+
+    .navbar {
+        width: calc(100% - 30px);
+
+        margin: 15px auto;
+
+        padding: 20px;
+
+        grid-template-columns: 1fr;
+        grid-template-areas:
+            "logo"
+            "profile"
+            "links";
+
+        gap: 18px;
+    }
+
+
+    /* LOGO */
+
+    .navbar-logo {
+        justify-content: flex-start;
+    }
+
+    .logo-circle {
+        width: 62px;
+        height: 62px;
+
+        font-size: 30px;
+    }
+
+    .navbar-logo h2 {
+        font-size: 25px;
+    }
+
+    .navbar-logo p {
+        font-size: 14px;
+    }
+
+
+    /* PROFILE */
+
+    .navbar-profile {
+        width: 100%;
+
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+
+        gap: 12px;
+    }
+
+    .profile-avatar {
+        width: 58px;
+        height: 58px;
+
+        font-size: 25px;
+    }
+
+    .profile-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .profile-info h4 {
+        font-size: 18px;
+    }
+
+    .profile-info span {
+        font-size: 14px;
+    }
+
+    .logout-btn {
+        padding: 11px 18px;
+
+        font-size: 15px;
+    }
+
+
+    /* LINKS */
+
+    .navbar-links {
+        width: 100%;
+
+        justify-content: center;
+
+        gap: 10px;
+
+        padding-top: 15px;
+    }
+
+    .navbar-links a {
+        flex: 1;
+
+        text-align: center;
+
+        font-size: 17px;
+
+        padding: 11px 15px;
+    }
+}
+
+
+/* =========================
+   SMALL MOBILE
+========================= */
 
 @media (max-width: 480px) {
 
-  .navbar {
-    width: calc(100% - 16px);
-    padding: 14px;
-    margin-top: 8px;
-  }
+    .navbar {
+        width: calc(100% - 24px);
 
-  .navbar-logo h2 {
-    font-size: 17px;
-  }
+        padding: 16px;
 
-  .navbar-logo p {
-    font-size: 10px;
-  }
+        border-radius: 16px;
 
-  .logo-circle {
-    width: 44px;
-    height: 44px;
-    font-size: 21px;
-  }
+        gap: 15px;
+    }
 
-  .profile-avatar {
-    width: 42px;
-    height: 42px;
-    font-size: 18px;
-  }
 
-  .profile-info {
-    display: none;
-  }
+    /* LOGO */
 
-  .logout-btn {
-    padding: 8px 11px;
-    font-size: 12px;
-  }
+    .logo-circle {
+        width: 55px;
+        height: 55px;
 
-  .navbar-links a {
-    font-size: 14px;
-    padding: 9px 5px;
-  }
+        font-size: 27px;
+    }
 
+    .navbar-logo {
+        gap: 10px;
+    }
+
+    .navbar-logo h2 {
+        font-size: 22px;
+    }
+
+    .navbar-logo p {
+        font-size: 12px;
+    }
+
+
+    /* PROFILE */
+
+    .navbar-profile {
+        gap: 9px;
+    }
+
+    .profile-avatar {
+        width: 50px;
+        height: 50px;
+
+        font-size: 22px;
+    }
+
+    .profile-info h4 {
+        font-size: 16px;
+    }
+
+    .profile-info span {
+        font-size: 13px;
+    }
+
+    .logout-btn {
+        padding: 10px 14px;
+
+        font-size: 14px;
+    }
+
+
+    /* LINKS */
+
+    .navbar-links {
+        gap: 5px;
+    }
+
+    .navbar-links a {
+        font-size: 15px;
+
+        padding: 10px 8px;
+    }
+}
+
+
+/* =========================
+   VERY SMALL PHONES
+========================= */
+
+@media (max-width: 360px) {
+
+    .navbar {
+        padding: 13px;
+    }
+
+    .navbar-logo h2 {
+        font-size: 20px;
+    }
+
+    .navbar-logo p {
+        font-size: 11px;
+    }
+
+    .profile-avatar {
+        width: 45px;
+        height: 45px;
+    }
+
+    .profile-info h4 {
+        font-size: 14px;
+    }
+
+    .profile-info span {
+        font-size: 12px;
+    }
+
+    .logout-btn {
+        padding: 9px 11px;
+        font-size: 13px;
+    }
 }
