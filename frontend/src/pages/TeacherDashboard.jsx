@@ -9,67 +9,16 @@ function TeacherDashboard() {
     const [exams, setExams] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    const [totalStudents, setTotalStudents] = useState(0);
-    const [totalAttempts, setTotalAttempts] = useState(0);
-
     const token = localStorage.getItem("token");
 
-    // IMPORTANT:
-    // Change this URL to your deployed BACKEND URL.
-   const API_URL = "https://ai-exam-portal-backend.onrender.com/api";
-
     useEffect(() => {
-        fetchDashboard();
         fetchExams();
     }, []);
-
-    /* =========================
-       FETCH DASHBOARD STATS
-    ========================= */
-
-    const fetchDashboard = async () => {
-        try {
-            const response = await axios.get(
-                `${API_URL}/dashboard/teacher`,
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
-            );
-
-            const data = response.data;
-
-            console.log("Teacher Dashboard:", data);
-
-            setTotalStudents(
-                data.totalStudents ??
-                data.students ??
-                0
-            );
-
-            setTotalAttempts(
-                data.totalAttempts ??
-                data.attempts ??
-                0
-            );
-
-        } catch (error) {
-            console.log(
-                "Dashboard error:",
-                error.response?.data || error.message
-            );
-        }
-    };
-
-    /* =========================
-       FETCH TEACHER EXAMS
-    ========================= */
 
     const fetchExams = async () => {
         try {
             const response = await axios.get(
-                `${API_URL}/exams/teacher`,
+                "https://YOUR-BACKEND-URL.onrender.com/api/exams",
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -77,37 +26,30 @@ function TeacherDashboard() {
                 }
             );
 
-            console.log("Teacher Exams:", response.data);
+            console.log("ALL EXAMS:", response.data);
 
             const examData =
-                response.data?.exams ||
-                response.data?.data ||
-                response.data ||
-                [];
+                response.data.exams ||
+                response.data.data ||
+                response.data;
 
             setExams(Array.isArray(examData) ? examData : []);
 
         } catch (error) {
-            console.log(
-                "Exam error:",
+            console.error(
+                "Error fetching exams:",
                 error.response?.data || error.message
             );
-
-            setExams([]);
         } finally {
             setLoading(false);
         }
     };
 
-    /* =========================
-       LOADING
-    ========================= */
-
     if (loading) {
         return (
             <div className="loading-screen">
                 <div className="loader"></div>
-                <h3>Loading Teacher Dashboard...</h3>
+                <h3>Loading...</h3>
             </div>
         );
     }
@@ -115,8 +57,7 @@ function TeacherDashboard() {
     return (
         <div className="teacher-dashboard">
 
-            {/* ================= HEADER ================= */}
-
+            {/* HEADER */}
             <div className="dashboard-header">
 
                 <div>
@@ -137,8 +78,7 @@ function TeacherDashboard() {
             </div>
 
 
-            {/* ================= STATS ================= */}
-
+            {/* STATS */}
             <div className="stats-grid">
 
                 <div className="stat-card">
@@ -148,40 +88,26 @@ function TeacherDashboard() {
 
                 <div className="stat-card">
                     <h3>Total Students</h3>
-                    <h2>{totalStudents}</h2>
+                    <h2>1</h2>
                 </div>
 
                 <div className="stat-card">
                     <h3>Total Attempts</h3>
-                    <h2>{totalAttempts}</h2>
+                    <h2>5</h2>
                 </div>
 
             </div>
 
 
-            {/* ================= EXAMS ================= */}
-
+            {/* EXAMS */}
             <div className="exam-section">
 
                 <h2>Your Exams</h2>
 
                 {exams.length === 0 ? (
-
                     <div className="no-exams">
-                        <h3>No exams found</h3>
-
-                        <p>
-                            Create your first exam to get started.
-                        </p>
-
-                        <button
-                            className="create-btn"
-                            onClick={() => navigate("/create-exam")}
-                        >
-                            + Create Exam
-                        </button>
+                        No exams found.
                     </div>
-
                 ) : (
 
                     <div className="exam-slider">
@@ -193,42 +119,32 @@ function TeacherDashboard() {
                                 key={exam._id}
                             >
 
-                                {/* ================= EXAM INFO ================= */}
-
+                                {/* EXAM INFORMATION */}
                                 <div className="exam-info">
 
-                                    <div className="exam-field">
+                                    <div>
                                         <span>EXAM</span>
-
                                         <h3>
-                                            {exam.title ||
-                                                exam.name ||
-                                                "Untitled Exam"}
+                                            {exam.title || exam.name}
                                         </h3>
                                     </div>
 
-
-                                    <div className="exam-field">
+                                    <div>
                                         <span>SUBJECT</span>
-
                                         <p>
                                             {exam.subject || "N/A"}
                                         </p>
                                     </div>
 
-
-                                    <div className="exam-field">
+                                    <div>
                                         <span>DURATION</span>
-
                                         <p>
                                             {exam.duration || 0} min
                                         </p>
                                     </div>
 
-
-                                    <div className="exam-field">
+                                    <div>
                                         <span>TOTAL MARKS</span>
-
                                         <p>
                                             {exam.totalMarks || 0}
                                         </p>
@@ -237,8 +153,7 @@ function TeacherDashboard() {
                                 </div>
 
 
-                                {/* ================= ACTIONS ================= */}
-
+                                {/* ACTIONS */}
                                 <div className="actions-cell">
 
                                     <button
@@ -252,7 +167,6 @@ function TeacherDashboard() {
                                         Add Questions
                                     </button>
 
-
                                     <button
                                         className="action-btn purple"
                                         onClick={() =>
@@ -263,7 +177,6 @@ function TeacherDashboard() {
                                     >
                                         AI Generate
                                     </button>
-
 
                                     <button
                                         className="action-btn orange"
@@ -276,7 +189,6 @@ function TeacherDashboard() {
                                         Upload Material
                                     </button>
 
-
                                     <button
                                         className="action-btn blue"
                                         onClick={() =>
@@ -288,11 +200,8 @@ function TeacherDashboard() {
                                         Manage
                                     </button>
 
-
-                                    {/* RESULTS */}
-
                                     <button
-                                        className="action-btn blue result-btn"
+                                        className="action-btn blue"
                                         onClick={() =>
                                             navigate(
                                                 `/teacher-results/${exam._id}`
@@ -301,9 +210,6 @@ function TeacherDashboard() {
                                     >
                                         Results
                                     </button>
-
-
-                                    {/* ANALYTICS */}
 
                                     <button
                                         className="action-btn analytics"
