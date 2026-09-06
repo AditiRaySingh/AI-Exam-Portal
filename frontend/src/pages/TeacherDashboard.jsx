@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import Navbar from "../components/Navbar";
 import "../styles/TeacherDashboard.css";
 
 function TeacherDashboard() {
@@ -14,228 +15,222 @@ function TeacherDashboard() {
     useEffect(() => {
         fetchExams();
     }, []);
-const fetchExams = async () => {
-    try {
-        const response = await axios.get(
-            "https://ai-exam-portal-1-vhhx.onrender.com/api/exams/teacher",
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            }
-        );
 
-        console.log("TEACHER EXAMS:", response.data);
+    const fetchExams = async () => {
+        try {
+            const response = await axios.get(
+                "https://ai-exam-portal-1-vhhx.onrender.com/api/exams/teacher",
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
 
-        if (response.data.success) {
             setExams(response.data.exams || []);
-        } else {
+        } catch (error) {
+            console.error(error);
             setExams([]);
+        } finally {
+            setLoading(false);
         }
-
-    } catch (error) {
-        console.error(
-            "FETCH EXAMS ERROR:",
-            error.response?.status,
-            error.response?.data || error.message
-        );
-
-        setExams([]);
-    } finally {
-        setLoading(false);
-    }
-};
+    };
 
     if (loading) {
         return (
-            <div className="loading-screen">
-                <div className="loader"></div>
-                <h3>Loading...</h3>
-            </div>
+            <>
+                <Navbar />
+
+                <div className="loading-screen">
+                    <div className="loader"></div>
+                    <h3>Loading...</h3>
+                </div>
+            </>
         );
     }
 
     return (
-        <div className="teacher-dashboard">
+        <>
+            {/* SAME NAVBAR AS STUDENT DASHBOARD */}
+            <Navbar />
 
-            {/* HEADER */}
-            <div className="dashboard-header">
+            <div className="teacher-dashboard">
 
-                <div>
-                    <h1>Teacher Dashboard</h1>
-
-                    <p>
-                        Manage Exams, Questions and Student Performance
-                    </p>
-                </div>
-
-                <button
-                    className="create-btn"
-                    onClick={() => navigate("/create-exam")}
-                >
-                    + Create Exam
-                </button>
-
-            </div>
-
-
-            {/* STATS */}
-            <div className="stats-grid">
-
-                <div className="stat-card">
-                    <h3>Total Exams</h3>
-                    <h2>{exams.length}</h2>
-                </div>
-
-                <div className="stat-card">
-                    <h3>Total Students</h3>
-                    <h2>1</h2>
-                </div>
-
-                <div className="stat-card">
-                    <h3>Total Attempts</h3>
-                    <h2>5</h2>
-                </div>
-
-            </div>
-
-
-            {/* EXAMS */}
-            <div className="exam-section">
-
-                <h2>Your Exams</h2>
-
-                {exams.length === 0 ? (
-                    <div className="no-exams">
-                        No exams found.
+                {/* HEADER */}
+                <div className="dashboard-header">
+                    <div>
+                        <h1>Teacher Dashboard</h1>
+                        <p>
+                            Manage Exams, Questions and Student Performance
+                        </p>
                     </div>
-                ) : (
 
-                    <div className="exam-slider">
+                    <button
+                        className="create-btn"
+                        onClick={() => navigate("/create-exam")}
+                    >
+                        + Create Exam
+                    </button>
+                </div>
 
-                        {exams.map((exam) => (
+                {/* STATS */}
+                <div className="stats-grid">
 
-                            <div
-                                className="exam-card"
-                                key={exam._id}
-                            >
+                    <div className="stat-card">
+                        <h3>Total Exams</h3>
+                        <h2>{exams.length}</h2>
+                    </div>
 
-                                {/* EXAM INFORMATION */}
-                                <div className="exam-info">
+                    <div className="stat-card">
+                        <h3>Total Students</h3>
+                        <h2>1</h2>
+                    </div>
 
-                                    <div>
-                                        <span>EXAM</span>
-                                        <h3>
-                                            {exam.title || exam.name}
-                                        </h3>
+                    <div className="stat-card">
+                        <h3>Total Attempts</h3>
+                        <h2>5</h2>
+                    </div>
+
+                </div>
+
+                {/* EXAMS */}
+                <div className="exam-section">
+
+                    <h2>Your Exams</h2>
+
+                    {exams.length === 0 ? (
+                        <div className="no-exams">
+                            No exams found.
+                        </div>
+                    ) : (
+
+                        <div className="exam-slider">
+
+                            {exams.map((exam) => (
+
+                                <div
+                                    className="exam-card"
+                                    key={exam._id}
+                                >
+
+                                    <div className="exam-info">
+
+                                        <div>
+                                            <span>EXAM</span>
+
+                                            <h3>
+                                                {exam.title || exam.name}
+                                            </h3>
+                                        </div>
+
+                                        <div>
+                                            <span>SUBJECT</span>
+
+                                            <p>
+                                                {exam.subject || "N/A"}
+                                            </p>
+                                        </div>
+
+                                        <div>
+                                            <span>DURATION</span>
+
+                                            <p>
+                                                {exam.duration || 0} min
+                                            </p>
+                                        </div>
+
+                                        <div>
+                                            <span>TOTAL MARKS</span>
+
+                                            <p>
+                                                {exam.totalMarks || 0}
+                                            </p>
+                                        </div>
+
                                     </div>
 
-                                    <div>
-                                        <span>SUBJECT</span>
-                                        <p>
-                                            {exam.subject || "N/A"}
-                                        </p>
-                                    </div>
+                                    <div className="actions-cell">
 
-                                    <div>
-                                        <span>DURATION</span>
-                                        <p>
-                                            {exam.duration || 0} min
-                                        </p>
-                                    </div>
+                                        <button
+                                            className="action-btn blue"
+                                            onClick={() =>
+                                                navigate(
+                                                    `/add-question/${exam._id}`
+                                                )
+                                            }
+                                        >
+                                            Add Questions
+                                        </button>
 
-                                    <div>
-                                        <span>TOTAL MARKS</span>
-                                        <p>
-                                            {exam.totalMarks || 0}
-                                        </p>
+                                        <button
+                                            className="action-btn purple"
+                                            onClick={() =>
+                                                navigate(
+                                                    `/ai-generate/${exam._id}`
+                                                )
+                                            }
+                                        >
+                                            AI Generate
+                                        </button>
+
+                                        <button
+                                            className="action-btn orange"
+                                            onClick={() =>
+                                                navigate(
+                                                    `/generate-material/${exam._id}`
+                                                )
+                                            }
+                                        >
+                                            Upload Material
+                                        </button>
+
+                                        <button
+                                            className="action-btn blue"
+                                            onClick={() =>
+                                                navigate(
+                                                    `/questions/${exam._id}`
+                                                )
+                                            }
+                                        >
+                                            Manage
+                                        </button>
+
+                                        <button
+                                            className="action-btn blue"
+                                            onClick={() =>
+                                                navigate(
+                                                    `/teacher-results/${exam._id}`
+                                                )
+                                            }
+                                        >
+                                            Results
+                                        </button>
+
+                                        <button
+                                            className="action-btn analytics"
+                                            onClick={() =>
+                                                navigate(
+                                                    `/teacher-analytics/${exam._id}`
+                                                )
+                                            }
+                                        >
+                                            📊 Analytics
+                                        </button>
+
                                     </div>
 
                                 </div>
 
+                            ))}
 
-                                {/* ACTIONS */}
-                                <div className="actions-cell">
+                        </div>
 
-                                    <button
-                                        className="action-btn blue"
-                                        onClick={() =>
-                                            navigate(
-                                                `/add-question/${exam._id}`
-                                            )
-                                        }
-                                    >
-                                        Add Questions
-                                    </button>
+                    )}
 
-                                    <button
-                                        className="action-btn purple"
-                                        onClick={() =>
-                                            navigate(
-                                                `/ai-generate/${exam._id}`
-                                            )
-                                        }
-                                    >
-                                        AI Generate
-                                    </button>
-
-                                    <button
-                                        className="action-btn orange"
-                                        onClick={() =>
-                                            navigate(
-                                                `/generate-material/${exam._id}`
-                                            )
-                                        }
-                                    >
-                                        Upload Material
-                                    </button>
-
-                                    <button
-                                        className="action-btn blue"
-                                        onClick={() =>
-                                            navigate(
-                                                `/questions/${exam._id}`
-                                            )
-                                        }
-                                    >
-                                        Manage
-                                    </button>
-
-                                    <button
-                                        className="action-btn blue"
-                                        onClick={() =>
-                                            navigate(
-                                                `/teacher-results/${exam._id}`
-                                            )
-                                        }
-                                    >
-                                        Results
-                                    </button>
-
-                                    <button
-                                        className="action-btn analytics"
-                                        onClick={() =>
-                                            navigate(
-                                                `/teacher-analytics/${exam._id}`
-                                            )
-                                        }
-                                    >
-                                        📊 Analytics
-                                    </button>
-
-                                </div>
-
-                            </div>
-
-                        ))}
-
-                    </div>
-
-                )}
+                </div>
 
             </div>
-
-        </div>
+        </>
     );
 }
 
