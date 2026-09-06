@@ -4,713 +4,851 @@ import api from "../services/api";
 import "../styles/teacherAnalytics.css";
 
 import {
-  ResponsiveContainer,
-  BarChart,
-  Bar,
-  PieChart,
-  Pie,
-  Cell,
-  Tooltip,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Legend
+    ResponsiveContainer,
+    BarChart,
+    Bar,
+    PieChart,
+    Pie,
+    Cell,
+    Tooltip,
+    XAxis,
+    YAxis,
+    CartesianGrid,
+    Legend
 } from "recharts";
 
 import {
-  FaUsers,
-  FaTrophy,
-  FaChartLine,
-  FaCheckCircle,
-  FaTimesCircle
+    FaUsers,
+    FaTrophy,
+    FaChartLine,
+    FaCheckCircle,
+    FaTimesCircle
 } from "react-icons/fa";
 
 import { motion } from "framer-motion";
 
 function TeacherAnalytics() {
 
-  const { examId } = useParams();
+    const { examId } = useParams();
 
-  const [data, setData] = useState(null);
+    const [data, setData] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [search, setSearch] = useState("");
 
-  const [loading, setLoading] = useState(true);
+    // ==========================
+    // FETCH ANALYTICS
+    // ==========================
 
-  const [search, setSearch] = useState("");
+    useEffect(() => {
+        fetchAnalytics();
+    }, [examId]);
 
-  useEffect(() => {
-    fetchAnalytics();
-  }, []);
+    const fetchAnalytics = async () => {
 
-  const fetchAnalytics = async () => {
+        try {
 
-    try {
+            setLoading(true);
 
-      const token = localStorage.getItem("token");
+            const token = localStorage.getItem("token");
 
-      const res = await api.get(
+            if (!token) {
+                console.error("Token not found");
+                setData(null);
+                return;
+            }
 
-        `/attempt/teacher/${examId}`,
+            if (!examId) {
+                console.error("Exam ID not found");
+                setData(null);
+                return;
+            }
+
+            const res = await api.get(
+                `/attempt/teacher/${examId}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+
+            console.log("Analytics Response:", res.data);
+
+            setData(res.data);
+
+        } catch (err) {
+
+            console.error(
+                "Analytics Error:",
+                err.response?.data || err.message
+            );
+
+            setData(null);
+
+        } finally {
+
+            setLoading(false);
+
+        }
+    };
+
+
+    // ==========================
+    // LOADING
+    // ==========================
+
+    if (loading) {
+
+        return (
+            <div className="loading">
+                <h2>Loading Analytics...</h2>
+            </div>
+        );
+
+    }
+
+
+    // ==========================
+    // NO DATA
+    // ==========================
+
+    if (!data) {
+
+        return (
+            <div className="teacher-dashboard">
+                <div className="no-exams">
+
+                    <h2>
+                        No Analytics Available
+                    </h2>
+
+                    <p>
+                        Unable to load analytics for this exam.
+                    </p>
+
+                </div>
+            </div>
+        );
+
+    }
+
+
+    // ==========================
+    // SAFE DATA
+    // ==========================
+
+    const analytics = data.analytics || {
+
+        totalAttempts: 0,
+        averageScore: 0,
+        highestScore: 0,
+        passCount: 0,
+        failCount: 0
+
+    };
+
+
+    const leaderboard = Array.isArray(data.leaderboard)
+        ? data.leaderboard
+        : [];
+
+
+    const results = Array.isArray(data.results)
+        ? data.results
+        : [];
+
+
+    // ==========================
+    // SEARCH RESULTS
+    // ==========================
+
+    const filteredResults = results.filter((student) => {
+
+        const studentName =
+            student.studentId?.name || "";
+
+        return studentName
+            .toLowerCase()
+            .includes(search.toLowerCase());
+
+    });
+
+
+    // ==========================
+    // PIE DATA
+    // ==========================
+
+    const pieData = [
 
         {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
+            name: "Pass",
+            value: Number(analytics.passCount) || 0
+        },
+
+        {
+            name: "Fail",
+            value: Number(analytics.failCount) || 0
         }
 
-      );
+    ];
 
-      console.log("Analytics:", res.data);
 
-      setData(res.data);
+    const COLORS = [
+        "#22c55e",
+        "#ef4444"
+    ];
 
-    }
 
-    catch (err) {
+    // ==========================
+    // BAR DATA
+    // ==========================
 
-      console.log(err);
+    const barData = leaderboard.map((student) => ({
 
-    }
+        name:
+            student.studentName ||
+            student.studentId?.name ||
+            "Student",
 
-    finally {
+        Score:
+            Number(student.score) || 0
 
-      setLoading(false);
+    }));
 
-    }
 
-  };
+    // ==========================
+    // EXAM DATA
+    // ==========================
 
-  if (loading) {
+    const exam = data.exam || {};
+
+    const examTitle =
+        exam.title ||
+        exam.name ||
+        "Exam Analytics";
+
+    const examSubject =
+        exam.subject ||
+        "N/A";
+
+
+    // ==========================
+    // JSX
+    // ==========================
 
     return (
 
-      <h2 className="loading">
+        <div className="teacher-dashboard">
 
-        Loading Analytics...
+            {/* ==========================
+                HEADER
+            ========================== */}
 
-      </h2>
+            <div className="dashboard-header">
 
-    );
+                <div>
 
-  }
+                    <h1>
+                        📊 Teacher Analytics Dashboard
+                    </h1>
 
-  if (!data) {
+                    <h3>
+                        {examTitle}
+                    </h3>
 
-    return (
+                    <p>
+                        Subject: {examSubject}
+                    </p>
 
-      <h2>
+                </div>
 
-        No Analytics Available
+            </div>
 
-      </h2>
 
-    );
+            {/* ==========================
+                STATS
+            ========================== */}
 
-  }
+            <div className="stats-grid">
 
-const analytics = data.analytics || {
-    totalAttempts: 0,
-    averageScore: 0,
-    highestScore: 0,
-    passCount: 0,
-    failCount: 0
-};
 
-const leaderboard = data.leaderboard || [];
-const results = data.results || [];
-  const filteredResults = results.filter((student) =>
+                {/* TOTAL ATTEMPTS */}
 
-  student.studentId?.name
-    ?.toLowerCase()
-    .includes(search.toLowerCase())
+                <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    className="stat-card"
+                >
 
-);
+                    <FaUsers className="stat-icon" />
 
-  const pieData = [
+                    <h3>
+                        Total Attempts
+                    </h3>
 
-    {
+                    <h1>
+                        {analytics.totalAttempts}
+                    </h1>
 
-      name: "Pass",
+                </motion.div>
 
-      value: analytics.passCount
 
-    },
+                {/* AVERAGE SCORE */}
 
-    {
+                <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    className="stat-card"
+                >
 
-      name: "Fail",
-
-      value: analytics.failCount
-
-    }
-
-  ];
-
-  const COLORS = [
-
-    "#22c55e",
-
-    "#ef4444"
-
-  ];
-
- 
-
-
-  const barData = leaderboard.map(student => ({
-  name: student.studentName,
-  Score: student.score
-}));
-
-return (
-
-  <div className="teacher-dashboard">
-
-    <div className="dashboard-header">
-
-      <h1>
-
-        📊 Teacher Analytics Dashboard
-
-      </h1>
-
-      <h3>
-
-        {data.exam.title}
-
-      </h3>
-
-      <p>
-
-        Subject : {data.exam.subject}
-
-      </p>
-
-    </div>
-
-    <div className="stats-grid">
-
-      <motion.div
-
-        whileHover={{ scale: 1.05 }}
-
-        className="stat-card"
-
-      >
-
-        <FaUsers className="stat-icon" />
-
-        <h3>Total Attempts</h3>
-
-        <h1>
-
-          {analytics.totalAttempts}
-
-        </h1>
-
-      </motion.div>
-
-      <motion.div
-
-        whileHover={{ scale: 1.05 }}
-
-        className="stat-card"
-
-      >
-
-        <FaChartLine className="stat-icon blue" />
-
-        <h3>Average Score</h3>
-
-        <h1>
-
-          {analytics.averageScore}
-
-        </h1>
-
-      </motion.div>
-
-      <motion.div
-
-        whileHover={{ scale: 1.05 }}
-
-        className="stat-card"
-
-      >
-
-        <FaTrophy className="stat-icon gold" />
-
-        <h3>Highest Score</h3>
-
-        <h1>
-
-          {analytics.highestScore}
-
-        </h1>
-
-      </motion.div>
-
-      <motion.div
-
-        whileHover={{ scale: 1.05 }}
-
-        className="stat-card"
-
-      >
-
-        <FaCheckCircle
-
-          className="stat-icon green"
-
-        />
-
-        <h3>Pass Students</h3>
-
-        <h1>
-
-          {analytics.passCount}
-
-        </h1>
-
-      </motion.div>
-
-      <motion.div
-
-        whileHover={{ scale: 1.05 }}
-
-        className="stat-card"
-
-      >
-
-        <FaTimesCircle
-
-          className="stat-icon red"
-
-        />
-
-        <h3>Fail Students</h3>
-
-        <h1>
-
-          {analytics.failCount}
-
-        </h1>
-
-      </motion.div>
-
-    </div>
-
-          <div className="charts-grid">
-
-        {/* ==========================
-            BAR CHART
-        ========================== */}
-
-        <motion.div
-
-          className="chart-card"
-
-          initial={{ opacity: 0 }}
-
-          animate={{ opacity: 1 }}
-
-        >
-
-          <h2>
-
-            📊 Student Score Analysis
-
-          </h2>
-
-          <ResponsiveContainer
-            width="100%"
-            height={350}
-          >
-
-            <BarChart data={barData}>
-
-              <CartesianGrid
-                strokeDasharray="3 3"
-              />
-
-              <XAxis
-                dataKey="name"
-              />
-
-              <YAxis />
-
-              <Tooltip />
-
-              <Legend />
-
-              <Bar
-                dataKey="Score"
-                fill="#4f46e5"
-                radius={[8,8,0,0]}
-              />
-
-            </BarChart>
-
-          </ResponsiveContainer>
-
-        </motion.div>
-
-        {/* ==========================
-            PIE CHART
-        ========================== */}
-
-        <motion.div
-
-          className="chart-card"
-
-          initial={{ opacity: 0 }}
-
-          animate={{ opacity: 1 }}
-
-        >
-
-          <h2>
-
-            🥧 Pass vs Fail
-
-          </h2>
-
-          <ResponsiveContainer
-            width="100%"
-            height={350}
-          >
-
-            <PieChart>
-
-              <Pie
-
-                data={pieData}
-
-                dataKey="value"
-
-                nameKey="name"
-
-                outerRadius={120}
-
-                innerRadius={60}
-
-                label
-
-              >
-
-                {
-
-                  pieData.map((entry,index)=>(
-
-                    <Cell
-
-                      key={index}
-
-                      fill={COLORS[index]}
-
+                    <FaChartLine
+                        className="stat-icon blue"
                     />
 
-                  ))
+                    <h3>
+                        Average Score
+                    </h3>
 
-                }
+                    <h1>
+                        {analytics.averageScore}
+                    </h1>
 
-              </Pie>
-
-              <Tooltip />
-
-              <Legend />
-
-            </PieChart>
-
-          </ResponsiveContainer>
-
-        </motion.div>
-
-      </div>
+                </motion.div>
 
 
+                {/* HIGHEST SCORE */}
+
+                <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    className="stat-card"
+                >
+
+                    <FaTrophy
+                        className="stat-icon gold"
+                    />
+
+                    <h3>
+                        Highest Score
+                    </h3>
+
+                    <h1>
+                        {analytics.highestScore}
+                    </h1>
+
+                </motion.div>
 
 
-      <motion.div
+                {/* PASS */}
 
-  className="toolbar"
+                <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    className="stat-card"
+                >
 
-  initial={{ opacity: 0 }}
+                    <FaCheckCircle
+                        className="stat-icon green"
+                    />
 
-  animate={{ opacity: 1 }}
+                    <h3>
+                        Pass Students
+                    </h3>
 
->
+                    <h1>
+                        {analytics.passCount}
+                    </h1>
 
-  <input
+                </motion.div>
 
-    type="text"
 
-    placeholder="🔍 Search Student"
+                {/* FAIL */}
 
-    value={search}
+                <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    className="stat-card"
+                >
 
-    onChange={(e)=>setSearch(e.target.value)}
+                    <FaTimesCircle
+                        className="stat-icon red"
+                    />
 
-    className="search-box"
+                    <h3>
+                        Fail Students
+                    </h3>
 
-  />
+                    <h1>
+                        {analytics.failCount}
+                    </h1>
 
-  <button
+                </motion.div>
 
-    className="action-btn"
+            </div>
 
-    onClick={()=>window.print()}
-
-  >
-
-    🖨 Print Report
-
-  </button>
-
-  <button
-
-    className="action-btn"
-
-    onClick={()=>alert("PDF Export Coming Next")}
-
-  >
-
-    📄 Download PDF
-
-  </button>
-
-</motion.div>
 
             {/* ==========================
-          LEADERBOARD
-      ========================== */}
+                CHARTS
+            ========================== */}
 
-      <motion.div
+            <div className="charts-grid">
 
-        className="leaderboard-card"
 
-        initial={{ opacity: 0, y: 40 }}
+                {/* ==========================
+                    BAR CHART
+                ========================== */}
 
-        animate={{ opacity: 1, y: 0 }}
+                <motion.div
+                    className="chart-card"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                >
 
-        transition={{ duration: 0.5 }}
+                    <h2>
+                        📊 Student Score Analysis
+                    </h2>
 
-      >
 
-        <h2>
+                    {barData.length > 0 ? (
 
-          🏆 Student Leaderboard
+                        <ResponsiveContainer
+                            width="100%"
+                            height={350}
+                        >
 
-        </h2>
+                            <BarChart data={barData}>
 
-        <table className="leaderboard-table">
+                                <CartesianGrid
+                                    strokeDasharray="3 3"
+                                />
 
-          <thead>
+                                <XAxis
+                                    dataKey="name"
+                                />
 
-            <tr>
+                                <YAxis />
 
-              <th>Rank</th>
+                                <Tooltip />
 
-              <th>Student</th>
+                                <Legend />
 
-              <th>Email</th>
+                                <Bar
+                                    dataKey="Score"
+                                    fill="#4f46e5"
+                                    radius={[
+                                        8,
+                                        8,
+                                        0,
+                                        0
+                                    ]}
+                                />
 
-              <th>Score</th>
+                            </BarChart>
 
-              <th>Percentage</th>
+                        </ResponsiveContainer>
 
-            </tr>
+                    ) : (
 
-          </thead>
+                        <div className="no-data">
+                            No student score data available.
+                        </div>
 
-          <tbody>
+                    )}
 
-            {
+                </motion.div>
 
-              leaderboard.map((student, index) => (
 
-                <tr key={student.email}>
+                {/* ==========================
+                    PIE CHART
+                ========================== */}
 
-                  <td>
+                <motion.div
+                    className="chart-card"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                >
 
-                    {
+                    <h2>
+                        🥧 Pass vs Fail
+                    </h2>
 
-                      index === 0
 
-                        ? "🥇"
+                    {analytics.totalAttempts > 0 ? (
 
-                        : index === 1
+                        <ResponsiveContainer
+                            width="100%"
+                            height={350}
+                        >
 
-                        ? "🥈"
+                            <PieChart>
 
-                        : index === 2
+                                <Pie
+                                    data={pieData}
+                                    dataKey="value"
+                                    nameKey="name"
+                                    outerRadius={120}
+                                    innerRadius={60}
+                                    label
+                                >
 
-                        ? "🥉"
+                                    {pieData.map(
+                                        (entry, index) => (
 
-                        : index + 1
+                                            <Cell
+                                                key={`cell-${index}`}
+                                                fill={COLORS[index]}
+                                            />
 
-                    }
+                                        )
+                                    )}
 
-                  </td>
+                                </Pie>
 
-                  <td>
+                                <Tooltip />
 
-                    {student.studentName}
+                                <Legend />
 
-                  </td>
+                            </PieChart>
 
-                  <td>
+                        </ResponsiveContainer>
 
-                    {student.email}
+                    ) : (
 
-                  </td>
+                        <div className="no-data">
+                            No attempt data available.
+                        </div>
 
-                  <td>
+                    )}
 
-                    {student.score}
+                </motion.div>
 
-                  </td>
+            </div>
 
-                  <td>
-
-                    {student.percentage}%
-
-                  </td>
-
-                </tr>
-
-              ))
-
-            }
-
-          </tbody>
-
-        </table>
-
-      </motion.div>
 
             {/* ==========================
-          STUDENT RESULTS
-      ========================== */}
+                TOOLBAR
+            ========================== */}
 
-      <motion.div
+            <motion.div
+                className="toolbar"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+            >
 
-        className="students-card"
-
-        initial={{ opacity: 0 }}
-
-        animate={{ opacity: 1 }}
-
-      >
-
-        <h2>
-
-          📋 All Student Results
-
-        </h2>
-
-        <table className="students-table">
-
-          <thead>
-
-            <tr>
-
-              <th>Student</th>
-
-              <th>Score</th>
-
-              <th>Correct</th>
-
-              <th>Wrong</th>
-
-              <th>Percentage</th>
-
-              <th>Status</th>
-
-            </tr>
-
-          </thead>
-
-          <tbody>
-
-            {
-
-              filteredResults.map((student) => (
-
-                <tr key={student._id}>
-
-                  <td>
-
-                    {student.studentId?.name}
-
-                  </td>
-
-                  <td>
-
-                    {student.score}
-
-                  </td>
-
-                  <td>
-
-                    {student.correctCount}
-
-                  </td>
-
-                  <td>
-
-                    {student.wrongCount}
-
-                  </td>
-
-                  <td>
-
-                    {student.percentage}%
-
-                  </td>
-
-                  <td>
-
-                    {
-
-                      student.percentage >= 40
-
-                        ?
-
-                        <span className="pass">
-
-                          PASS
-
-                        </span>
-
-                        :
-
-                        <span className="fail">
-
-                          FAIL
-
-                        </span>
-
+                <input
+                    type="text"
+                    placeholder="🔍 Search Student"
+                    value={search}
+                    onChange={(e) =>
+                        setSearch(e.target.value)
                     }
-
-                  </td>
-
-                </tr>
-
-              ))
-
-            }
-
-          </tbody>
-
-        </table>
-
-      </motion.div>
+                    className="search-box"
+                />
 
 
-          </div>
+                <button
+                    className="action-btn"
+                    onClick={() => window.print()}
+                >
+                    🖨 Print Report
+                </button>
 
-  );
 
+                <button
+                    className="action-btn"
+                    onClick={() =>
+                        alert(
+                            "PDF Export Coming Next"
+                        )
+                    }
+                >
+                    📄 Download PDF
+                </button>
+
+            </motion.div>
+
+
+            {/* ==========================
+                LEADERBOARD
+            ========================== */}
+
+            <motion.div
+                className="leaderboard-card"
+                initial={{
+                    opacity: 0,
+                    y: 40
+                }}
+                animate={{
+                    opacity: 1,
+                    y: 0
+                }}
+                transition={{
+                    duration: 0.5
+                }}
+            >
+
+                <h2>
+                    🏆 Student Leaderboard
+                </h2>
+
+
+                {leaderboard.length > 0 ? (
+
+                    <div className="table-container">
+
+                        <table className="leaderboard-table">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>
+                                        Rank
+                                    </th>
+
+                                    <th>
+                                        Student
+                                    </th>
+
+                                    <th>
+                                        Email
+                                    </th>
+
+                                    <th>
+                                        Score
+                                    </th>
+
+                                    <th>
+                                        Percentage
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+                                {leaderboard.map(
+                                    (student, index) => (
+
+                                        <tr
+                                            key={
+                                                student.email ||
+                                                student._id ||
+                                                index
+                                            }
+                                        >
+
+                                            <td>
+
+                                                {index === 0
+                                                    ? "🥇"
+                                                    : index === 1
+                                                    ? "🥈"
+                                                    : index === 2
+                                                    ? "🥉"
+                                                    : index + 1}
+
+                                            </td>
+
+
+                                            <td>
+
+                                                {student.studentName ||
+                                                    student.studentId?.name ||
+                                                    "Unknown"}
+
+                                            </td>
+
+
+                                            <td>
+
+                                                {student.email ||
+                                                    student.studentId?.email ||
+                                                    "N/A"}
+
+                                            </td>
+
+
+                                            <td>
+
+                                                {student.score ?? 0}
+
+                                            </td>
+
+
+                                            <td>
+
+                                                {student.percentage ?? 0}%
+
+                                            </td>
+
+                                        </tr>
+
+                                    )
+                                )}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                ) : (
+
+                    <div className="no-data">
+                        No leaderboard data available.
+                    </div>
+
+                )}
+
+            </motion.div>
+
+
+            {/* ==========================
+                STUDENT RESULTS
+            ========================== */}
+
+            <motion.div
+                className="students-card"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+            >
+
+                <h2>
+                    📋 All Student Results
+                </h2>
+
+
+                {filteredResults.length > 0 ? (
+
+                    <div className="table-container">
+
+                        <table className="students-table">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>
+                                        Student
+                                    </th>
+
+                                    <th>
+                                        Score
+                                    </th>
+
+                                    <th>
+                                        Correct
+                                    </th>
+
+                                    <th>
+                                        Wrong
+                                    </th>
+
+                                    <th>
+                                        Percentage
+                                    </th>
+
+                                    <th>
+                                        Status
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+                                {filteredResults.map(
+                                    (student) => (
+
+                                        <tr
+                                            key={
+                                                student._id
+                                            }
+                                        >
+
+                                            <td>
+
+                                                {student.studentId?.name ||
+                                                    "Unknown"}
+
+                                            </td>
+
+
+                                            <td>
+
+                                                {student.score ?? 0}
+
+                                            </td>
+
+
+                                            <td>
+
+                                                {student.correctCount ?? 0}
+
+                                            </td>
+
+
+                                            <td>
+
+                                                {student.wrongCount ?? 0}
+
+                                            </td>
+
+
+                                            <td>
+
+                                                {student.percentage ?? 0}%
+
+                                            </td>
+
+
+                                            <td>
+
+                                                {Number(
+                                                    student.percentage || 0
+                                                ) >= 40 ? (
+
+                                                    <span className="pass">
+                                                        PASS
+                                                    </span>
+
+                                                ) : (
+
+                                                    <span className="fail">
+                                                        FAIL
+                                                    </span>
+
+                                                )}
+
+                                            </td>
+
+                                        </tr>
+
+                                    )
+                                )}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                ) : (
+
+                    <div className="no-data">
+
+                        {search
+                            ? "No student found."
+                            : "No student results available."}
+
+                    </div>
+
+                )}
+
+            </motion.div>
+
+        </div>
+    );
 }
 
 export default TeacherAnalytics;
