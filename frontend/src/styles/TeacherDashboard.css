@@ -1,6 +1,6 @@
 /* =========================================================
    TEACHER DASHBOARD
-   Professional Admin / SaaS Style
+   PROFESSIONAL EXAM MANAGEMENT UI
 ========================================================= */
 
 .teacher-dashboard,
@@ -10,13 +10,14 @@
 
 .teacher-dashboard {
     min-height: 100vh;
-    padding: 32px;
-    background: #f6f8fc;
+    padding: 30px;
+    background: #f5f7fb;
     color: #172033;
 }
 
+
 /* =========================================================
-   MAIN WIDTH
+   COMMON WIDTH
 ========================================================= */
 
 .dashboard-header,
@@ -34,39 +35,44 @@
 ========================================================= */
 
 .dashboard-header {
-    min-height: 170px;
-    margin-bottom: 28px;
-    padding: 32px 38px;
+    min-height: 155px;
+
+    margin-bottom: 26px;
+
+    padding: 30px 34px;
 
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 30px;
 
-    border-radius: 18px;
+    gap: 25px;
+
+    border-radius: 16px;
 
     background:
         linear-gradient(
             135deg,
-            #1e40af 0%,
+            #1d4ed8,
             #2563eb 55%,
-            #4f46e5 100%
+            #4338ca
         );
 
     box-shadow:
-        0 12px 30px rgba(37, 99, 235, 0.18);
+        0 12px 30px rgba(37, 99, 235, 0.16);
 
     color: white;
 }
 
 .dashboard-header h1 {
-    margin: 0 0 8px;
+    margin: 0 0 7px;
 
-    color: #ffffff !important;
+    color: white !important;
 
-    font-size: 30px;
+    font-size: 29px;
     line-height: 1.2;
+
     font-weight: 750;
+
     letter-spacing: -0.5px;
 }
 
@@ -75,26 +81,24 @@
 
     color: rgba(255, 255, 255, 0.82) !important;
 
-    font-size: 15px;
-    line-height: 1.5;
+    font-size: 14px;
 }
 
 
 /* =========================================================
-   CREATE EXAM BUTTON
+   CREATE EXAM
 ========================================================= */
 
 .create-btn {
     flex-shrink: 0;
 
-    min-width: 145px;
-
-    padding: 13px 20px;
+    padding: 12px 20px;
 
     border: none;
     border-radius: 9px;
 
     background: #ffffff;
+
     color: #1d4ed8;
 
     font-size: 14px;
@@ -102,23 +106,14 @@
 
     cursor: pointer;
 
-    transition:
-        transform 0.2s ease,
-        box-shadow 0.2s ease,
-        background 0.2s ease;
+    transition: all 0.2s ease;
 }
 
 .create-btn:hover {
     transform: translateY(-2px);
 
-    background: #f8fafc;
-
     box-shadow:
-        0 8px 20px rgba(0, 0, 0, 0.15);
-}
-
-.create-btn:active {
-    transform: translateY(0);
+        0 7px 18px rgba(0, 0, 0, 0.16);
 }
 
 
@@ -127,41 +122,43 @@
 ========================================================= */
 
 .stats-grid {
-    margin-bottom: 28px;
+    margin-bottom: 26px;
 
     display: grid;
 
     grid-template-columns:
         repeat(3, 1fr);
 
-    gap: 20px;
+    gap: 18px;
 }
 
 .stat-card {
     position: relative;
 
-    min-height: 112px;
+    min-height: 108px;
 
-    padding: 22px 24px;
+    padding: 21px 24px;
 
     display: flex;
     align-items: center;
     justify-content: space-between;
 
-    background: #ffffff;
+    background: white;
 
-    border: 1px solid #e6eaf2;
+    border: 1px solid #e4e9f1;
+
     border-radius: 14px;
 
     box-shadow:
-        0 4px 15px rgba(15, 23, 42, 0.05);
+        0 4px 14px rgba(15, 23, 42, 0.045);
 
     overflow: hidden;
 
-    transition:
-        transform 0.2s ease,
-        box-shadow 0.2s ease;
+    transition: all 0.2s ease;
 }
+
+
+/* LEFT COLOR LINE */
 
 .stat-card::before {
     content: "";
@@ -189,7 +186,7 @@
     transform: translateY(-3px);
 
     box-shadow:
-        0 10px 25px rgba(15, 23, 42, 0.08);
+        0 9px 22px rgba(15, 23, 42, 0.08);
 }
 
 .stat-card h3 {
@@ -202,11 +199,12 @@
 }
 
 .stat-card h2 {
-    margin: 7px 0 0;
+    margin: 6px 0 0;
 
     color: #172033;
 
     font-size: 30px;
+
     line-height: 1;
 
     font-weight: 750;
@@ -218,23 +216,25 @@
 ========================================================= */
 
 .exam-section {
-    padding: 30px;
+    padding: 28px;
 
     background: #ffffff;
 
-    border: 1px solid #e7ebf2;
+    border: 1px solid #e4e9f1;
+
     border-radius: 18px;
 
     box-shadow:
-        0 5px 20px rgba(15, 23, 42, 0.05);
+        0 5px 20px rgba(15, 23, 42, 0.045);
 }
 
 .exam-section > h2 {
-    margin: 0 0 24px;
+    margin: 0 0 22px;
 
     color: #172033;
 
     font-size: 22px;
+
     font-weight: 750;
 
     letter-spacing: -0.3px;
@@ -254,8 +254,6 @@
         repeat(3, minmax(0, 1fr));
 
     gap: 20px;
-
-    overflow: visible;
 }
 
 
@@ -265,22 +263,22 @@
 
 .exam-card {
     width: 100%;
-    max-width: none;
     min-width: 0;
-    min-height: 0;
 
     display: flex;
+
     flex-direction: column;
 
     overflow: hidden;
 
     background: #ffffff;
 
-    border: 1px solid #e3e8f0;
-    border-radius: 14px;
+    border: 1px solid #e1e7ef;
+
+    border-radius: 15px;
 
     box-shadow:
-        0 4px 14px rgba(15, 23, 42, 0.05);
+        0 4px 15px rgba(15, 23, 42, 0.055);
 
     transition:
         transform 0.2s ease,
@@ -294,7 +292,7 @@
     border-color: #cbd5e1;
 
     box-shadow:
-        0 12px 28px rgba(15, 23, 42, 0.10);
+        0 12px 28px rgba(15, 23, 42, 0.11);
 }
 
 
@@ -303,15 +301,7 @@
 ========================================================= */
 
 .exam-info {
-    min-height: 0;
-
-    padding: 24px 22px;
-
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-
-    text-align: left;
+    padding: 23px 22px 20px;
 
     background:
         linear-gradient(
@@ -320,8 +310,13 @@
             #ffffff 100%
         );
 
-    border-bottom: 1px solid #edf0f5;
+    border-bottom: 1px solid #edf0f4;
 }
+
+
+/* =========================================================
+   EVERY INFORMATION BLOCK
+========================================================= */
 
 .exam-info > div {
     margin-bottom: 17px;
@@ -332,31 +327,51 @@
 }
 
 
-/* LABEL */
+/* =========================================================
+   EXAM LABEL
+========================================================= */
 
-.exam-info span {
-    display: block;
+.exam-info > div:first-child {
+    padding-bottom: 17px;
 
-    margin-bottom: 5px;
+    border-bottom: 1px solid #e8edf4;
+}
 
-    color: #64748b;
+.exam-info > div:first-child span {
+    display: inline-flex;
 
-    font-size: 10px;
-    font-weight: 700;
+    align-items: center;
+
+    padding: 5px 9px;
+
+    margin-bottom: 9px;
+
+    border-radius: 6px;
+
+    background: #eff6ff;
+
+    color: #2563eb;
+
+    font-size: 9px;
+
+    font-weight: 800;
 
     letter-spacing: 1px;
 }
 
 
-/* TITLE */
+/* =========================================================
+   EXAM TITLE
+========================================================= */
 
 .exam-info h3 {
     margin: 0;
 
     color: #172033;
 
-    font-size: 20px;
-    line-height: 1.35;
+    font-size: 21px;
+
+    line-height: 1.3;
 
     font-weight: 750;
 
@@ -364,33 +379,126 @@
 }
 
 
-/* VALUES */
+/* =========================================================
+   SUBJECT / DURATION / MARKS
+========================================================= */
+
+/*
+   Make the information blocks compact
+*/
+
+.exam-info > div:not(:first-child) {
+    position: relative;
+
+    padding-left: 11px;
+}
+
+
+/* Small vertical indicator */
+
+.exam-info > div:not(:first-child)::before {
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    top: 2px;
+
+    width: 3px;
+    height: 28px;
+
+    border-radius: 4px;
+
+    background: #dbeafe;
+}
+
+
+/* LABEL */
+
+.exam-info > div:not(:first-child) span {
+    display: block;
+
+    margin-bottom: 4px;
+
+    color: #94a3b8;
+
+    font-size: 9px;
+
+    font-weight: 800;
+
+    letter-spacing: 0.9px;
+}
+
+
+/* VALUE */
 
 .exam-info p {
     margin: 0;
 
-    color: #475569;
+    color: #334155;
 
     font-size: 14px;
-    line-height: 1.4;
 
-    font-weight: 600;
+    line-height: 1.35;
+
+    font-weight: 650;
 }
 
 
 /* =========================================================
-   ACTIONS
+   MAKE SUBJECT + DURATION LOOK LIKE METADATA
+========================================================= */
+
+.exam-info > div:nth-child(2),
+.exam-info > div:nth-child(3) {
+    display: inline-block;
+
+    width: 48%;
+
+    vertical-align: top;
+}
+
+.exam-info > div:nth-child(2) {
+    margin-right: 2%;
+}
+
+
+/* =========================================================
+   TOTAL MARKS
+========================================================= */
+
+.exam-info > div:nth-child(4) {
+    margin-top: 3px;
+
+    padding-top: 15px;
+
+    border-top: 1px dashed #e2e8f0;
+}
+
+.exam-info > div:nth-child(4)::before {
+    background: #dcfce7;
+}
+
+.exam-info > div:nth-child(4) p {
+    color: #15803d;
+
+    font-size: 15px;
+}
+
+
+/* =========================================================
+   ACTION AREA
 ========================================================= */
 
 .actions-cell {
-    padding: 18px;
+    padding: 16px;
 
     display: grid;
 
     grid-template-columns:
         repeat(2, 1fr);
 
-    gap: 9px;
+    gap: 8px;
 
     background: #ffffff;
 }
@@ -405,30 +513,29 @@
 
     min-height: 38px;
 
-    padding: 9px 10px;
+    padding: 9px 8px;
 
-    border: 1px solid transparent;
+    border: none;
+
     border-radius: 8px;
 
     color: white;
 
-    font-size: 12px;
+    font-size: 11px;
+
     line-height: 1.2;
 
-    font-weight: 650;
+    font-weight: 700;
 
     cursor: pointer;
 
-    transition:
-        transform 0.18s ease,
-        filter 0.18s ease,
-        box-shadow 0.18s ease;
+    transition: all 0.18s ease;
 }
 
 .action-btn:hover {
     transform: translateY(-1px);
 
-    filter: brightness(1.04);
+    filter: brightness(1.05);
 
     box-shadow:
         0 4px 10px rgba(15, 23, 42, 0.12);
@@ -456,8 +563,8 @@
     background:
         linear-gradient(
             135deg,
-            #7c3aed,
-            #6d28d9
+            #8b5cf6,
+            #7c3aed
         );
 }
 
@@ -510,17 +617,17 @@
 
     display: flex;
     flex-direction: column;
+
     justify-content: center;
     align-items: center;
 
-    background: #f6f8fc;
+    background: #f5f7fb;
 }
 
 .loading-screen h3 {
-    color: #475569;
+    color: #64748b;
 
-    font-size: 15px;
-    font-weight: 600;
+    font-size: 14px;
 }
 
 .loader {
@@ -530,6 +637,7 @@
     margin-bottom: 14px;
 
     border: 4px solid #e2e8f0;
+
     border-top-color: #2563eb;
 
     border-radius: 50%;
@@ -545,7 +653,7 @@
 
 
 /* =========================================================
-   LARGE TABLET
+   TABLET
 ========================================================= */
 
 @media (max-width: 1100px) {
@@ -562,13 +670,13 @@
 
 
 /* =========================================================
-   TABLET
+   SMALL TABLET
 ========================================================= */
 
-@media (max-width: 850px) {
+@media (max-width: 800px) {
 
     .dashboard-header {
-        padding: 28px;
+        padding: 27px;
     }
 
     .stats-grid {
@@ -589,7 +697,7 @@
 @media (max-width: 600px) {
 
     .teacher-dashboard {
-        padding: 14px;
+        padding: 13px;
     }
 
 
@@ -598,15 +706,13 @@
     .dashboard-header {
         min-height: auto;
 
-        margin-bottom: 18px;
-
-        padding: 24px 20px;
+        padding: 23px 18px;
 
         flex-direction: column;
 
         text-align: center;
 
-        gap: 20px;
+        gap: 18px;
 
         border-radius: 14px;
     }
@@ -627,15 +733,15 @@
     /* STATS */
 
     .stats-grid {
-        gap: 12px;
+        gap: 11px;
 
         margin-bottom: 18px;
     }
 
     .stat-card {
-        min-height: 90px;
+        min-height: 88px;
 
-        padding: 18px 20px;
+        padding: 17px 19px;
     }
 
     .stat-card h3 {
@@ -647,10 +753,10 @@
     }
 
 
-    /* EXAM SECTION */
+    /* SECTION */
 
     .exam-section {
-        padding: 20px 14px;
+        padding: 19px 13px;
 
         border-radius: 14px;
     }
@@ -665,48 +771,37 @@
     /* ONE CARD */
 
     .exam-slider {
-        display: grid;
-
         grid-template-columns: 1fr;
 
-        gap: 16px;
+        gap: 15px;
     }
 
 
     /* EXAM INFO */
 
     .exam-info {
-        padding: 21px 18px;
+        padding: 21px 18px 18px;
+    }
+
+    .exam-info h3 {
+        font-size: 20px;
     }
 
     .exam-info > div {
         margin-bottom: 14px;
     }
 
-    .exam-info h3 {
-        font-size: 19px;
-    }
 
-    .exam-info p {
-        font-size: 14px;
-    }
-
-
-    /* ACTIONS */
+    /* BUTTONS */
 
     .actions-cell {
         padding: 14px;
-
-        grid-template-columns:
-            repeat(2, 1fr);
 
         gap: 8px;
     }
 
     .action-btn {
-        min-height: 40px;
-
-        padding: 9px 7px;
+        min-height: 39px;
 
         font-size: 11px;
     }
@@ -720,11 +815,11 @@
 @media (max-width: 380px) {
 
     .teacher-dashboard {
-        padding: 9px;
+        padding: 8px;
     }
 
     .dashboard-header {
-        padding: 20px 15px;
+        padding: 20px 14px;
     }
 
     .dashboard-header h1 {
@@ -732,7 +827,15 @@
     }
 
     .exam-section {
-        padding: 17px 11px;
+        padding: 16px 10px;
+    }
+
+    .exam-info {
+        padding: 19px 15px;
+    }
+
+    .exam-info h3 {
+        font-size: 18px;
     }
 
     .actions-cell {
