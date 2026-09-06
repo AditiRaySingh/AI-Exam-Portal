@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import api from "../services/api";
+
 import "../styles/StudentResults.css";
+
+import Navbar from "../components/Navbar";
 
 import {
   ResponsiveContainer,
@@ -32,13 +36,23 @@ import {
   FaBook
 } from "react-icons/fa";
 
+
 function StudentResults() {
 
+  const navigate = useNavigate();
+
   const [results, setResults] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+
+  // ==============================
+  // FETCH RESULTS
+  // ==============================
 
   useEffect(() => {
     fetchResults();
   }, []);
+
 
   const fetchResults = async () => {
 
@@ -55,534 +69,634 @@ function StudentResults() {
         }
       );
 
-      console.log(res.data);
+      console.log("STUDENT RESULTS:", res.data);
 
       setResults(res.data.history || []);
 
     } catch (error) {
 
-      console.log(error);
+      console.error(
+        "STUDENT RESULTS ERROR:",
+        error
+      );
+
+    } finally {
+
+      setLoading(false);
 
     }
-
   };
+
+
+  // ==============================
+  // LOADING
+  // ==============================
+
+  if (loading) {
+
+    return (
+      <>
+        <Navbar />
+
+        <div className="student-results-loading">
+          <div className="student-results-loader"></div>
+          <h2>Loading Results...</h2>
+        </div>
+      </>
+    );
+  }
+
+
+  // ==============================
+  // NO RESULTS
+  // ==============================
 
   if (results.length === 0) {
 
     return (
+      <>
+        <Navbar />
 
-      <div className="no-results">
+        <div className="student-results-page">
 
-        <h1>No Results Found</h1>
+          <h1 className="student-results-title">
+            📊 My Exam Results
+          </h1>
 
-      </div>
+          <div className="student-no-results">
+            <FaBook />
+            <h2>No Results Found</h2>
+            <p>
+              You have not completed any exam yet.
+            </p>
+          </div>
 
+        </div>
+      </>
     );
-
   }
+
+
+  // ==============================
+  // UI
+  // ==============================
 
   return (
 
-    <div className="results-page">
+    <div className="student-results-wrapper">
 
-      <h1 className="page-title">
+      <Navbar />
 
-        📊 My Exam Results
+      <div className="student-results-page">
 
-      </h1>
 
-      {
+        {/* ==============================
+            PAGE TITLE
+        ============================== */}
 
-        results.map((result) => {
+        <div className="student-results-heading">
 
-          const percentage =
-            result.percentage || 0;
+          <h1>
+            📊 My Exam Results
+          </h1>
 
-          const chartData = [
+          <p>
+            Check your exam performance and detailed evaluation
+          </p>
 
-            {
-              name: "Correct",
-              value: result.correctCount
-            },
+        </div>
 
-            {
-              name: "Wrong",
-              value: result.wrongCount
-            }
 
-          ];
+        {/* ==============================
+            RESULTS
+        ============================== */}
 
-          const scoreData = [
+        <div className="student-results-list">
 
-            {
-              name: "Score",
-              Marks: result.score
-            },
 
-            {
-              name: "Total",
-              Marks: result.totalMarks
-            }
+          {results.map((result) => {
 
-          ];
 
-          const badge =
+            const percentage =
+              parseFloat(result.percentage) || 0;
 
-            percentage >= 90
-              ? "Excellent"
 
-              : percentage >= 75
-              ? "Very Good"
+            // Do not show 100.00%
+            // Show 100%, 85.5%, etc.
+            const displayPercentage =
+              Number.isInteger(percentage)
+                ? percentage
+                : parseFloat(
+                    percentage.toFixed(2)
+                  );
 
-              : percentage >= 60
-              ? "Good"
 
-              : percentage >= 40
-              ? "Average"
+            const chartData = [
 
-              : "Needs Improvement";
-                        return (
+              {
+                name: "Correct",
+                value: result.correctCount || 0
+              },
 
-            <motion.div
+              {
+                name: "Wrong",
+                value: result.wrongCount || 0
+              }
 
-              key={result._id}
+            ];
 
-              className="result-card"
 
-              initial={{ opacity: 0, y: 40 }}
+            const scoreData = [
 
-              animate={{ opacity: 1, y: 0 }}
+              {
+                name: "Score",
+                Marks: result.score || 0
+              },
 
-              transition={{ duration: 0.5 }}
+              {
+                name: "Total",
+                Marks: result.totalMarks || 0
+              }
 
-            >
+            ];
 
-              <div className="result-header">
 
-                <h2>
+            const badge =
+              percentage >= 90
+                ? "Excellent"
+                : percentage >= 75
+                ? "Very Good"
+                : percentage >= 60
+                ? "Good"
+                : percentage >= 40
+                ? "Average"
+                : "Needs Improvement";
 
-                  <FaBook />
 
-                  {" "}
+            const passed =
+              percentage >= 40;
 
-                  {result.examId?.title || "Exam"}
 
-                </h2>
+            return (
 
-                <span className="badge">
+              <motion.div
 
-                  <FaTrophy />
+                key={result._id}
 
-                  {" "}
+                className="student-result-card"
 
-                  {badge}
+                initial={{
+                  opacity: 0,
+                  y: 30
+                }}
 
-                </span>
+                animate={{
+                  opacity: 1,
+                  y: 0
+                }}
 
-              </div>
+                transition={{
+                  duration: 0.4
+                }}
 
-              <div className="summary-grid">
+              >
 
-                <div className="summary-box">
 
-                  <h4>Score</h4>
+                {/* ==============================
+                    HEADER
+                ============================== */}
 
-                  <h2>
+                <div className="student-result-header">
 
-                    {result.score} / {result.totalMarks}
+                  <div className="student-result-exam">
 
-                  </h2>
+                    <FaBook />
 
-                </div>
+                    <h2>
+                      {result.examId?.title || "Exam"}
+                    </h2>
 
-                <div className="summary-box">
+                  </div>
 
-                  <h4>Percentage</h4>
 
-                  <h2>
-
-                    {percentage.toFixed(2)}%
-
-                  </h2>
-
-                </div>
-
-                <div className="summary-box">
-
-                  <h4>Correct</h4>
-
-                  <h2>
-
-                    <FaCheckCircle
-                      style={{
-                        color: "green",
-                        marginRight: "6px"
-                      }}
-                    />
-
-                    {result.correctCount}
-
-                  </h2>
-
-                </div>
-
-                <div className="summary-box">
-
-                  <h4>Wrong</h4>
-
-                  <h2>
-
-                    <FaTimesCircle
-                      style={{
-                        color: "red",
-                        marginRight: "6px"
-                      }}
-                    />
-
-                    {result.wrongCount}
-
-                  </h2>
-
-                </div>
-
-              </div>
-
-              <div className="progress-section">
-
-                <div className="circle">
-
-                  <CircularProgressbar
-
-                    value={percentage}
-
-                    text={`${percentage}%`}
-
-                    styles={buildStyles({
-
-                      pathColor:
-                        percentage >= 40
-                          ? "#22c55e"
-                          : "#ef4444",
-
-                      textColor: "#111",
-
-                      trailColor: "#ddd"
-
-                    })}
-
-                  />
-
-                </div>
-
-                <div className="performance">
-
-                  <h2>Performance</h2>
-
-                  <p>
-
-                    Status :
-
-                    <strong>
-
-                      {" "}
-
-                      {result.result}
-
-                    </strong>
-
-                  </p>
-
-                  <p>
-
-                    Submitted :
-
-                    <strong>
-
-                      {" "}
-
-                      {
-
-                        new Date(
-                          result.submittedAt
-                        ).toLocaleString()
-
-                      }
-
-                    </strong>
-
-                  </p>
-
-                </div>
-
-              </div>
-                            <div className="charts">
-
-                <div className="chart-box">
-
-                  <h3>📊 Marks Analysis</h3>
-
-                  <ResponsiveContainer
-                    width="100%"
-                    height={300}
+                  <span
+                    className={
+                      passed
+                        ? "student-result-badge student-pass"
+                        : "student-result-badge student-fail"
+                    }
                   >
 
-                    <BarChart
-                      data={scoreData}
+                    <FaTrophy />
+
+                    {badge}
+
+                  </span>
+
+                </div>
+
+
+                {/* ==============================
+                    SUMMARY
+                ============================== */}
+
+                <div className="student-summary-grid">
+
+
+                  <div className="student-summary-box">
+
+                    <h4>
+                      Score
+                    </h4>
+
+                    <h2>
+                      {result.score || 0}
+                      {" / "}
+                      {result.totalMarks || 0}
+                    </h2>
+
+                  </div>
+
+
+                  <div className="student-summary-box">
+
+                    <h4>
+                      Percentage
+                    </h4>
+
+                    <h2>
+                      {displayPercentage}%
+                    </h2>
+
+                  </div>
+
+
+                  <div className="student-summary-box">
+
+                    <h4>
+                      Correct
+                    </h4>
+
+                    <h2 className="student-correct">
+
+                      <FaCheckCircle />
+
+                      {result.correctCount || 0}
+
+                    </h2>
+
+                  </div>
+
+
+                  <div className="student-summary-box">
+
+                    <h4>
+                      Wrong
+                    </h4>
+
+                    <h2 className="student-wrong">
+
+                      <FaTimesCircle />
+
+                      {result.wrongCount || 0}
+
+                    </h2>
+
+                  </div>
+
+                </div>
+
+
+                {/* ==============================
+                    PERFORMANCE
+                ============================== */}
+
+                <div className="student-performance-section">
+
+
+                  <div className="student-progress">
+
+                    <CircularProgressbar
+
+                      value={percentage}
+
+                      text={`${displayPercentage}%`}
+
+                      styles={buildStyles({
+
+                        pathColor:
+                          passed
+                            ? "#22c55e"
+                            : "#ef4444",
+
+                        textColor:
+                          "#1e293b",
+
+                        trailColor:
+                          "#e5e7eb"
+
+                      })}
+
+                    />
+
+                  </div>
+
+
+                  <div className="student-performance-info">
+
+                    <h2>
+                      Performance
+                    </h2>
+
+                    <p>
+                      Status:
+                      <strong>
+                        {" "}
+                        {result.result || (
+                          passed
+                            ? "Passed"
+                            : "Failed"
+                        )}
+                      </strong>
+                    </p>
+
+                    <p>
+                      Submitted:
+                      <strong>
+                        {" "}
+                        {result.submittedAt
+                          ? new Date(
+                              result.submittedAt
+                            ).toLocaleString()
+                          : "N/A"}
+                      </strong>
+                    </p>
+
+                  </div>
+
+                </div>
+
+
+                {/* ==============================
+                    CHARTS
+                ============================== */}
+
+                <div className="student-charts">
+
+
+                  {/* MARKS CHART */}
+
+                  <div className="student-chart-box">
+
+                    <h3>
+                      📊 Marks Analysis
+                    </h3>
+
+                    <ResponsiveContainer
+                      width="100%"
+                      height={280}
                     >
 
-                      <CartesianGrid
-                        strokeDasharray="3 3"
-                      />
+                      <BarChart
+                        data={scoreData}
+                      >
 
-                      <XAxis
-                        dataKey="name"
-                      />
+                        <CartesianGrid
+                          strokeDasharray="3 3"
+                        />
 
-                      <YAxis />
+                        <XAxis
+                          dataKey="name"
+                        />
 
-                      <Tooltip />
+                        <YAxis />
 
-                      <Legend />
+                        <Tooltip />
 
-                      <Bar
-                        dataKey="Marks"
-                        fill="#4f46e5"
-                        radius={[8, 8, 0, 0]}
-                      />
+                        <Bar
+                          dataKey="Marks"
+                          fill="#4f46e5"
+                          radius={[
+                            8,
+                            8,
+                            0,
+                            0
+                          ]}
+                        />
 
-                    </BarChart>
+                      </BarChart>
 
-                  </ResponsiveContainer>
+                    </ResponsiveContainer>
+
+                  </div>
+
+
+                  {/* PIE CHART */}
+
+                  <div className="student-chart-box">
+
+                    <h3>
+                      🥧 Correct vs Wrong
+                    </h3>
+
+                    <ResponsiveContainer
+                      width="100%"
+                      height={280}
+                    >
+
+                      <PieChart>
+
+                        <Pie
+
+                          data={chartData}
+
+                          dataKey="value"
+
+                          nameKey="name"
+
+                          cx="50%"
+
+                          cy="50%"
+
+                          outerRadius={90}
+
+                          innerRadius={45}
+
+                          paddingAngle={5}
+
+                          label
+
+                        >
+
+                          <Cell fill="#22c55e" />
+
+                          <Cell fill="#ef4444" />
+
+                        </Pie>
+
+                        <Tooltip />
+
+                        <Legend />
+
+                      </PieChart>
+
+                    </ResponsiveContainer>
+
+                  </div>
 
                 </div>
 
-                <div className="chart-box">
 
-                  <h3>🥧 Correct vs Wrong</h3>
+                {/* ==============================
+                    AI EVALUATION
+                ============================== */}
 
-                  <ResponsiveContainer
-                    width="100%"
-                    height={300}
-                  >
+                <div className="student-evaluation">
 
-                    <PieChart>
+                  <h2>
+                    🤖 AI Evaluation
+                  </h2>
 
-                      <Pie
 
-                        data={chartData}
+                  {result.answers?.length > 0 ? (
 
-                        dataKey="value"
+                    result.answers.map(
+                      (answer, index) => (
 
-                        nameKey="name"
-
-                        outerRadius={100}
-
-                        innerRadius={50}
-
-                        paddingAngle={5}
-
-                        label
-
-                      >
-
-                        <Cell fill="#22c55e" />
-
-                        <Cell fill="#ef4444" />
-
-                      </Pie>
-
-                      <Tooltip />
-
-                      <Legend />
-
-                    </PieChart>
-
-                  </ResponsiveContainer>
-
-                </div>
-
-              </div>
-                            <div className="evaluation-section">
-
-                <h2 className="evaluation-title">
-
-                  🤖 AI Evaluation
-
-                </h2>
-
-                {
-
-                  result.answers?.length > 0 ? (
-
-                    result.answers.map((answer, index) => (
-
-                      <motion.div
-
-                        key={index}
-
-                        className="answer-card"
-
-                        initial={{ opacity: 0, y: 20 }}
-
-                        whileInView={{ opacity: 1, y: 0 }}
-
-                        whileHover={{ scale: 1.02 }}
-
-                        transition={{ duration: 0.4 }}
-
-                      >
-
-                        <div className="answer-header">
-
-                          <h3>
-
-                            Question {index + 1}
-
-                          </h3>
-
-                          {
-
-                            answer.isCorrect ? (
-
-                              <span className="correct">
-
-                                <FaCheckCircle />
-
-                                {" "}Correct
-
-                              </span>
-
-                            ) : (
-
-                              <span className="wrong">
-
-                                <FaTimesCircle />
-
-                                {" "}Wrong
-
-                              </span>
-
-                            )
-
+                        <div
+                          key={index}
+                          className={
+                            answer.isCorrect
+                              ? "student-answer-card correct-answer"
+                              : "student-answer-card wrong-answer"
                           }
+                        >
+
+                          <div className="student-answer-header">
+
+                            <h3>
+                              Question {index + 1}
+                            </h3>
+
+                            <span>
+
+                              {answer.isCorrect ? (
+                                <>
+                                  <FaCheckCircle />
+                                  {" "}Correct
+                                </>
+                              ) : (
+                                <>
+                                  <FaTimesCircle />
+                                  {" "}Wrong
+                                </>
+                              )}
+
+                            </span>
+
+                          </div>
+
+
+                          <div className="student-answer-row">
+
+                            <strong>
+                              Your Answer
+                            </strong>
+
+                            <p>
+                              {answer.selectedAnswer ||
+                                "Not Attempted"}
+                            </p>
+
+                          </div>
+
+
+                          <div className="student-answer-row">
+
+                            <strong>
+                              AI Score
+                            </strong>
+
+                            <p>
+                              {answer.aiScore ??
+                                answer.obtainedMarks ??
+                                0}
+                            </p>
+
+                          </div>
+
+
+                          <div className="student-answer-row">
+
+                            <strong>
+                              Feedback
+                            </strong>
+
+                            <p>
+                              {answer.aiFeedback ||
+                                "No feedback available"}
+                            </p>
+
+                          </div>
 
                         </div>
 
-                        <div className="answer-content">
-
-                          <div className="answer-row">
-
-                            <strong>Your Answer</strong>
-
-                            <p>
-
-                              {
-
-                                answer.selectedAnswer ||
-
-                                "Not Attempted"
-
-                              }
-
-                            </p>
-
-                          </div>
-
-                          <div className="answer-row">
-
-                            <strong>AI Score</strong>
-
-                            <p>
-
-                              {answer.aiScore}
-
-                            </p>
-
-                          </div>
-
-                          <div className="answer-row">
-
-                            <strong>Feedback</strong>
-
-                            <p>
-
-                              {
-
-                                answer.aiFeedback ||
-
-                                "No feedback available"
-
-                              }
-
-                            </p>
-
-                          </div>
-
-                        </div>
-
-                      </motion.div>
-
-                    ))
+                      )
+                    )
 
                   ) : (
 
-                    <div className="no-ai">
+                    <div className="student-no-ai">
 
                       <h3>
-
                         No AI Evaluation Available
-
                       </h3>
 
                     </div>
 
-                  )
+                  )}
 
-                }
+                </div>
 
-              </div>
-              
 
-                            <div className="result-footer">
+                {/* ==============================
+                    FOOTER
+                ============================== */}
 
-                <button
-                  className="download-btn"
-                  onClick={() => window.print()}
-                >
-                  🖨 Print Result
-                </button>
+                <div className="student-result-footer">
 
-                <button
-                  className="download-btn"
-                  onClick={() => {
+                  <button
+                    className="student-view-btn"
+                    onClick={() =>
+                      navigate(
+                        `/result/${result.examId?._id || result.examId}`
+                      )
+                    }
+                  >
+                    View Full Result →
+                  </button>
 
-                    const text =
-`Exam : ${result.examId?.title}
+                  <button
+                    className="student-print-btn"
+                    onClick={() =>
+                      window.print()
+                    }
+                  >
+                    🖨 Print Result
+                  </button>
 
-Score : ${result.score}/${result.totalMarks}
+                </div>
 
-Percentage : ${percentage.toFixed(2)}%
 
-Status : ${result.result}`;
+              </motion.div>
 
-                    navigator.clipboard.writeText(text);
+            );
 
-                    alert("Result copied to clipboard!");
+          })}
 
-                  }}
-                >
-                  📋 Copy Result
-                </button>
+        </div>
 
-              </div>
-
-            </motion.div>
-
-          );
-
-        })
-
-      }
+      </div>
 
     </div>
 
