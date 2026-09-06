@@ -18,7 +18,7 @@ function TeacherDashboard() {
     const fetchExams = async () => {
         try {
             const response = await axios.get(
-                "https://YOUR-BACKEND-URL.onrender.com/api/exams",
+                "https://ai-exam-portal-1-vhhx.onrender.com",
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
