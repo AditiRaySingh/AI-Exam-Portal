@@ -15,35 +15,42 @@ function TeacherDashboard() {
         fetchExams();
     }, []);
 
-    const fetchExams = async () => {
-        try {
-            const response = await axios.get(
-                "https://ai-exam-portal-1-vhhx.onrender.com",
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
-            );
+   const fetchExams = async () => {
+    try {
+        const response = await axios.get(
+            "https://ai-exam-portal-1-vhhx.onrender.com/api/exams",
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
 
-            console.log("ALL EXAMS:", response.data);
+        console.log("EXAM API RESPONSE:", response.data);
 
-            const examData =
-                response.data.exams ||
-                response.data.data ||
-                response.data;
+        const examData =
+            response.data.exams ||
+            response.data.data ||
+            response.data;
 
-            setExams(Array.isArray(examData) ? examData : []);
-
-        } catch (error) {
-            console.error(
-                "Error fetching exams:",
-                error.response?.data || error.message
-            );
-        } finally {
-            setLoading(false);
+        if (Array.isArray(examData)) {
+            setExams(examData);
+        } else {
+            setExams([]);
+            console.log("Exams are not an array:", examData);
         }
-    };
+
+    } catch (error) {
+        console.error(
+            "Error fetching exams:",
+            error.response?.data || error.message
+        );
+
+        setExams([]);
+    } finally {
+        setLoading(false);
+    }
+};
 
     if (loading) {
         return (
