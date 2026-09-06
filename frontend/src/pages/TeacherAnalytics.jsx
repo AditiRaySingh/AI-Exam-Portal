@@ -107,11 +107,16 @@ function TeacherAnalytics() {
 
   }
 
-  const analytics = data.analytics;
+const analytics = data.analytics || {
+    totalAttempts: 0,
+    averageScore: 0,
+    highestScore: 0,
+    passCount: 0,
+    failCount: 0
+};
 
-  const leaderboard = data.leaderboard;
-
-  const results = data.results;
+const leaderboard = data.leaderboard || [];
+const results = data.results || [];
   const filteredResults = results.filter((student) =>
 
   student.studentId?.name
