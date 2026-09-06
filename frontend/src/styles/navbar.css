@@ -1,9 +1,16 @@
+
 /* =========================
-   NAVBAR
+   RESET
 ========================= */
 
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 .navbar {
-    width: 100%;
+    width: calc(100% - 40px);
     max-width: 1200px;
     margin: 20px auto;
     padding: 22px 28px;
@@ -14,7 +21,9 @@
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
 
     display: grid;
+
     grid-template-columns: 1fr auto;
+
     grid-template-areas:
         "logo profile"
         "links links";
@@ -35,40 +44,40 @@
     display: flex;
     align-items: center;
     gap: 15px;
+
+    min-width: 0;
 }
 
 .logo-circle {
-    width: 80px;
-    height: 80px;
+    width: 72px;
+    height: 72px;
 
     border-radius: 50%;
 
     background: #2563eb;
 
     display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
 
-    font-size: 38px;
+    font-size: 36px;
 
     flex-shrink: 0;
 }
 
 .navbar-logo h2 {
-    margin: 0;
-
     color: #1e293b;
-
     font-size: 30px;
     font-weight: 700;
+
+    white-space: nowrap;
 }
 
 .navbar-logo p {
-    margin-top: 3px;
+    margin-top: 4px;
 
     color: #64748b;
-
-    font-size: 16px;
+    font-size: 15px;
 }
 
 
@@ -81,14 +90,16 @@
 
     display: flex;
     align-items: center;
-    gap: 14px;
+    justify-content: flex-end;
 
-    white-space: nowrap;
+    gap: 12px;
+
+    min-width: 0;
 }
 
 .profile-avatar {
-    width: 62px;
-    height: 62px;
+    width: 58px;
+    height: 58px;
 
     border-radius: 50%;
 
@@ -99,24 +110,24 @@
     align-items: center;
     justify-content: center;
 
-    font-size: 27px;
+    font-size: 25px;
     font-weight: 600;
 
     flex-shrink: 0;
 }
 
 .profile-info {
-    min-width: 0;
+    min-width: 80px;
+    max-width: 150px;
 }
 
 .profile-info h4 {
-    margin: 0;
-
     color: #1e293b;
 
-    font-size: 21px;
+    font-size: 19px;
     font-weight: 600;
 
+    white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
@@ -128,7 +139,7 @@
 
     color: #64748b;
 
-    font-size: 15px;
+    font-size: 14px;
 
     text-transform: capitalize;
 }
@@ -144,7 +155,7 @@
     background: #ef4444;
     color: white;
 
-    padding: 13px 22px;
+    padding: 12px 20px;
 
     border-radius: 10px;
 
@@ -174,7 +185,7 @@
     justify-content: center;
     align-items: center;
 
-    gap: 45px;
+    gap: 20px;
 
     border-top: 1px solid #e5e7eb;
 
@@ -189,7 +200,7 @@
     font-size: 18px;
     font-weight: 500;
 
-    padding: 10px 25px;
+    padding: 10px 28px;
 
     border-radius: 10px;
 
@@ -221,13 +232,16 @@
 
         margin: 15px auto;
 
-        padding: 20px;
+        padding: 18px;
+
+        display: grid;
 
         grid-template-columns: 1fr;
+
         grid-template-areas:
             "logo"
-            "profile"
-            "links";
+            "links"
+            "profile";
 
         gap: 18px;
     }
@@ -236,12 +250,14 @@
     /* LOGO */
 
     .navbar-logo {
+        width: 100%;
+
         justify-content: flex-start;
     }
 
     .logo-circle {
-        width: 62px;
-        height: 62px;
+        width: 60px;
+        height: 60px;
 
         font-size: 30px;
     }
@@ -251,7 +267,30 @@
     }
 
     .navbar-logo p {
-        font-size: 14px;
+        font-size: 13px;
+    }
+
+
+    /* LINKS */
+
+    .navbar-links {
+        width: 100%;
+
+        padding-top: 15px;
+
+        gap: 10px;
+
+        justify-content: center;
+    }
+
+    .navbar-links a {
+        flex: 1;
+
+        text-align: center;
+
+        font-size: 17px;
+
+        padding: 11px 10px;
     }
 
 
@@ -261,22 +300,29 @@
         width: 100%;
 
         display: flex;
+
         justify-content: flex-start;
+
         align-items: center;
 
         gap: 12px;
+
+        padding-top: 2px;
     }
 
     .profile-avatar {
-        width: 58px;
-        height: 58px;
+        width: 56px;
+        height: 56px;
 
-        font-size: 25px;
+        font-size: 24px;
     }
 
     .profile-info {
         flex: 1;
+
         min-width: 0;
+
+        max-width: none;
     }
 
     .profile-info h4 {
@@ -292,34 +338,11 @@
 
         font-size: 15px;
     }
-
-
-    /* LINKS */
-
-    .navbar-links {
-        width: 100%;
-
-        justify-content: center;
-
-        gap: 10px;
-
-        padding-top: 15px;
-    }
-
-    .navbar-links a {
-        flex: 1;
-
-        text-align: center;
-
-        font-size: 17px;
-
-        padding: 11px 15px;
-    }
 }
 
 
 /* =========================
-   SMALL MOBILE
+   MOBILE
 ========================= */
 
 @media (max-width: 480px) {
@@ -327,9 +350,11 @@
     .navbar {
         width: calc(100% - 24px);
 
+        margin: 12px auto;
+
         padding: 16px;
 
-        border-radius: 16px;
+        border-radius: 17px;
 
         gap: 15px;
     }
@@ -337,15 +362,15 @@
 
     /* LOGO */
 
-    .logo-circle {
-        width: 55px;
-        height: 55px;
-
-        font-size: 27px;
-    }
-
     .navbar-logo {
         gap: 10px;
+    }
+
+    .logo-circle {
+        width: 54px;
+        height: 54px;
+
+        font-size: 27px;
     }
 
     .navbar-logo h2 {
@@ -357,10 +382,29 @@
     }
 
 
+    /* LINKS */
+
+    .navbar-links {
+        gap: 6px;
+
+        padding-top: 13px;
+    }
+
+    .navbar-links a {
+        font-size: 15px;
+
+        padding: 10px 6px;
+    }
+
+
     /* PROFILE */
 
     .navbar-profile {
+        width: 100%;
+
         gap: 9px;
+
+        justify-content: flex-start;
     }
 
     .profile-avatar {
@@ -370,60 +414,14 @@
         font-size: 22px;
     }
 
+    .profile-info {
+        flex: 1;
+
+        min-width: 0;
+    }
+
     .profile-info h4 {
         font-size: 16px;
-    }
-
-    .profile-info span {
-        font-size: 13px;
-    }
-
-    .logout-btn {
-        padding: 10px 14px;
-
-        font-size: 14px;
-    }
-
-
-    /* LINKS */
-
-    .navbar-links {
-        gap: 5px;
-    }
-
-    .navbar-links a {
-        font-size: 15px;
-
-        padding: 10px 8px;
-    }
-}
-
-
-/* =========================
-   VERY SMALL PHONES
-========================= */
-
-@media (max-width: 360px) {
-
-    .navbar {
-        padding: 13px;
-    }
-
-    .navbar-logo h2 {
-        font-size: 20px;
-    }
-
-    .navbar-logo p {
-        font-size: 11px;
-    }
-
-    .profile-avatar {
-        width: 45px;
-        height: 45px;
-    }
-
-    .profile-info h4 {
-        font-size: 14px;
     }
 
     .profile-info span {
@@ -431,7 +429,87 @@
     }
 
     .logout-btn {
-        padding: 9px 11px;
+        padding: 10px 14px;
+
+        font-size: 14px;
+    }
+}
+
+
+/* =========================
+   VERY SMALL PHONE
+========================= */
+
+@media (max-width: 360px) {
+
+    .navbar {
+        width: calc(100% - 16px);
+
+        padding: 13px;
+
+        gap: 13px;
+    }
+
+
+    /* LOGO */
+
+    .logo-circle {
+        width: 48px;
+        height: 48px;
+
+        font-size: 24px;
+    }
+
+    .navbar-logo {
+        gap: 8px;
+    }
+
+    .navbar-logo h2 {
+        font-size: 19px;
+    }
+
+    .navbar-logo p {
+        font-size: 10px;
+    }
+
+
+    /* LINKS */
+
+    .navbar-links {
+        gap: 4px;
+    }
+
+    .navbar-links a {
+        font-size: 14px;
+
+        padding: 9px 5px;
+    }
+
+
+    /* PROFILE */
+
+    .navbar-profile {
+        gap: 7px;
+    }
+
+    .profile-avatar {
+        width: 45px;
+        height: 45px;
+
+        font-size: 20px;
+    }
+
+    .profile-info h4 {
+        font-size: 14px;
+    }
+
+    .profile-info span {
+        font-size: 11px;
+    }
+
+    .logout-btn {
+        padding: 9px 10px;
+
         font-size: 13px;
     }
 }
