@@ -5,7 +5,6 @@ import userModel from "../models/userModel.js";
 // register
 export const userregistration = async (req, res) => {
   try {
-
     const { name, email, password, role } = req.body;
 
     if (!name || !email || !password || !role) {
