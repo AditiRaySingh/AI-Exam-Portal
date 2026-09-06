@@ -1,54 +1,32 @@
-/* =========================================================
-   EXAM CARD
-========================================================= */
-
 .exam-card {
     width: 100%;
-    background: #ffffff;
-
+    background: #fff;
     border: 1px solid #e3e8f0;
     border-radius: 18px;
-
     overflow: hidden;
-
     box-shadow: 0 4px 18px rgba(15, 23, 42, 0.06);
-
     display: flex;
     flex-direction: column;
-
-    transition: all 0.2s ease;
+    transition: 0.2s ease;
 }
 
 .exam-card:hover {
     transform: translateY(-3px);
-
-    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.10);
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.1);
 }
 
 
-/* =========================================================
-   HEADER
-========================================================= */
+/* HEADER */
 
 .exam-card .exam-header {
     padding: 20px 22px 18px;
-
     border-bottom: 1px solid #edf0f4;
-
-    position: relative;
 }
-
-
-/* STATUS */
 
 .exam-card .status {
     display: inline-flex;
-    align-items: center;
-
     padding: 5px 11px;
-
     margin-bottom: 9px;
-
     border-radius: 50px;
 
     background: #eaf9f1;
@@ -58,17 +36,12 @@
     font-weight: 700;
 }
 
-
-/* TITLE */
-
 .exam-card .exam-header h2 {
     margin: 0;
 
     color: #182238;
-
     font-size: 20px;
     font-weight: 750;
-
     line-height: 1.3;
 
     white-space: nowrap;
@@ -76,14 +49,10 @@
     text-overflow: ellipsis;
 }
 
-
-/* DESCRIPTION */
-
 .exam-card .description {
     margin: 5px 0 0;
 
     color: #7a8799;
-
     font-size: 13px;
 
     white-space: nowrap;
@@ -92,59 +61,44 @@
 }
 
 
-/* =========================================================
-   EXAM META
-========================================================= */
+/* INFORMATION */
 
-.exam-card .exam-meta {
+.exam-card .exam-info {
     padding: 18px 22px;
 
     display: grid;
-
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: 1fr 1fr;
 
     gap: 12px;
 }
 
 
-/* =========================================================
-   META ITEM
-========================================================= */
+/* INFORMATION CARD */
 
-.exam-card .exam-meta-item {
+.exam-card .info-card {
     min-width: 0;
-    min-height: 70px;
+    min-height: 68px;
 
-    padding: 12px 13px;
+    padding: 12px;
 
     display: flex;
     align-items: center;
 
-    gap: 11px;
+    gap: 10px;
 
     background: #f8fafc;
 
     border: 1px solid #e8edf4;
-
     border-radius: 12px;
 
     box-sizing: border-box;
 }
 
 
-/* LAST ITEM FULL WIDTH */
+/* ICON */
 
-.exam-card .exam-meta-item:last-child {
-    grid-column: span 2;
-}
-
-
-/* =========================================================
-   ICON
-========================================================= */
-
-.exam-card .meta-icon {
-    flex: 0 0 38px;
+.exam-card .info-card .icon {
+    flex-shrink: 0;
 
     width: 38px;
     height: 38px;
@@ -161,20 +115,14 @@
 }
 
 
-/* =========================================================
-   META CONTENT
-========================================================= */
+/* TEXT */
 
-.exam-card .meta-content {
+.exam-card .info-card > div:last-child {
     min-width: 0;
-    flex: 1;
 }
 
-
-.exam-card .meta-content span {
-    display: block;
-
-    margin-bottom: 4px;
+.exam-card .info-card h4 {
+    margin: 0 0 4px;
 
     color: #7b8798;
 
@@ -182,9 +130,8 @@
     font-weight: 600;
 }
 
-
-.exam-card .meta-content strong {
-    display: block;
+.exam-card .info-card p {
+    margin: 0;
 
     color: #202b3d;
 
@@ -192,33 +139,33 @@
     font-weight: 700;
 
     line-height: 1.35;
-
-    overflow-wrap: break-word;
 }
 
 
-/* =========================================================
-   BUTTON
-========================================================= */
+/* TOTAL MARKS */
+
+.exam-card .info-card:last-child {
+    grid-column: span 2;
+}
+
+
+/* BUTTON */
 
 .exam-card .start-btn {
     width: calc(100% - 44px);
-
     height: 44px;
 
     margin: 0 22px 22px;
 
-    border: none;
+    border: none !important;
     outline: none;
 
     border-radius: 11px;
 
     background: #2563eb !important;
-
-    color: #ffffff !important;
+    color: #fff !important;
 
     font-family: inherit;
-
     font-size: 14px;
     font-weight: 700;
 
@@ -228,14 +175,12 @@
     align-items: center;
     justify-content: center;
 
-    transition: all 0.2s ease;
+    transition: 0.2s ease;
 }
-
 
 .exam-card .start-btn:hover {
     background: #1d4ed8 !important;
-
-    color: #ffffff !important;
+    color: #fff !important;
 
     transform: translateY(-1px);
 
@@ -243,28 +188,20 @@
 }
 
 
-/* =========================================================
-   TABLET
-========================================================= */
+/* TABLET */
 
 @media (max-width: 1100px) {
 
-    .exam-card .exam-meta {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+    .exam-card .exam-info {
+        grid-template-columns: 1fr 1fr;
     }
 
 }
 
 
-/* =========================================================
-   MOBILE
-========================================================= */
+/* MOBILE */
 
 @media (max-width: 768px) {
-
-    .exam-card {
-        border-radius: 16px;
-    }
 
     .exam-card .exam-header {
         padding: 18px;
@@ -274,40 +211,27 @@
         font-size: 18px;
     }
 
-    .exam-card .description {
-        font-size: 12px;
-    }
-
-    .exam-card .exam-meta {
+    .exam-card .exam-info {
         padding: 14px 18px;
-
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-
         gap: 9px;
     }
 
-    .exam-card .exam-meta-item {
+    .exam-card .info-card {
         min-height: 62px;
-
         padding: 10px;
-
-        gap: 8px;
     }
 
-    .exam-card .meta-icon {
-        flex-basis: 34px;
-
+    .exam-card .info-card .icon {
         width: 34px;
         height: 34px;
-
         font-size: 15px;
     }
 
-    .exam-card .meta-content span {
+    .exam-card .info-card h4 {
         font-size: 10px;
     }
 
-    .exam-card .meta-content strong {
+    .exam-card .info-card p {
         font-size: 12px;
     }
 
@@ -321,17 +245,15 @@
 }
 
 
-/* =========================================================
-   SMALL MOBILE
-========================================================= */
+/* SMALL MOBILE */
 
 @media (max-width: 480px) {
 
-    .exam-card .exam-meta {
+    .exam-card .exam-info {
         grid-template-columns: 1fr;
     }
 
-    .exam-card .exam-meta-item:last-child {
+    .exam-card .info-card:last-child {
         grid-column: span 1;
     }
 
