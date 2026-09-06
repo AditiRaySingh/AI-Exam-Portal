@@ -16,7 +16,7 @@ function TeacherDashboard() {
 
     // IMPORTANT:
     // Change this URL to your deployed BACKEND URL.
-    const API_URL = "https://YOUR-BACKEND-URL.onrender.com/api";
+   const API_URL = "https://ai-exam-portal-backend.onrender.com/api";
 
     useEffect(() => {
         fetchDashboard();
