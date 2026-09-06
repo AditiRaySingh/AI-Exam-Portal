@@ -15,10 +15,10 @@ function TeacherDashboard() {
         fetchExams();
     }, []);
 
-   const fetchExams = async () => {
+const fetchExams = async () => {
     try {
         const response = await axios.get(
-            "https://ai-exam-portal-1-vhhx.onrender.com/api/exams",
+            "https://ai-exam-portal-1-vhhx.onrender.com/api/exams/teacher",
             {
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -26,23 +26,13 @@ function TeacherDashboard() {
             }
         );
 
-        console.log("EXAM API RESPONSE:", response.data);
+        console.log("EXAM RESPONSE:", response.data);
 
-        const examData =
-            response.data.exams ||
-            response.data.data ||
-            response.data;
-
-        if (Array.isArray(examData)) {
-            setExams(examData);
-        } else {
-            setExams([]);
-            console.log("Exams are not an array:", examData);
-        }
+        setExams(response.data.exams || []);
 
     } catch (error) {
-        console.error(
-            "Error fetching exams:",
+        console.log(
+            "Error:",
             error.response?.data || error.message
         );
 
