@@ -1,203 +1,328 @@
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 .navbar {
-    min-height: 75px;
-    background: #ffffff;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 40px;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
-    position: sticky;
-    top: 0;
-    z-index: 1000;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto 30px;
+  padding: 18px 28px;
+
+  background: #ffffff;
+  border-radius: 18px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 25px;
+
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
 }
 
 /* ================= LOGO ================= */
 
 .navbar-logo {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-shrink: 0;
 }
 
 .logo-circle {
-    width: 50px;
-    height: 50px;
-    min-width: 50px;
-    background: #2563eb;
-    border-radius: 50%;
+  width: 58px;
+  height: 58px;
 
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  background: #2563eb;
+  border-radius: 50%;
 
-    font-size: 24px;
-    color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  font-size: 28px;
 }
 
 .navbar-logo h2 {
-    font-size: 22px;
-    color: #1e293b;
-    white-space: nowrap;
+  margin: 0;
+  color: #1e293b;
+  font-size: 25px;
+  font-weight: 700;
 }
 
 .navbar-logo p {
-    font-size: 12px;
-    color: #64748b;
-    white-space: nowrap;
+  margin: 3px 0 0;
+  color: #64748b;
+  font-size: 13px;
 }
-
 
 /* ================= LINKS ================= */
 
 .navbar-links {
-    display: flex;
-    align-items: center;
-    gap: 30px;
-    margin-left: auto;
-    margin-right: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }
 
 .navbar-links a {
-    text-decoration: none;
-    color: #334155;
-    font-weight: 600;
-    white-space: nowrap;
-    transition: 0.3s;
+  text-decoration: none;
+  color: #334155;
+
+  padding: 10px 18px;
+  border-radius: 10px;
+
+  font-size: 16px;
+  font-weight: 600;
+
+  transition: 0.2s;
 }
 
 .navbar-links a:hover {
-    color: #2563eb;
+  background: #eff6ff;
+  color: #2563eb;
 }
 
-.active {
-    color: #2563eb !important;
+.navbar-links a.active {
+  background: #eff6ff;
+  color: #2563eb;
 }
-
 
 /* ================= PROFILE ================= */
 
 .navbar-profile {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
 }
 
 .profile-avatar {
-    width: 45px;
-    height: 45px;
-    min-width: 45px;
+  width: 52px;
+  height: 52px;
 
-    border-radius: 50%;
-    background: #2563eb;
-    color: white;
+  border-radius: 50%;
+  background: #2563eb;
+  color: white;
 
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
-    font-size: 20px;
-    font-weight: bold;
+  font-size: 22px;
+  font-weight: 600;
 }
 
 .profile-info {
-    min-width: 65px;
+  min-width: 100px;
 }
 
 .profile-info h4 {
-    color: #1e293b;
-    white-space: nowrap;
+  margin: 0;
+  color: #1e293b;
+  font-size: 16px;
+  font-weight: 600;
 }
 
 .profile-info span {
-    color: gray;
-    font-size: 13px;
-    text-transform: capitalize;
-    white-space: nowrap;
+  display: block;
+  margin-top: 3px;
+
+  color: #64748b;
+  font-size: 13px;
+  text-transform: capitalize;
 }
 
-
-/* ================= LOGOUT ================= */
-
 .logout-btn {
-    padding: 10px 18px;
-    border: none;
-    border-radius: 8px;
+  border: none;
+  background: #ef4444;
+  color: white;
 
-    background: #ef4444;
-    color: white;
+  padding: 11px 18px;
+  border-radius: 10px;
 
-    cursor: pointer;
-    white-space: nowrap;
+  font-size: 14px;
+  font-weight: 600;
 
-    transition: 0.3s;
+  cursor: pointer;
+  transition: 0.2s;
 }
 
 .logout-btn:hover {
-    background: #dc2626;
+  background: #dc2626;
+  transform: translateY(-1px);
 }
-
 
 /* ================= TABLET ================= */
 
-@media (max-width: 1000px) {
+@media (max-width: 1050px) {
 
-    .navbar {
-        padding: 0 20px;
-    }
+  .navbar {
+    padding: 18px 20px;
+    gap: 15px;
+  }
 
-    .navbar-links {
-        gap: 18px;
-        margin-right: 20px;
-    }
+  .navbar-logo h2 {
+    font-size: 21px;
+  }
 
-    .navbar-logo h2 {
-        font-size: 19px;
-    }
+  .navbar-logo p {
+    font-size: 12px;
+  }
 
-    .navbar-logo p {
-        font-size: 11px;
-    }
+  .logo-circle {
+    width: 50px;
+    height: 50px;
+    font-size: 24px;
+  }
+
+  .navbar-links a {
+    padding: 9px 12px;
+    font-size: 15px;
+  }
+
+  .profile-info {
+    display: none;
+  }
 
 }
 
-
 /* ================= MOBILE ================= */
 
-@media (max-width: 767px) {
+@media (max-width: 768px) {
 
-    .navbar {
-        height: auto;
-        min-height: 75px;
-        padding: 12px 15px;
+  .navbar {
+    width: calc(100% - 24px);
 
-        flex-wrap: wrap;
-        gap: 15px;
-    }
+    margin: 12px auto 25px;
+    padding: 16px;
 
-    .navbar-logo {
-        width: auto;
-    }
+    border-radius: 16px;
 
-    .navbar-links {
-        order: 3;
-        width: 100%;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 18px;
+  }
 
-        justify-content: center;
+  /* LOGO */
 
-        margin: 0;
-        gap: 25px;
-    }
+  .navbar-logo {
+    gap: 10px;
+  }
 
-    .navbar-profile {
-        margin-left: auto;
-    }
+  .logo-circle {
+    width: 48px;
+    height: 48px;
+    font-size: 23px;
+  }
+
+  .navbar-logo h2 {
+    font-size: 19px;
+  }
+
+  .navbar-logo p {
+    font-size: 11px;
+  }
+
+  /* PROFILE */
+
+  .navbar-profile {
+    gap: 8px;
+  }
+
+  .profile-avatar {
+    width: 46px;
+    height: 46px;
+    font-size: 20px;
+  }
+
+  .profile-info {
+    display: block;
+    min-width: auto;
+  }
+
+  .profile-info h4 {
+    font-size: 14px;
+    white-space: nowrap;
+  }
+
+  .profile-info span {
+    font-size: 11px;
+  }
+
+  .logout-btn {
+    padding: 9px 12px;
+    font-size: 13px;
+  }
+
+  /* LINKS */
+
+  .navbar-links {
+    grid-column: 1 / -1;
+
+    width: 100%;
+
+    display: flex;
+    justify-content: center;
+
+    border-top: 1px solid #e5e7eb;
+    padding-top: 12px;
+  }
+
+  .navbar-links a {
+    flex: 1;
+
+    text-align: center;
+
+    padding: 9px 8px;
+
+    font-size: 15px;
+    border-radius: 9px;
+  }
+
+}
+
+/* ================= SMALL MOBILE ================= */
+
+@media (max-width: 480px) {
+
+  .navbar {
+    width: calc(100% - 16px);
+    padding: 14px;
+    margin-top: 8px;
+  }
+
+  .navbar-logo h2 {
+    font-size: 17px;
+  }
+
+  .navbar-logo p {
+    font-size: 10px;
+  }
+
+  .logo-circle {
+    width: 44px;
+    height: 44px;
+    font-size: 21px;
+  }
+
+  .profile-avatar {
+    width: 42px;
+    height: 42px;
+    font-size: 18px;
+  }
+
+  .profile-info {
+    display: none;
+  }
+
+  .logout-btn {
+    padding: 8px 11px;
+    font-size: 12px;
+  }
+
+  .navbar-links a {
+    font-size: 14px;
+    padding: 9px 5px;
+  }
 
 }
