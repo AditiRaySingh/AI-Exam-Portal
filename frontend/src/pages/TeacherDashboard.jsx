@@ -14,7 +14,6 @@ function TeacherDashboard() {
     useEffect(() => {
         fetchExams();
     }, []);
-
 const fetchExams = async () => {
     try {
         const response = await axios.get(
@@ -26,13 +25,18 @@ const fetchExams = async () => {
             }
         );
 
-        console.log("EXAM RESPONSE:", response.data);
+        console.log("TEACHER EXAMS:", response.data);
 
-        setExams(response.data.exams || []);
+        if (response.data.success) {
+            setExams(response.data.exams || []);
+        } else {
+            setExams([]);
+        }
 
     } catch (error) {
-        console.log(
-            "Error:",
+        console.error(
+            "FETCH EXAMS ERROR:",
+            error.response?.status,
             error.response?.data || error.message
         );
 
