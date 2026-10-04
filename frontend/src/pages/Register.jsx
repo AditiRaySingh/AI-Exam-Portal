@@ -1,155 +1,237 @@
 import "../styles/register.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import api from "../services/api";
 
 function Register() {
 
-  const [formData, setFormData] =
-    useState({
-      name: "",
-      email: "",
-      password: "",
-      role: "student"
+    const navigate = useNavigate();
+
+    const [formData, setFormData] = useState({
+
+        name: "",
+        email: "",
+        password: "",
+        role: "student"
+
     });
 
-  const handleChange =
-    (e) => {
+    const [loading, setLoading] =
+        useState(false);
 
-      setFormData({
-        ...formData,
-        [e.target.name]:
-          e.target.value
-      });
 
-    };
+    const handleChange = (e) => {
 
-  const handleSubmit =
-    async (e) => {
+        setFormData({
 
-      e.preventDefault();
+            ...formData,
 
-      console.log(
-        "FORM DATA:",
-        formData
-      );
+            [e.target.name]: e.target.value
 
-      try {
-
-        const res =
-          await api.post(
-            "/auth/register",
-            {
-              name:
-                formData.name,
-              email:
-                formData.email,
-              password:
-                formData.password,
-              role:
-                formData.role
-            }
-          );
-
-        console.log(
-          res.data
-        );
-
-        alert(
-          "Registration Success"
-        );
-
-      }
-
-      catch (error) {
-
-        console.log(
-          error.response?.data
-        );
-
-        alert(
-          error.response?.data?.message ||
-          "Registration Failed"
-        );
-      }
+        });
 
     };
 
-  return (
 
-    <div className="register-container">
+    const handleSubmit = async (e) => {
 
-      <form
-        className="register-box"
-        onSubmit={handleSubmit}
-      >
+        e.preventDefault();
 
-        <h2>
-          Register
-        </h2>
 
-        <input
-          type="text"
-          name="name"
-          placeholder="Enter Name"
-          value={formData.name}
-          onChange={handleChange}
-        />
+        /*
+        ================================================
+        FRONTEND EMAIL CHECK
+        ================================================
+        */
 
-        <input
-          type="email"
-          name="email"
-          placeholder="Enter Email"
-          value={formData.email}
-          onChange={handleChange}
-        />
+        if (
+            !formData.email
+                .toLowerCase()
+                .trim()
+                .endsWith("@gla.ac.in")
+        ) {
 
-        <input
-          type="password"
-          name="password"
-          placeholder="Enter Password"
-          value={formData.password}
-          onChange={handleChange}
-        />
+            alert(
+                "Please use your GLA University email address."
+            );
 
-        <select
-          name="role"
-          value={formData.role}
-          onChange={handleChange}
-        >
+            return;
 
-          <option value="student">
-            Student
-          </option>
+        }
 
-          <option value="teacher">
-            Teacher
-          </option>
 
-        </select>
+        if (formData.password.length < 6) {
 
-        <button>
-          Register
-        </button>
+            alert(
+                "Password must be at least 6 characters."
+            );
 
-        <p
-          style={{
-            marginTop: "15px",
-            textAlign: "center"
-          }}
-        >
-          Already have account?
+            return;
 
-          <Link to="/">
-            Login
-          </Link>
+        }
 
-        </p>
 
-      </form>
+        try {
 
-    </div>
-  );
+            setLoading(true);
+
+
+            const res =
+                await api.post(
+                    "/auth/register",
+                    formData
+                );
+
+
+            console.log(
+                "REGISTRATION:",
+                res.data
+            );
+
+
+            alert(
+                "Registration submitted successfully!\n\nYour account is now pending Admin approval."
+            );
+
+
+            setFormData({
+
+                name: "",
+                email: "",
+                password: "",
+                role: "student"
+
+            });
+
+
+            navigate("/");
+
+
+        } catch (error) {
+
+            console.error(
+                "REGISTRATION ERROR:",
+                error
+            );
+
+
+            alert(
+                error.response?.data?.message ||
+                "Registration failed"
+            );
+
+        } finally {
+
+            setLoading(false);
+
+        }
+
+    };
+
+
+    return (
+
+        <div className="register-container">
+
+            <form
+                className="register-box"
+                onSubmit={handleSubmit}
+            >
+
+                <h2>Create Account</h2>
+
+                <p
+                    style={{
+                        textAlign: "center",
+                        color: "#777",
+                        fontSize: "13px",
+                        marginBottom: "20px"
+                    }}
+                >
+                    GLA University users only
+                </p>
+
+
+                <input
+                    type="text"
+                    name="name"
+                    placeholder="Enter Name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    required
+                />
+
+
+                <input
+                    type="email"
+                    name="email"
+                    placeholder="Enter GLA Email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
+                />
+
+
+                <input
+                    type="password"
+                    name="password"
+                    placeholder="Enter Password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    required
+                />
+
+
+                <select
+                    name="role"
+                    value={formData.role}
+                    onChange={handleChange}
+                >
+
+                    <option value="student">
+                        Student
+                    </option>
+
+                    <option value="teacher">
+                        Teacher
+                    </option>
+
+                </select>
+
+
+                <button
+                    type="submit"
+                    disabled={loading}
+                >
+
+                    {loading
+                        ? "Submitting..."
+                        : "Register"}
+
+                </button>
+
+
+                <p
+                    style={{
+                        marginTop: "15px",
+                        textAlign: "center"
+                    }}
+                >
+
+                    Already have account?{" "}
+
+                    <Link to="/">
+                        Login
+                    </Link>
+
+                </p>
+
+            </form>
+
+        </div>
+
+    );
+
 }
 
 export default Register;

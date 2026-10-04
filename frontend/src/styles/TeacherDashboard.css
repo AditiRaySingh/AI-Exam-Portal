@@ -1,5 +1,6 @@
 /* =========================================================
    TEACHER DASHBOARD
+   DARK PURPLE / BLACK / WHITE / PINK THEME
 ========================================================= */
 
 .teacher-dashboard,
@@ -7,16 +8,34 @@
     box-sizing: border-box;
 }
 
+/* =========================================================
+   MAIN DASHBOARD
+========================================================= */
+
 .teacher-dashboard {
     min-height: 100vh;
-
     padding: 30px;
 
-    background: #f5f7fb;
+    background:
+        radial-gradient(
+            circle at 85% 5%,
+            rgba(157, 79, 174, 0.18),
+            transparent 28%
+        ),
+        radial-gradient(
+            circle at 10% 60%,
+            rgba(91, 48, 111, 0.12),
+            transparent 30%
+        ),
+        linear-gradient(
+            135deg,
+            #0d0812 0%,
+            #130a19 50%,
+            #0b0710 100%
+        );
 
-    color: #172033;
+    color: #ffffff;
 }
-
 
 /* =========================================================
    COMMON WIDTH
@@ -26,105 +45,160 @@
 .stats-grid,
 .exam-section {
     width: 100%;
-
     max-width: 1280px;
-
     margin-left: auto;
     margin-right: auto;
 }
-
 
 /* =========================================================
    DASHBOARD HEADER
 ========================================================= */
 
 .dashboard-header {
+    position: relative;
+    overflow: hidden;
+
     min-height: 155px;
-
     margin-bottom: 26px;
-
     padding: 30px 34px;
 
     display: flex;
-
     align-items: center;
-
     justify-content: space-between;
-
     gap: 25px;
 
-    border-radius: 16px;
+    border: 1px solid rgba(190, 140, 211, 0.24);
+    border-radius: 18px;
 
     background:
         linear-gradient(
             135deg,
-            #1d4ed8,
-            #2563eb 55%,
-            #4338ca
+            #2d193b 0%,
+            #24132f 52%,
+            #170c20 100%
         );
 
     box-shadow:
-        0 12px 30px rgba(37, 99, 235, 0.16);
+        0 18px 40px rgba(0, 0, 0, 0.40),
+        inset 0 1px 0 rgba(255, 255, 255, 0.04);
 
-    color: white;
+    color: #ffffff;
+}
+
+.dashboard-header::before {
+    content: "";
+
+    position: absolute;
+    width: 280px;
+    height: 220px;
+    right: -100px;
+    top: -130px;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(183, 91, 195, 0.32),
+            transparent 70%
+        );
+
+    filter: blur(10px);
+    pointer-events: none;
+}
+
+.dashboard-header::after {
+    content: "";
+
+    position: absolute;
+    left: 30px;
+    right: 30px;
+    bottom: 0;
+    height: 2px;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            #8c4d9e,
+            #d27ab7,
+            #8c4d9e,
+            transparent
+        );
+
+    opacity: 0.7;
 }
 
 .dashboard-header h1 {
+    position: relative;
+    z-index: 2;
+
     margin: 0 0 7px;
 
-    color: white;
+    color: #ffffff;
 
     font-size: 29px;
-
     line-height: 1.2;
-
     font-weight: 750;
-
     letter-spacing: -0.5px;
 }
 
 .dashboard-header p {
+    position: relative;
+    z-index: 2;
+
     margin: 0;
 
-    color: rgba(255, 255, 255, 0.82);
-
+    color: #cbb8d0;
     font-size: 14px;
 }
-
 
 /* =========================================================
    CREATE EXAM BUTTON
 ========================================================= */
 
 .create-btn {
+    position: relative;
+    z-index: 3;
+
     flex-shrink: 0;
 
     padding: 12px 20px;
 
-    border: none;
+    border: 1px solid rgba(224, 165, 221, 0.35);
+    border-radius: 10px;
 
-    border-radius: 9px;
+    background:
+        linear-gradient(
+            135deg,
+            #794487,
+            #a85a9f
+        );
 
-    background: #ffffff;
-
-    color: #1d4ed8;
+    color: #ffffff;
 
     font-size: 14px;
-
     font-weight: 700;
 
     cursor: pointer;
 
-    transition: all 0.2s ease;
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease,
+        background 0.25s ease;
 }
 
 .create-btn:hover {
     transform: translateY(-2px);
 
-    box-shadow:
-        0 7px 18px rgba(0, 0, 0, 0.16);
-}
+    background:
+        linear-gradient(
+            135deg,
+            #895097,
+            #b765aa
+        );
 
+    box-shadow:
+        0 10px 24px rgba(113, 52, 127, 0.35);
+}
 
 /* =========================================================
    STATISTICS
@@ -134,127 +208,219 @@
     margin-bottom: 26px;
 
     display: grid;
-
-    grid-template-columns:
-        repeat(3, 1fr);
-
+    grid-template-columns: repeat(3, 1fr);
     gap: 18px;
 }
 
 .stat-card {
     position: relative;
+    overflow: hidden;
 
     min-height: 108px;
-
     padding: 21px 24px;
 
     display: flex;
-
     align-items: center;
-
     justify-content: space-between;
 
-    background: white;
+    background:
+        linear-gradient(
+            145deg,
+            #2a1936 0%,
+            #21142d 55%,
+            #170d20 100%
+        );
 
-    border: 1px solid #e4e9f1;
-
-    border-radius: 14px;
+    border: 1px solid rgba(190, 140, 211, 0.22);
+    border-radius: 17px;
 
     box-shadow:
-        0 4px 14px rgba(15, 23, 42, 0.045);
+        0 14px 32px rgba(0, 0, 0, 0.35),
+        inset 0 1px 0 rgba(255, 255, 255, 0.035);
 
-    overflow: hidden;
-
-    transition: all 0.2s ease;
+    transition:
+        transform 0.25s ease,
+        border-color 0.25s ease,
+        box-shadow 0.25s ease;
 }
-
-
-/* LEFT COLOR LINE */
 
 .stat-card::before {
     content: "";
 
     position: absolute;
-
     left: 0;
-
     top: 0;
-
     bottom: 0;
 
     width: 4px;
 
-    background: #2563eb;
+    background:
+        linear-gradient(
+            180deg,
+            #9b55aa,
+            #d27ab7
+        );
+}
+
+.stat-card::after {
+    content: "";
+
+    position: absolute;
+
+    width: 150px;
+    height: 120px;
+
+    right: -70px;
+    top: -70px;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(178, 91, 192, 0.25),
+            transparent 70%
+        );
+
+    filter: blur(8px);
+    pointer-events: none;
 }
 
 .stat-card:nth-child(2)::before {
-    background: #16a34a;
+    background:
+        linear-gradient(
+            180deg,
+            #6f9f80,
+            #9ee0b1
+        );
 }
 
 .stat-card:nth-child(3)::before {
-    background: #f97316;
+    background:
+        linear-gradient(
+            180deg,
+            #b77a42,
+            #e5ad70
+        );
 }
 
-
 .stat-card:hover {
-    transform: translateY(-3px);
+    transform: translateY(-4px);
+
+    border-color: rgba(207, 153, 222, 0.35);
 
     box-shadow:
-        0 9px 22px rgba(15, 23, 42, 0.08);
+        0 18px 38px rgba(0, 0, 0, 0.45),
+        0 0 24px rgba(125, 68, 143, 0.10);
 }
 
 .stat-card h3 {
+    position: relative;
+    z-index: 2;
+
     margin: 0;
 
-    color: #64748b;
+    color: #c2afc7;
 
     font-size: 14px;
-
     font-weight: 600;
 }
 
 .stat-card h2 {
+    position: relative;
+    z-index: 2;
+
     margin: 6px 0 0;
 
-    color: #172033;
+    color: #ffffff;
 
     font-size: 30px;
-
     line-height: 1;
-
     font-weight: 750;
 }
-
 
 /* =========================================================
    EXAM SECTION
 ========================================================= */
 
 .exam-section {
+    position: relative;
+    overflow: hidden;
+
     padding: 28px;
 
-    background: #ffffff;
+    background:
+        linear-gradient(
+            145deg,
+            #2a1936 0%,
+            #21142d 55%,
+            #170d20 100%
+        );
 
-    border: 1px solid #e4e9f1;
-
-    border-radius: 18px;
+    border: 1px solid rgba(190, 140, 211, 0.22);
+    border-radius: 19px;
 
     box-shadow:
-        0 5px 20px rgba(15, 23, 42, 0.045);
+        0 16px 38px rgba(0, 0, 0, 0.40),
+        inset 0 1px 0 rgba(255, 255, 255, 0.035);
 }
 
+.exam-section::before {
+    content: "";
+
+    position: absolute;
+
+    width: 250px;
+    height: 180px;
+
+    right: -100px;
+    top: -100px;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(178, 91, 192, 0.24),
+            transparent 70%
+        );
+
+    filter: blur(10px);
+    pointer-events: none;
+}
+
+.exam-section::after {
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    left: 28px;
+    right: 28px;
+
+    height: 2px;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            #8c4d9e,
+            #d27ab7,
+            #8c4d9e,
+            transparent
+        );
+
+    opacity: 0.7;
+}
 
 /* =========================================================
    SECTION HEADING
 ========================================================= */
 
 .section-heading {
+    position: relative;
+    z-index: 3;
+
     margin-bottom: 22px;
 
     display: flex;
-
     align-items: center;
-
     justify-content: space-between;
 
     gap: 15px;
@@ -263,17 +429,16 @@
 .section-heading h2 {
     margin: 0 0 4px;
 
-    color: #172033;
+    color: #ffffff;
 
     font-size: 22px;
-
     font-weight: 750;
 }
 
 .section-heading p {
     margin: 0;
 
-    color: #94a3b8;
+    color: #b6a3bc;
 
     font-size: 13px;
 }
@@ -281,41 +446,40 @@
 .exam-count {
     padding: 7px 12px;
 
+    border: 1px solid rgba(190, 140, 211, 0.24);
     border-radius: 20px;
 
-    background: #eff6ff;
+    background: rgba(126, 69, 142, 0.18);
 
-    color: #2563eb;
+    color: #d9b9df;
 
     font-size: 12px;
-
     font-weight: 700;
 
     white-space: nowrap;
 }
 
-
 /* =========================================================
    EXAM GRID
-
    IMPORTANT:
-   NO SLIDER
-   NO HORIZONTAL SCROLL
+   2 CARDS ON DESKTOP = MORE BALANCED
 ========================================================= */
 
 .exam-slider {
+    position: relative;
+    z-index: 2;
+
     width: 100%;
 
     display: grid;
 
     grid-template-columns:
-        repeat(3, minmax(0, 1fr));
+        repeat(2, minmax(0, 1fr));
 
-    gap: 20px;
+    gap: 22px;
 
     overflow: visible;
 }
-
 
 /* =========================================================
    EXAM CARD
@@ -323,57 +487,61 @@
 
 .exam-card {
     width: 100%;
-
     min-width: 0;
 
     display: flex;
-
     flex-direction: column;
 
     overflow: hidden;
 
-    background: #ffffff;
+    background:
+        linear-gradient(
+            145deg,
+            #2b1937 0%,
+            #21142d 58%,
+            #170d20 100%
+        );
 
-    border: 1px solid #e1e7ef;
-
-    border-radius: 15px;
+    border: 1px solid rgba(190, 140, 211, 0.19);
+    border-radius: 17px;
 
     box-shadow:
-        0 4px 15px rgba(15, 23, 42, 0.055);
+        0 10px 25px rgba(0, 0, 0, 0.30);
 
     transition:
-        transform 0.2s ease,
-        box-shadow 0.2s ease,
-        border-color 0.2s ease;
+        transform 0.25s ease,
+        box-shadow 0.25s ease,
+        border-color 0.25s ease;
 }
 
 .exam-card:hover {
     transform: translateY(-4px);
 
-    border-color: #cbd5e1;
+    border-color:
+        rgba(207, 153, 222, 0.36);
 
     box-shadow:
-        0 12px 28px rgba(15, 23, 42, 0.11);
+        0 18px 36px rgba(0, 0, 0, 0.45),
+        0 0 22px rgba(125, 68, 143, 0.08);
 }
-
 
 /* =========================================================
    EXAM INFORMATION
 ========================================================= */
 
 .exam-info {
-    padding: 23px 22px 20px;
+    padding: 25px;
 
     background:
         linear-gradient(
             180deg,
-            #f8faff 0%,
-            #ffffff 100%
+            rgba(57, 31, 69, 0.72) 0%,
+            rgba(31, 17, 42, 0.72) 100%
         );
 
-    border-bottom: 1px solid #edf0f4;
+    border-bottom:
+        1px solid rgba(190, 140, 211, 0.12);
 }
-
 
 /* =========================================================
    EXAM TITLE
@@ -384,78 +552,76 @@
 
     padding-bottom: 17px;
 
-    border-bottom: 1px solid #e8edf4;
+    border-bottom:
+        1px solid rgba(190, 140, 211, 0.13);
 }
 
 .exam-label {
     display: inline-flex;
-
     align-items: center;
 
-    padding: 5px 9px;
-
+    padding: 5px 10px;
     margin-bottom: 9px;
 
+    border: 1px solid rgba(190, 140, 211, 0.22);
     border-radius: 6px;
 
-    background: #eff6ff;
+    background:
+        rgba(126, 69, 142, 0.18);
 
-    color: #2563eb;
+    color: #d7a9df;
 
     font-size: 9px;
-
     font-weight: 800;
-
     letter-spacing: 1px;
 }
 
 .exam-title-area h3 {
     margin: 0;
 
-    padding-right: 5px;
+    color: #ffffff;
 
-    color: #172033;
-
-    font-size: 20px;
-
-    line-height: 1.3;
-
+    font-size: 22px;
+    line-height: 1.25;
     font-weight: 750;
 
-    word-break: break-word;
+    word-break: normal;
+    overflow-wrap: anywhere;
 }
-
-
-/* =========================================================
-   STATUS BADGE
-========================================================= */
 
 .status-badge {
     display: inline-flex;
 
-    margin-top: 10px;
-
-    padding: 5px 9px;
+    margin-top: 11px;
+    padding: 6px 11px;
 
     border-radius: 20px;
 
     font-size: 10px;
-
     font-weight: 700;
+
+    border: 1px solid transparent;
 }
 
 .status-badge.draft {
-    background: #fff7ed;
+    background:
+        rgba(180, 112, 48, 0.16);
 
-    color: #ea580c;
+    border-color:
+        rgba(221, 171, 81, 0.25);
+
+    color: #f0c878;
 }
 
 .status-badge.published {
-    background: #dcfce7;
+    background:
+        rgba(76, 145, 104, 0.16);
 
-    color: #15803d;
+    border-color:
+        rgba(104, 183, 130, 0.25);
+
+    color: #9ee0b1;
 }
-
 
 /* =========================================================
    EXAM META
@@ -465,19 +631,20 @@
     display: grid;
 
     grid-template-columns:
-        repeat(2, 1fr);
+        repeat(2, minmax(0, 1fr));
 
-    gap: 10px;
+    gap: 18px;
 
-    margin-top: 18px;
-
-    margin-bottom: 17px;
+    margin-top: 20px;
+    margin-bottom: 19px;
 }
 
 .meta-item {
     position: relative;
 
-    padding-left: 10px;
+    min-width: 0;
+
+    padding-left: 13px;
 }
 
 .meta-item::before {
@@ -486,48 +653,46 @@
     position: absolute;
 
     left: 0;
-
     top: 2px;
 
     width: 3px;
-
-    height: 28px;
+    height: 30px;
 
     border-radius: 4px;
 
-    background: #dbeafe;
+    background:
+        linear-gradient(
+            180deg,
+            #a85bb4,
+            #d27ab7
+        );
 }
 
 .meta-item span,
 .marks-info span {
     display: block;
 
-    margin-bottom: 4px;
+    margin-bottom: 5px;
 
-    color: #94a3b8;
+    color: #9d8aa4;
 
     font-size: 9px;
-
     font-weight: 800;
-
-    letter-spacing: 0.9px;
+    letter-spacing: 1px;
 }
 
 .meta-item p,
 .marks-info p {
     margin: 0;
 
-    color: #334155;
+    color: #eee4f0;
 
-    font-size: 14px;
-
+    font-size: 15px;
     line-height: 1.35;
-
     font-weight: 650;
 
-    word-break: break-word;
+    overflow-wrap: anywhere;
 }
-
 
 /* =========================================================
    TOTAL MARKS
@@ -536,11 +701,11 @@
 .marks-info {
     position: relative;
 
-    padding-top: 15px;
+    padding-top: 16px;
+    padding-left: 13px;
 
-    padding-left: 10px;
-
-    border-top: 1px dashed #e2e8f0;
+    border-top:
+        1px dashed rgba(190, 140, 211, 0.18);
 }
 
 .marks-info::before {
@@ -549,42 +714,47 @@
     position: absolute;
 
     left: 0;
-
-    top: 17px;
+    top: 18px;
 
     width: 3px;
-
-    height: 28px;
+    height: 30px;
 
     border-radius: 4px;
 
-    background: #dcfce7;
+    background:
+        linear-gradient(
+            180deg,
+            #6f9f80,
+            #9ee0b1
+        );
 }
 
 .marks-info p {
-    color: #15803d;
+    color: #9ee0b1;
 
-    font-size: 15px;
+    font-size: 16px;
 }
-
 
 /* =========================================================
    ACTION AREA
 ========================================================= */
 
 .actions-cell {
-    padding: 16px;
+    padding: 17px;
 
     display: grid;
 
     grid-template-columns:
-        repeat(2, 1fr);
+        repeat(2, minmax(0, 1fr));
 
-    gap: 8px;
+    gap: 9px;
 
-    background: #ffffff;
+    background:
+        rgba(19, 10, 25, 0.72);
+
+    border-top:
+        1px solid rgba(190, 140, 211, 0.10);
 }
-
 
 /* =========================================================
    ACTION BUTTON
@@ -592,82 +762,91 @@
 
 .action-btn {
     width: 100%;
+    min-height: 42px;
 
-    min-height: 38px;
+    padding: 10px 9px;
 
-    padding: 9px 8px;
+    border: 1px solid transparent;
+    border-radius: 9px;
 
-    border: none;
+    color: #ffffff;
 
-    border-radius: 8px;
-
-    color: white;
-
-    font-size: 11px;
-
+    font-size: 12px;
     line-height: 1.2;
-
     font-weight: 700;
 
     cursor: pointer;
 
-    transition: all 0.18s ease;
+    transition:
+        transform 0.18s ease,
+        filter 0.18s ease,
+        box-shadow 0.18s ease;
 }
 
 .action-btn:hover {
     transform: translateY(-1px);
 
-    filter: brightness(1.05);
+    filter: brightness(1.08);
 
     box-shadow:
-        0 4px 10px rgba(15, 23, 42, 0.12);
+        0 7px 15px rgba(0, 0, 0, 0.25);
 }
 
 .action-btn:active {
     transform: translateY(0);
 }
 
-
 /* =========================================================
-   NORMAL BUTTON COLORS
+   BUTTON COLORS
 ========================================================= */
 
 .action-btn.blue {
     background:
         linear-gradient(
             135deg,
-            #2563eb,
-            #1d4ed8
+            #70417f,
+            #99549b
         );
+
+    border-color:
+        rgba(213, 157, 222, 0.25);
 }
 
 .action-btn.purple {
     background:
         linear-gradient(
             135deg,
-            #8b5cf6,
-            #7c3aed
+            #71417e,
+            #a05b9c
         );
+
+    border-color:
+        rgba(213, 157, 222, 0.25);
 }
 
 .action-btn.orange {
     background:
         linear-gradient(
             135deg,
-            #f97316,
-            #ea580c
+            #865043,
+            #a96850
         );
+
+    border-color:
+        rgba(226, 151, 119, 0.25);
 }
 
 .action-btn.analytics {
     background:
         linear-gradient(
             135deg,
-            #0891b2,
-            #0e7490
+            #553c6b,
+            #754e8b
         );
-}
 
+    border-color:
+        rgba(190, 150, 218, 0.25);
+}
 
 /* =========================================================
    PUBLISH BUTTON
@@ -677,9 +856,12 @@
     background:
         linear-gradient(
             135deg,
-            #16a34a,
-            #15803d
+            #477e5b,
+            #609a70
         );
+
+    border-color:
+        rgba(135, 205, 157, 0.25);
 
     grid-column: 1 / -1;
 }
@@ -688,21 +870,25 @@
     background:
         linear-gradient(
             135deg,
-            #15803d,
-            #166534
+            #548e65,
+            #6ca97c
         );
 }
-
 
 /* =========================================================
    ALREADY PUBLISHED
 ========================================================= */
 
 .action-btn.published-btn {
-    background: #94a3b8;
+    background:
+        rgba(108, 84, 116, 0.45);
+
+    border-color:
+        rgba(190, 140, 211, 0.15);
+
+    color: #b9a8bd;
 
     cursor: not-allowed;
-
     opacity: 0.9;
 
     grid-column: 1 / -1;
@@ -710,83 +896,138 @@
 
 .action-btn.published-btn:hover {
     transform: none;
-
     filter: none;
-
     box-shadow: none;
 }
-
 
 /* =========================================================
    NO EXAMS
 ========================================================= */
 
 .no-exams {
+    position: relative;
+    overflow: hidden;
+
     padding: 55px 20px;
 
     display: flex;
-
     flex-direction: column;
-
     align-items: center;
-
     justify-content: center;
 
     text-align: center;
 
-    color: #64748b;
+    color: #bca9c2;
 
-    background: #f8fafc;
+    background:
+        linear-gradient(
+            145deg,
+            #24152e,
+            #1a1023
+        );
 
-    border: 1px dashed #cbd5e1;
+    border:
+        1px dashed rgba(190, 140, 211, 0.28);
 
-    border-radius: 12px;
+    border-radius: 14px;
+}
+
+.no-exams::before {
+    content: "";
+
+    position: absolute;
+
+    width: 180px;
+    height: 140px;
+
+    right: -70px;
+    top: -70px;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(178, 91, 192, 0.22),
+            transparent 70%
+        );
+
+    filter: blur(8px);
 }
 
 .no-exams-icon {
+    position: relative;
+    z-index: 2;
+
     font-size: 40px;
 
     margin-bottom: 10px;
 }
 
 .no-exams h3 {
+    position: relative;
+    z-index: 2;
+
     margin: 0 0 6px;
 
-    color: #334155;
+    color: #ffffff;
 
     font-size: 18px;
 }
 
 .no-exams p {
+    position: relative;
+    z-index: 2;
+
     margin: 0 0 18px;
 
-    color: #94a3b8;
+    color: #a997ae;
 
     font-size: 13px;
 }
 
 .empty-create-btn {
+    position: relative;
+    z-index: 2;
+
     padding: 10px 18px;
 
-    border: none;
+    border:
+        1px solid rgba(224, 165, 221, 0.30);
 
     border-radius: 8px;
 
-    background: #2563eb;
+    background:
+        linear-gradient(
+            135deg,
+            #794487,
+            #a85a9f
+        );
 
-    color: white;
+    color: #ffffff;
 
     font-size: 13px;
-
     font-weight: 700;
 
     cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
 }
 
 .empty-create-btn:hover {
-    background: #1d4ed8;
-}
+    transform: translateY(-2px);
 
+    background:
+        linear-gradient(
+            135deg,
+            #895097,
+            #b765aa
+        );
+
+    box-shadow:
+        0 9px 20px rgba(113, 52, 127, 0.30);
+}
 
 /* =========================================================
    LOADING
@@ -796,36 +1037,45 @@
     min-height: 100vh;
 
     display: flex;
-
     flex-direction: column;
-
     justify-content: center;
-
     align-items: center;
 
-    background: #f5f7fb;
+    background:
+        radial-gradient(
+            circle at center,
+            rgba(110, 55, 125, 0.12),
+            transparent 35%
+        ),
+        #0d0812;
+
+    color: #ffffff;
 }
 
 .loading-screen h3 {
-    color: #64748b;
-
+    color: #c2afc7;
     font-size: 14px;
 }
 
 .loader {
     width: 42px;
-
     height: 42px;
 
     margin-bottom: 14px;
 
-    border: 4px solid #e2e8f0;
+    border:
+        4px solid rgba(190, 140, 211, 0.14);
 
-    border-top-color: #2563eb;
+    border-top-color: #b66bc0;
+    border-right-color: #8c4d9e;
 
     border-radius: 50%;
 
-    animation: spin 0.8s linear infinite;
+    animation:
+        spin 0.8s linear infinite;
+
+    box-shadow:
+        0 0 20px rgba(166, 87, 181, 0.15);
 }
 
 @keyframes spin {
@@ -834,13 +1084,29 @@
     }
 }
 
+/* =========================================================
+   LARGE DESKTOP
+   3 COLUMNS ONLY WHEN THERE IS REALLY ENOUGH SPACE
+========================================================= */
+
+@media (min-width: 1450px) {
+    .dashboard-header,
+    .stats-grid,
+    .exam-section {
+        max-width: 1400px;
+    }
+
+    .exam-slider {
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
+    }
+}
 
 /* =========================================================
    TABLET
 ========================================================= */
 
 @media (max-width: 1100px) {
-
     .teacher-dashboard {
         padding: 25px;
     }
@@ -851,13 +1117,11 @@
     }
 }
 
-
 /* =========================================================
    SMALL TABLET
 ========================================================= */
 
 @media (max-width: 800px) {
-
     .dashboard-header {
         padding: 27px;
     }
@@ -870,8 +1134,19 @@
         grid-template-columns:
             repeat(2, minmax(0, 1fr));
     }
-}
 
+    .exam-info {
+        padding: 21px 19px 19px;
+    }
+
+    .exam-title-area h3 {
+        font-size: 20px;
+    }
+
+    .action-btn {
+        font-size: 11px;
+    }
+}
 
 /* =========================================================
    MOBILE
@@ -882,7 +1157,6 @@
     .teacher-dashboard {
         padding: 13px;
     }
-
 
     /* HEADER */
 
@@ -897,7 +1171,7 @@
 
         gap: 18px;
 
-        border-radius: 14px;
+        border-radius: 15px;
     }
 
     .dashboard-header h1 {
@@ -912,18 +1186,15 @@
         width: 100%;
     }
 
-
     /* STATS */
 
     .stats-grid {
         gap: 11px;
-
         margin-bottom: 18px;
     }
 
     .stat-card {
         min-height: 88px;
-
         padding: 17px 19px;
     }
 
@@ -935,18 +1206,15 @@
         font-size: 26px;
     }
 
-
     /* SECTION */
 
     .exam-section {
         padding: 19px 13px;
-
-        border-radius: 14px;
+        border-radius: 15px;
     }
 
     .section-heading {
         align-items: flex-start;
-
         margin-bottom: 18px;
     }
 
@@ -960,21 +1228,15 @@
 
     .exam-count {
         font-size: 10px;
-
         padding: 6px 9px;
     }
-
 
     /* ONE CARD PER ROW */
 
     .exam-slider {
         grid-template-columns: 1fr;
-
         gap: 15px;
-
-        overflow: visible;
     }
-
 
     /* EXAM INFO */
 
@@ -986,22 +1248,18 @@
         font-size: 20px;
     }
 
-
     /* BUTTONS */
 
     .actions-cell {
         padding: 14px;
-
         gap: 8px;
     }
 
     .action-btn {
         min-height: 39px;
-
         font-size: 11px;
     }
 }
-
 
 /* =========================================================
    VERY SMALL MOBILE

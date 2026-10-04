@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../services/api";
 import Navbar from "../components/Navbar";
 import "../styles/TeacherDashboard.css";
 
@@ -8,6 +8,12 @@ function TeacherDashboard() {
     const navigate = useNavigate();
 
     const [exams, setExams] = useState([]);
+    const [stats, setStats] = useState({
+        totalExams: 0,
+        totalStudents: 0,
+        totalAttempts: 0,
+    });
+
     const [loading, setLoading] = useState(true);
     const [publishingId, setPublishingId] = useState(null);
 
@@ -18,13 +24,13 @@ function TeacherDashboard() {
     }, []);
 
     /* =========================================================
-       FETCH TEACHER EXAMS
+       FETCH TEACHER EXAMS + DASHBOARD STATS
     ========================================================= */
 
     const fetchExams = async () => {
         try {
-            const response = await axios.get(
-                "https://ai-exam-portal-1-vhhx.onrender.com/api/exams/teacher",
+            const response = await api.get(
+                "/exams/teacher",
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -33,6 +39,14 @@ function TeacherDashboard() {
             );
 
             setExams(response.data.exams || []);
+
+            setStats({
+                totalExams: response.data.stats?.totalExams || 0,
+                totalStudents:
+                    response.data.stats?.totalStudents || 0,
+                totalAttempts:
+                    response.data.stats?.totalAttempts || 0,
+            });
         } catch (error) {
             console.error(
                 "FETCH EXAMS ERROR:",
@@ -40,6 +54,12 @@ function TeacherDashboard() {
             );
 
             setExams([]);
+
+            setStats({
+                totalExams: 0,
+                totalStudents: 0,
+                totalAttempts: 0,
+            });
         } finally {
             setLoading(false);
         }
@@ -53,8 +73,8 @@ function TeacherDashboard() {
         try {
             setPublishingId(examId);
 
-            const response = await axios.put(
-                `https://ai-exam-portal-1-vhhx.onrender.com/api/exams/publish/${examId}`,
+            const response = await api.put(
+                `/exams/publish/${examId}`,
                 {},
                 {
                     headers: {
@@ -69,7 +89,6 @@ function TeacherDashboard() {
             );
 
             await fetchExams();
-
         } catch (error) {
             console.error(
                 "PUBLISH EXAM ERROR:",
@@ -108,7 +127,6 @@ function TeacherDashboard() {
 
     return (
         <>
-            {/* SAME NAVBAR AS STUDENT DASHBOARD */}
             <Navbar />
 
             <div className="teacher-dashboard">
@@ -143,18 +161,22 @@ function TeacherDashboard() {
 
                 <div className="stats-grid">
 
+                    {/* TOTAL EXAMS */}
+
                     <div className="stat-card">
 
                         <div>
                             <h3>Total Exams</h3>
 
                             <h2>
-                                {exams.length}
+                                {stats.totalExams}
                             </h2>
                         </div>
 
                     </div>
 
+
+                    {/* TOTAL STUDENTS */}
 
                     <div className="stat-card">
 
@@ -162,12 +184,14 @@ function TeacherDashboard() {
                             <h3>Total Students</h3>
 
                             <h2>
-                                1
+                                {stats.totalStudents}
                             </h2>
                         </div>
 
                     </div>
 
+
+                    {/* TOTAL ATTEMPTS */}
 
                     <div className="stat-card">
 
@@ -175,7 +199,7 @@ function TeacherDashboard() {
                             <h3>Total Attempts</h3>
 
                             <h2>
-                                5
+                                {stats.totalAttempts}
                             </h2>
                         </div>
 
@@ -235,20 +259,6 @@ function TeacherDashboard() {
                         </div>
 
                     ) : (
-
-                        /*
-                            IMPORTANT:
-                            This is NOT a slider.
-
-                            Desktop:
-                            3 cards per row
-
-                            Tablet:
-                            2 cards per row
-
-                            Mobile:
-                            1 card per row
-                        */
 
                         <div className="exam-slider">
 
@@ -454,9 +464,7 @@ function TeacherDashboard() {
                                             </button>
 
 
-                                            {/* =================================================
-                                                PUBLISH
-                                            ================================================= */}
+                                            {/* PUBLISH */}
 
                                             <button
                                                 className={

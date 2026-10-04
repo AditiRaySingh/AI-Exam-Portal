@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import api from "../services/api";
+import "../styles/ai.css";
 
 function AIGenerate() {
 
@@ -73,96 +74,81 @@ function AIGenerate() {
   };
 
   return (
-    <div
-      style={{
-        maxWidth: "700px",
-        margin: "40px auto",
-        padding: "30px",
-        background: "#fff",
-        borderRadius: "15px",
-      }}
-    >
-      <h2>AI Question Generator</h2>
+    <div className="ai-page">
 
-      <form onSubmit={handleSubmit}>
+      <div className="ai-card">
 
-        <input
-          type="text"
-          name="topic"
-          placeholder="Enter Topic"
-          value={formData.topic}
-          onChange={handleChange}
-          required
-          style={{
-            width: "100%",
-            padding: "12px",
-            marginTop: "20px",
-          }}
-        />
+        <h1>AI Question Generator</h1>
 
-        <select
-          name="difficulty"
-          value={formData.difficulty}
-          onChange={handleChange}
-          style={{
-            width: "100%",
-            padding: "12px",
-            marginTop: "20px",
-          }}
-        >
-          <option value="easy">Easy</option>
-          <option value="medium">Medium</option>
-          <option value="hard">Hard</option>
-        </select>
+        <p>
+          Generate questions automatically using AI
+          based on your selected topic and difficulty.
+        </p>
 
-        <select
-          name="questionType"
-          value={formData.questionType}
-          onChange={handleChange}
-          style={{
-            width: "100%",
-            padding: "12px",
-            marginTop: "20px",
-          }}
-        >
-          <option value="mcq">MCQ</option>
-          <option value="truefalse">True False</option>
-          <option value="shortanswer">Short Answer</option>
-          <option value="veryshortanswer">Very Short Answer</option>
-        </select>
+        <form onSubmit={handleSubmit}>
 
-        <input
-          type="number"
-          name="numberOfQuestions"
-          min="1"
-          max="50"
-          value={formData.numberOfQuestions}
-          onChange={handleChange}
-          style={{
-            width: "100%",
-            padding: "12px",
-            marginTop: "20px",
-          }}
-        />
+          <label>Topic</label>
 
-        <button
-          type="submit"
-          disabled={loading}
-          style={{
-            width: "100%",
-            marginTop: "25px",
-            padding: "15px",
-            border: "none",
-            borderRadius: "10px",
-            background: "#4f46e5",
-            color: "#fff",
-            cursor: "pointer",
-          }}
-        >
-          {loading ? "Generating..." : "Generate Questions"}
-        </button>
+          <input
+            type="text"
+            name="topic"
+            placeholder="Enter Topic"
+            value={formData.topic}
+            onChange={handleChange}
+            required
+          />
 
-      </form>
+          <label>Difficulty</label>
+
+          <select
+            name="difficulty"
+            value={formData.difficulty}
+            onChange={handleChange}
+          >
+            <option value="easy">Easy</option>
+            <option value="medium">Medium</option>
+            <option value="hard">Hard</option>
+          </select>
+
+          <label>Question Type</label>
+
+          <select
+            name="questionType"
+            value={formData.questionType}
+            onChange={handleChange}
+          >
+            <option value="mcq">MCQ</option>
+            <option value="truefalse">True False</option>
+            <option value="shortanswer">Short Answer</option>
+            <option value="veryshortanswer">
+              Very Short Answer
+            </option>
+          </select>
+
+          <label>Number of Questions</label>
+
+          <input
+            type="number"
+            name="numberOfQuestions"
+            min="1"
+            max="50"
+            value={formData.numberOfQuestions}
+            onChange={handleChange}
+          />
+
+          <button
+            type="submit"
+            disabled={loading}
+          >
+            {loading
+              ? "Generating..."
+              : "Generate Questions"}
+          </button>
+
+        </form>
+
+      </div>
+
     </div>
   );
 }

@@ -1,724 +1,636 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 import "../styles/ExamPage.css";
 
-function ExamPage() {
 
+function ExamPage() {
   const navigate = useNavigate();
 
-  const examId =
-    localStorage.getItem("examId");
+  const examId = localStorage.getItem("examId");
 
   console.log("Exam ID =", examId);
-
 
   // =====================================================
   // STATE
   // =====================================================
 
-  const [questions, setQuestions] =
-    useState([]);
+  const [questions, setQuestions] = useState([]);
 
-  const [currentQuestion, setCurrentQuestion] =
-    useState(0);
+  const [currentQuestion, setCurrentQuestion] = useState(0);
 
-  const [answers, setAnswers] =
-    useState({});
+  const [answers, setAnswers] = useState({});
 
-  const [loading, setLoading] =
-    useState(true);
+  const [loading, setLoading] = useState(true);
 
-  const [submitting, setSubmitting] =
-    useState(false);
-
+  const [submitting, setSubmitting] = useState(false);
 
   // =====================================================
-  // EXAM TIMER
+  // CAMERA
   // =====================================================
 
-  const [timeLeft, setTimeLeft] =
-    useState(null);
+  const videoRef = useRef(null);
 
-  const [examEndTime, setExamEndTime] =
-    useState(null);
+  const cameraStreamRef = useRef(null);
 
+  const [cameraStream, setCameraStream] = useState(null);
+
+  const [cameraError, setCameraError] = useState("");
+
+  // =====================================================
+  // TIMER
+  // =====================================================
+
+  const [timeLeft, setTimeLeft] = useState(null);
+
+  const [examEndTime, setExamEndTime] = useState(null);
 
   // =====================================================
   // LOAD EXAM DETAILS
   // =====================================================
 
   const fetchExamDetails = async () => {
-
     try {
+      const token = localStorage.getItem("token");
 
-      const token =
-        localStorage.getItem("token");
+      const res = await api.get(`/exams/${examId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
+      console.log("EXAM DETAILS:", res.data);
 
-      const res =
-        await api.get(
-          `/exams/${examId}`,
-          {
-            headers: {
-              Authorization:
-                `Bearer ${token}`
-            }
-          }
-        );
-
-
-      console.log(
-        "EXAM DETAILS:",
-        res.data
-      );
-
-
-      const exam =
-        res.data.exam;
-
+      const exam = res.data.exam;
 
       if (!exam) {
-
-        alert(
-          "Exam details not found."
-        );
-
-        navigate(
-          "/student-dashboard"
-        );
-
+        alert("Exam details not found.");
+        navigate("/student-dashboard");
         return false;
       }
 
+      // ---------------------------------------------------
+      // GET EXAM TIMES
+      // ---------------------------------------------------
 
-      // =================================================
-      // GET START AND END TIME
-      // =================================================
+      const startTime = new Date(exam.startTime).getTime();
 
-      const startTime =
-        new Date(
-          exam.startTime
-        ).getTime();
+      const endTime = new Date(exam.endTime).getTime();
 
+      const currentTime = Date.now();
 
-      const endTime =
-        new Date(
-          exam.endTime
-        ).getTime();
+      console.log("Start:", new Date(startTime));
+      console.log("End:", new Date(endTime));
+      console.log("Current:", new Date(currentTime));
 
-
-      const currentTime =
-        Date.now();
-
-
-      console.log(
-        "Start Time:",
-        new Date(startTime)
-      );
-
-      console.log(
-        "End Time:",
-        new Date(endTime)
-      );
-
-      console.log(
-        "Current Time:",
-        new Date(currentTime)
-      );
-
-
-      // =================================================
-      // INVALID TIME
-      // =================================================
+      // ---------------------------------------------------
+      // CHECK INVALID TIME
+      // ---------------------------------------------------
 
       if (
         Number.isNaN(startTime) ||
         Number.isNaN(endTime)
       ) {
+        alert("Exam timing is not configured correctly.");
 
-        alert(
-          "Exam timing is not configured correctly."
-        );
-
-        navigate(
-          "/student-dashboard"
-        );
+        navigate("/student-dashboard");
 
         return false;
       }
 
-
-      // =================================================
+      // ---------------------------------------------------
       // EXAM NOT STARTED
-      // =================================================
+      // ---------------------------------------------------
 
-      if (
-        currentTime < startTime
-      ) {
-
+      if (currentTime < startTime) {
         alert(
           `Exam will start at ${new Date(
             startTime
           ).toLocaleString("en-IN")}`
         );
 
-        navigate(
-          "/student-dashboard"
-        );
+        navigate("/student-dashboard");
 
         return false;
       }
 
+      // ---------------------------------------------------
+      // EXAM ENDED
+      // ---------------------------------------------------
 
-      // =================================================
-      // EXAM ALREADY ENDED
-      // =================================================
+      if (currentTime >= endTime) {
+        alert("This exam has already ended.");
 
-      if (
-        currentTime >= endTime
-      ) {
-
-        alert(
-          "This exam has already ended."
-        );
-
-        navigate(
-          "/student-dashboard"
-        );
+        navigate("/student-dashboard");
 
         return false;
       }
 
+      // ---------------------------------------------------
+      // CALCULATE TIME
+      // ---------------------------------------------------
 
-      // =================================================
-      // CALCULATE REMAINING TIME
-      // =================================================
-
-      const remainingSeconds =
-        Math.floor(
-          (endTime - currentTime) / 1000
-        );
-
+      const remainingSeconds = Math.max(
+        0,
+        Math.floor((endTime - currentTime) / 1000)
+      );
 
       console.log(
-        "Remaining Seconds:",
+        "Remaining seconds:",
         remainingSeconds
       );
 
+      setExamEndTime(endTime);
 
-      setExamEndTime(
-        endTime
-      );
-
-
-      setTimeLeft(
-        remainingSeconds
-      );
-
+      setTimeLeft(remainingSeconds);
 
       return true;
-
     } catch (error) {
-
       console.error(
         "EXAM DETAILS ERROR:",
         error
       );
 
-
       alert(
         error.response?.data?.message ||
-        "Unable to load exam details."
+          "Unable to load exam details."
       );
 
-
-      navigate(
-        "/student-dashboard"
-      );
-
+      navigate("/student-dashboard");
 
       return false;
     }
   };
-
 
   // =====================================================
   // LOAD QUESTIONS
   // =====================================================
 
   const fetchQuestions = async () => {
-
     try {
+      const token = localStorage.getItem("token");
 
-      const token =
-        localStorage.getItem("token");
+      const res = await api.get(
+        `/questions/exam/${examId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
+      console.log(
+        "QUESTIONS RESPONSE:",
+        res.data
+      );
 
-      const res =
-        await api.get(
-          `/questions/exam/${examId}`,
-          {
-            headers: {
-              Authorization:
-                `Bearer ${token}`
-            }
-          }
-        );
-
+      const fetchedQuestions =
+        res.data.questions || [];
 
       console.log(
         "QUESTIONS:",
-        res.data.questions
+        fetchedQuestions
       );
 
-
-      setQuestions(
-        res.data.questions || []
-      );
-
-
+      setQuestions(fetchedQuestions);
     } catch (error) {
-
       console.error(
         "QUESTIONS ERROR:",
         error
       );
 
-
       alert(
         error.response?.data?.message ||
-        "Unable to load questions."
+          "Unable to load questions."
       );
-
-
     }
   };
 
+  // =====================================================
+  // START WEBCAM
+  // =====================================================
+
+  const startWebcam = async () => {
+    try {
+      setCameraError("");
+
+      // Browser support
+      if (
+        !navigator.mediaDevices ||
+        !navigator.mediaDevices.getUserMedia
+      ) {
+        setCameraError(
+          "Camera is not supported by this browser."
+        );
+
+        return;
+      }
+
+      console.log(
+        "REQUESTING CAMERA PERMISSION..."
+      );
+
+      const stream =
+        await navigator.mediaDevices.getUserMedia({
+          video: {
+            width: {
+              ideal: 640,
+            },
+            height: {
+              ideal: 480,
+            },
+          },
+          audio: false,
+        });
+
+      console.log(
+        "CAMERA STARTED"
+      );
+
+      cameraStreamRef.current = stream;
+
+      setCameraStream(stream);
+    } catch (error) {
+      console.error(
+        "WEBCAM ERROR:",
+        error
+      );
+
+      if (
+        error.name === "NotAllowedError"
+      ) {
+        setCameraError(
+          "Camera permission was denied. Please allow camera access."
+        );
+      } else if (
+        error.name === "NotFoundError"
+      ) {
+        setCameraError(
+          "No camera was found on this device."
+        );
+      } else if (
+        error.name === "NotReadableError"
+      ) {
+        setCameraError(
+          "Camera is already being used by another application."
+        );
+      } else {
+        setCameraError(
+          "Unable to access the camera."
+        );
+      }
+    }
+  };
+
+  // =====================================================
+  // CONNECT CAMERA STREAM TO VIDEO
+  // =====================================================
+
+  useEffect(() => {
+    if (
+      videoRef.current &&
+      cameraStream
+    ) {
+      videoRef.current.srcObject =
+        cameraStream;
+
+      videoRef.current
+        .play()
+        .catch((error) => {
+          console.log(
+            "VIDEO PLAY ERROR:",
+            error
+          );
+        });
+    }
+  }, [cameraStream]);
+
+  // =====================================================
+  // STOP WEBCAM
+  // =====================================================
+
+  const stopWebcam = () => {
+    console.log(
+      "STOPPING CAMERA..."
+    );
+
+    const stream =
+      cameraStreamRef.current;
+
+    if (stream) {
+      stream
+        .getTracks()
+        .forEach((track) => {
+          track.stop();
+        });
+    }
+
+    cameraStreamRef.current = null;
+
+    if (videoRef.current) {
+      videoRef.current.srcObject = null;
+    }
+
+    setCameraStream(null);
+  };
 
   // =====================================================
   // INITIAL LOAD
   // =====================================================
 
   useEffect(() => {
-
     const loadExam = async () => {
-
       try {
-
-        // First check exam timing
         const examAllowed =
           await fetchExamDetails();
 
-
-        // Only load questions
-        // if exam is currently active
-        if (examAllowed) {
-
-          await fetchQuestions();
-
+        if (!examAllowed) {
+          return;
         }
 
+        await fetchQuestions();
+
+        await startWebcam();
       } finally {
-
         setLoading(false);
-
       }
-
     };
 
-
     if (!examId) {
+      alert("Exam ID not found.");
 
-      alert(
-        "Exam ID not found."
-      );
-
-      navigate(
-        "/student-dashboard"
-      );
+      navigate("/student-dashboard");
 
       return;
     }
 
-
     loadExam();
-
   }, []);
 
+  // =====================================================
+  // CLEANUP CAMERA
+  // =====================================================
+
+  useEffect(() => {
+    return () => {
+      const stream =
+        cameraStreamRef.current;
+
+      if (stream) {
+        stream
+          .getTracks()
+          .forEach((track) => {
+            track.stop();
+          });
+      }
+
+      cameraStreamRef.current = null;
+    };
+  }, []);
 
   // =====================================================
   // TIMER
   // =====================================================
 
   useEffect(() => {
-
-    // Timer not ready
     if (
-      timeLeft === null
-    ) {
-      return;
-    }
-
-
-    // Exam is submitting
-    if (
+      timeLeft === null ||
+      examEndTime === null ||
       submitting
     ) {
       return;
     }
 
+    const timer = setInterval(() => {
+      const remaining = Math.max(
+        0,
+        Math.floor(
+          (examEndTime - Date.now()) /
+            1000
+        )
+      );
 
-    // ===================================================
-    // TIME FINISHED
-    // ===================================================
+      setTimeLeft(remaining);
 
+      if (remaining <= 0) {
+        clearInterval(timer);
+      }
+    }, 1000);
+
+    return () => {
+      clearInterval(timer);
+    };
+  }, [
+    examEndTime,
+    submitting,
+  ]);
+
+  // =====================================================
+  // AUTO SUBMIT WHEN TIMER REACHES ZERO
+  // =====================================================
+
+  useEffect(() => {
     if (
-      timeLeft <= 0
+      timeLeft === 0 &&
+      !submitting &&
+      questions.length > 0
     ) {
-
       console.log(
         "TIME FINISHED - AUTO SUBMIT"
       );
 
-
       handleSubmit();
-
-      return;
     }
-
-
-    // ===================================================
-    // COUNTDOWN
-    // ===================================================
-
-    const timer =
-      setInterval(() => {
-
-        setTimeLeft(
-          previousTime => {
-
-            if (
-              previousTime === null
-            ) {
-              return 0;
-            }
-
-
-            if (
-              previousTime <= 1
-            ) {
-              return 0;
-            }
-
-
-            return previousTime - 1;
-
-          }
-        );
-
-      }, 1000);
-
-
-    // Cleanup timer
-    return () => {
-
-      clearInterval(
-        timer
-      );
-
-    };
-
   }, [
     timeLeft,
-    submitting
+    submitting,
+    questions.length,
   ]);
-
 
   // =====================================================
   // SAVE ANSWER
   // =====================================================
 
-  const handleAnswer = (
-    answer
-  ) => {
+  const handleAnswer = (answer) => {
+    if (!questions[currentQuestion]) {
+      return;
+    }
 
-    setAnswers(
-      previousAnswers => ({
+    const questionId =
+      questions[currentQuestion]._id;
 
-        ...previousAnswers,
+    setAnswers((previousAnswers) => ({
+      ...previousAnswers,
 
-        [
-          questions[
-            currentQuestion
-          ]._id
-        ]: answer
-
-      })
-    );
-
+      [questionId]: answer,
+    }));
   };
-
 
   // =====================================================
   // PREVIOUS QUESTION
   // =====================================================
 
   const previousQuestion = () => {
-
-    if (
-      currentQuestion > 0
-    ) {
-
+    if (currentQuestion > 0) {
       setCurrentQuestion(
-        currentQuestion - 1
+        (previous) => previous - 1
       );
 
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
     }
-
   };
-
 
   // =====================================================
   // NEXT QUESTION
   // =====================================================
 
   const nextQuestion = () => {
-
     if (
       currentQuestion <
       questions.length - 1
     ) {
-
       setCurrentQuestion(
-        currentQuestion + 1
+        (previous) => previous + 1
       );
 
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
     }
-
   };
-
 
   // =====================================================
   // JUMP TO QUESTION
   // =====================================================
 
-  const jumpToQuestion = (
-    index
-  ) => {
+  const jumpToQuestion = (index) => {
+    if (
+      index >= 0 &&
+      index < questions.length
+    ) {
+      setCurrentQuestion(index);
 
-    setCurrentQuestion(
-      index
-    );
-
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    }
   };
-
 
   // =====================================================
   // SUBMIT EXAM
   // =====================================================
 
   const handleSubmit = async () => {
-
-    // Prevent duplicate submission
-    if (
-      submitting
-    ) {
+    if (submitting) {
       return;
     }
 
-
     try {
-
-      setSubmitting(
-        true
-      );
-
+      setSubmitting(true);
 
       const token =
         localStorage.getItem("token");
 
-
-      // =================================================
-      // CONVERT ANSWERS
-      // =================================================
+      // -------------------------------------------------
+      // FORMAT ANSWERS
+      // -------------------------------------------------
 
       const formattedAnswers =
-        Object.keys(
-          answers
-        ).map(
-          questionId => ({
-
+        Object.keys(answers).map(
+          (questionId) => ({
             questionId,
 
             selectedAnswer:
-              answers[
-                questionId
-              ]
-
+              answers[questionId],
           })
         );
-
 
       console.log(
         "ANSWERS BEING SUBMITTED:",
         formattedAnswers
       );
 
-
-      // =================================================
-      // SUBMIT TO BACKEND
-      // =================================================
+      // -------------------------------------------------
+      // SEND TO BACKEND
+      // -------------------------------------------------
 
       await api.post(
         "/attempt/submit",
         {
           examId,
 
-          answers:
-            formattedAnswers
+          answers: formattedAnswers,
         },
         {
           headers: {
             Authorization:
-              `Bearer ${token}`
-          }
+              `Bearer ${token}`,
+          },
         }
       );
 
+      // -------------------------------------------------
+      // STOP CAMERA
+      // -------------------------------------------------
 
-      // =================================================
-      // GO TO RESULT
-      // =================================================
+      stopWebcam();
+
+      // -------------------------------------------------
+      // RESULT PAGE
+      // -------------------------------------------------
 
       navigate(
         `/result/${examId}`
       );
-
-
     } catch (error) {
-
       console.error(
         "SUBMIT ERROR:",
         error
       );
-
 
       console.error(
         "SERVER ERROR:",
         error.response?.data
       );
 
-
       alert(
         error.response?.data?.message ||
-        "Failed to Submit Exam"
+          "Failed to Submit Exam"
       );
 
-
-      // If submission failed,
-      // allow user to try again
-      setSubmitting(
-        false
-      );
-
+      setSubmitting(false);
     }
-
   };
 
-
   // =====================================================
-  // LOADING SCREEN
+  // FORMAT TIMER
   // =====================================================
 
-  if (
-    loading
-  ) {
+  const formatTime = (totalSeconds) => {
+    if (
+      totalSeconds === null ||
+      totalSeconds < 0
+    ) {
+      return "00:00:00";
+    }
 
-    return (
-
-      <div className="loading-screen">
-
-        <div className="loader"></div>
-
-        <h2>
-          Loading Exam...
-        </h2>
-
-      </div>
-
+    const hours = Math.floor(
+      totalSeconds / 3600
     );
 
-  }
-
-
-  // =====================================================
-  // NO QUESTIONS
-  // =====================================================
-
-  if (
-    questions.length === 0
-  ) {
-
-    return (
-
-      <h2
-        style={{
-          textAlign:
-            "center",
-
-          marginTop:
-            "100px"
-        }}
-      >
-        No Questions Found
-      </h2>
-
+    const minutes = Math.floor(
+      (totalSeconds % 3600) / 60
     );
 
-  }
+    const seconds =
+      totalSeconds % 60;
 
-
-  // =====================================================
-  // CURRENT QUESTION
-  // =====================================================
-
-  const question =
-    questions[
-      currentQuestion
-    ];
-
-
-  // =====================================================
-  // TIMER FORMAT
-  // =====================================================
-
-  const hours =
-    Math.floor(
-      (timeLeft || 0) /
-      3600
-    );
-
-
-  const minutes =
-    Math.floor(
-      ((timeLeft || 0) %
-        3600) /
-      60
-    );
-
-
-  const seconds =
-    (timeLeft || 0) %
-    60;
-
-
-  // =====================================================
-  // TIMER TEXT
-  // =====================================================
-
-  const formattedTime =
-    `${String(hours).padStart(
+    return `${String(hours).padStart(
       2,
       "0"
     )}:${String(minutes).padStart(
@@ -728,176 +640,325 @@ function ExamPage() {
       2,
       "0"
     )}`;
-
+  };
 
   // =====================================================
-  // UI
+  // LOADING
+  // =====================================================
+
+  if (loading) {
+    return (
+      <div className="loading-screen">
+        <div className="loader"></div>
+
+        <h2>
+          Loading Exam...
+        </h2>
+      </div>
+    );
+  }
+
+  // =====================================================
+  // NO QUESTIONS
+  // =====================================================
+
+  if (questions.length === 0) {
+    return (
+      <div className="no-questions">
+        <h2>
+          No Questions Found
+        </h2>
+
+        <button
+          onClick={() =>
+            navigate(
+              "/student-dashboard"
+            )
+          }
+        >
+          Back to Dashboard
+        </button>
+      </div>
+    );
+  }
+
+  // =====================================================
+  // CURRENT QUESTION
+  // =====================================================
+
+  const question =
+    questions[currentQuestion];
+
+  // =====================================================
+  // CURRENT ANSWER
+  // =====================================================
+
+  const currentAnswer =
+    answers[question._id] || "";
+
+  // =====================================================
+  // PROGRESS
+  // =====================================================
+
+  const progress =
+    ((currentQuestion + 1) /
+      questions.length) *
+    100;
+
+  // =====================================================
+  // RENDER
   // =====================================================
 
   return (
-
     <div className="exam-container">
 
-
-      {/* =================================================
+      {/* ================================================
           HEADER
       ================================================= */}
 
       <div className="exam-header">
 
-        <div>
+        <div className="exam-title-section">
 
-          <h1>
+          <h2>
             Online Examination
-          </h1>
+          </h2>
 
           <p>
             Question{" "}
-            {currentQuestion + 1}
-            {" "}
+            {currentQuestion + 1}{" "}
             of{" "}
             {questions.length}
           </p>
 
         </div>
 
-
-        {/* =================================================
-            TIMER
-        ================================================= */}
-
         <div
-          className={
+          className={`timer ${
             timeLeft !== null &&
             timeLeft <= 300
-              ? "timer-box timer-warning"
-              : "timer-box"
-          }
+              ? "timer-danger"
+              : ""
+          }`}
         >
+          ⏱ {formatTime(timeLeft)}
+        </div>
 
-          ⏰{" "}
+      </div>
 
-          {formattedTime}
+
+      {/* ================================================
+          CAMERA
+      ================================================= */}
+
+      <div className="camera-wrapper">
+
+        <div className="camera-container">
+
+          {cameraStream ? (
+            <video
+              ref={videoRef}
+              autoPlay
+              playsInline
+              muted
+              className="camera-video"
+            />
+          ) : (
+            <div className="camera-placeholder">
+              <span>📷</span>
+
+              <p>
+                Camera unavailable
+              </p>
+            </div>
+          )}
+
+          <div className="camera-label">
+            Camera
+          </div>
+
+          {cameraStream && (
+            <div className="camera-status">
+              Monitoring
+            </div>
+          )}
 
         </div>
 
       </div>
 
 
-      {/* =================================================
-          EXAM END INFORMATION
+      {/* ================================================
+          CAMERA ERROR
       ================================================= */}
 
-      {examEndTime && (
+      {cameraError && (
+        <div className="camera-error">
+          ⚠ {cameraError}
+        </div>
+      )}
 
-        <div className="exam-end-info">
 
-          Exam ends at{" "}
+      {/* ================================================
+          PROGRESS
+      ================================================= */}
 
-          {new Date(
-            examEndTime
-          ).toLocaleTimeString(
-            "en-IN",
-            {
-              hour:
-                "2-digit",
+      <div className="progress-section">
 
-              minute:
-                "2-digit",
+        <div className="progress-info">
+          <span>
+            Progress
+          </span>
 
-              hour12:
-                true
+          <span>
+            {currentQuestion + 1}/
+            {questions.length}
+          </span>
+        </div>
+
+        <div className="exam-progress">
+
+          <div
+            className="exam-progress-bar"
+            style={{
+              width: `${progress}%`,
+            }}
+          ></div>
+
+        </div>
+
+      </div>
+
+
+      {/* ================================================
+          QUESTION PALETTE
+      ================================================= */}
+
+      <div className="question-palette">
+
+        <div className="palette-title">
+          Questions
+        </div>
+
+        <div className="palette-buttons">
+
+          {questions.map(
+            (item, index) => {
+
+              const answered =
+                answers[item._id] !==
+                  undefined &&
+                answers[item._id] !==
+                  "";
+
+              return (
+                <button
+                  key={item._id}
+                  className={`
+                    ${
+                      index ===
+                      currentQuestion
+                        ? "active"
+                        : ""
+                    }
+                    ${
+                      answered
+                        ? "answered"
+                        : ""
+                    }
+                  `}
+                  onClick={() =>
+                    jumpToQuestion(
+                      index
+                    )
+                  }
+                >
+                  {index + 1}
+                </button>
+              );
             }
           )}
 
         </div>
 
-      )}
-
-
-      {/* =================================================
-          PROGRESS BAR
-      ================================================= */}
-
-      <div className="progress-bar">
-
-        <div
-          className="progress-fill"
-          style={{
-            width:
-              `${
-                (
-                  (
-                    currentQuestion + 1
-                  ) /
-                  questions.length
-                ) *
-                100
-              }%`
-          }}
-        ></div>
-
       </div>
 
 
-      {/* =================================================
+      {/* ================================================
           QUESTION CARD
       ================================================= */}
 
       <div className="question-card">
 
-        <h2>
+        <div className="question-number">
+          Question {currentQuestion + 1}
+        </div>
+
+        <div className="question-type">
+          {question.questionType ||
+            question.type ||
+            "Question"}
+        </div>
+
+        <h3 className="question-text">
           {question.question}
-        </h2>
+        </h3>
 
 
-        {/* =================================================
+        {/* ==============================================
             MCQ
-        ================================================= */}
+        ============================================== */}
 
-        {question.questionType ===
-          "mcq" && (
+        {(
+          question.questionType ===
+            "mcq" ||
+          question.questionType ===
+            "MCQ" ||
+          question.type === "mcq"
+        ) && (
 
           <div className="options">
 
-            {question.options?.map(
-              (
-                option,
-                index
-              ) => {
+            {(
+              question.options ||
+              []
+            ).map(
+              (option, index) => {
 
                 const isSelected =
-                  answers[
-                    question._id
-                  ] === option;
-
+                  currentAnswer ===
+                  option;
 
                 return (
-
-                  <button
+                  <label
                     key={index}
-
-                    type="button"
-
-                    className={
+                    className={`option ${
                       isSelected
-                        ? "option selected"
-                        : "option"
-                    }
-
-                    onClick={() =>
-                      handleAnswer(
-                        option
-                      )
-                    }
+                        ? "selected"
+                        : ""
+                    }`}
                   >
 
-                    {option}
+                    <input
+                      type="radio"
+                      name={`question-${question._id}`}
+                      value={option}
+                      checked={
+                        isSelected
+                      }
+                      onChange={() =>
+                        handleAnswer(
+                          option
+                        )
+                      }
+                    />
 
-                  </button>
+                    <span className="option-text">
+                      {option}
+                    </span>
 
+                  </label>
                 );
-
               }
             )}
 
@@ -906,88 +967,117 @@ function ExamPage() {
         )}
 
 
-        {/* =================================================
+        {/* ==============================================
             TRUE / FALSE
-        ================================================= */}
+        ============================================== */}
 
-        {question.questionType ===
-          "truefalse" && (
+        {(
+          question.questionType ===
+            "truefalse" ||
+          question.questionType ===
+            "trueFalse" ||
+          question.type ===
+            "truefalse"
+        ) && (
 
           <div className="options">
 
-            <button
-              type="button"
+            {[
+              "True",
+              "False",
+            ].map(
+              (option) => {
 
-              className={
-                answers[
-                  question._id
-                ] === "True"
-                  ? "option selected"
-                  : "option"
+                const isSelected =
+                  currentAnswer ===
+                  option;
+
+                return (
+                  <label
+                    key={option}
+                    className={`option ${
+                      isSelected
+                        ? "selected"
+                        : ""
+                    }`}
+                  >
+
+                    <input
+                      type="radio"
+                      name={`question-${question._id}`}
+                      value={option}
+                      checked={
+                        isSelected
+                      }
+                      onChange={() =>
+                        handleAnswer(
+                          option
+                        )
+                      }
+                    />
+
+                    <span className="option-text">
+                      {option}
+                    </span>
+
+                  </label>
+                );
               }
-
-              onClick={() =>
-                handleAnswer(
-                  "True"
-                )
-              }
-            >
-              True
-            </button>
-
-
-            <button
-              type="button"
-
-              className={
-                answers[
-                  question._id
-                ] === "False"
-                  ? "option selected"
-                  : "option"
-              }
-
-              onClick={() =>
-                handleAnswer(
-                  "False"
-                )
-              }
-            >
-              False
-            </button>
+            )}
 
           </div>
 
         )}
 
 
-        {/* =================================================
+        {/* ==============================================
             SHORT ANSWER
-        ================================================= */}
+        ============================================== */}
 
         {(
           question.questionType ===
             "shortanswer" ||
-
           question.questionType ===
-            "veryshortanswer"
-
+            "shortAnswer" ||
+          question.type ===
+            "shortanswer"
         ) && (
 
           <textarea
-            rows="6"
-
-            placeholder="Write your answer..."
-
-            value={
-              answers[
-                question._id
-              ] || ""
-            }
-
-            onChange={(event) =>
+            className="answer-input"
+            placeholder="Write your answer here..."
+            value={currentAnswer}
+            onChange={(e) =>
               handleAnswer(
-                event.target.value
+                e.target.value
+              )
+            }
+          />
+
+        )}
+
+
+        {/* ==============================================
+            VERY SHORT ANSWER
+        ============================================== */}
+
+        {(
+          question.questionType ===
+            "veryshortanswer" ||
+          question.questionType ===
+            "veryShortAnswer" ||
+          question.type ===
+            "veryshortanswer"
+        ) && (
+
+          <input
+            type="text"
+            className="short-answer-input"
+            placeholder="Enter your answer..."
+            value={currentAnswer}
+            onChange={(e) =>
+              handleAnswer(
+                e.target.value
               )
             }
           />
@@ -997,139 +1087,69 @@ function ExamPage() {
       </div>
 
 
-      {/* =================================================
+      {/* ================================================
           NAVIGATION
       ================================================= */}
 
-      <div className="navigation">
-
-
-        {/* PREVIOUS */}
+      <div className="exam-navigation">
 
         <button
-          type="button"
-
           className="prev-btn"
-
-          disabled={
-            currentQuestion === 0
-          }
-
           onClick={
             previousQuestion
           }
+          disabled={
+            currentQuestion === 0 ||
+            submitting
+          }
         >
-          Previous
+          ← Previous
         </button>
 
 
-        {/* NEXT */}
+        <div className="navigation-center">
 
-        {currentQuestion !==
-          questions.length - 1 ? (
+          <span>
+            {currentQuestion + 1} /{" "}
+            {questions.length}
+          </span>
+
+        </div>
+
+
+        {currentQuestion <
+        questions.length - 1 ? (
 
           <button
-            type="button"
-
             className="next-btn"
-
             onClick={
               nextQuestion
             }
+            disabled={submitting}
           >
-            Next
+            Next →
           </button>
 
         ) : (
 
           <button
-            type="button"
-
             className="submit-btn"
-
-            disabled={
-              submitting
-            }
-
             onClick={
               handleSubmit
             }
+            disabled={submitting}
           >
-
             {submitting
               ? "Submitting..."
               : "Submit Exam"}
-
           </button>
 
         )}
 
       </div>
 
-
-      {/* =================================================
-          QUESTION PALETTE
-      ================================================= */}
-
-      <div className="question-palette">
-
-        <h3>
-          Questions
-        </h3>
-
-
-        <div className="palette-grid">
-
-          {questions.map(
-            (
-              q,
-              index
-            ) => (
-
-              <button
-                type="button"
-
-                key={q._id}
-
-                className={
-
-                  currentQuestion ===
-                    index
-
-                    ? "palette-btn active"
-
-                    : answers[
-                        q._id
-                      ]
-
-                    ? "palette-btn answered"
-
-                    : "palette-btn"
-
-                }
-
-                onClick={() =>
-                  jumpToQuestion(
-                    index
-                  )
-                }
-              >
-
-                {index + 1}
-
-              </button>
-
-            )
-          )}
-
-        </div>
-
-      </div>
-
     </div>
-
   );
-
 }
 
 export default ExamPage;

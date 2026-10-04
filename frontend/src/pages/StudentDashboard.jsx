@@ -9,11 +9,10 @@ import ExamCard from "../components/ExamCard";
 import ResultCard from "../components/ResultCard";
 
 function StudentDashboard() {
-
   const [dashboard, setDashboard] = useState(null);
 
   // ============================================
-  // FETCH DASHBOARD
+  // FETCH STUDENT DASHBOARD
   // ============================================
 
   useEffect(() => {
@@ -21,31 +20,20 @@ function StudentDashboard() {
   }, []);
 
   const fetchDashboard = async () => {
-
     try {
-
       const token = localStorage.getItem("token");
 
-      const res = await api.get(
-        "/dashboard/student",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        }
-      );
+      const res = await api.get("/dashboard/student", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       console.log("STUDENT DASHBOARD:", res.data);
 
       setDashboard(res.data);
-
     } catch (error) {
-
-      console.error(
-        "DASHBOARD ERROR:",
-        error
-      );
-
+      console.error("DASHBOARD ERROR:", error);
     }
   };
 
@@ -54,66 +42,71 @@ function StudentDashboard() {
   // ============================================
 
   if (!dashboard) {
-
     return (
       <div className="loading-screen">
-
         <div className="loader"></div>
 
-        <h2>
-          Loading Dashboard...
-        </h2>
+        <h2>Loading Dashboard...</h2>
 
+        <p>Please wait while we prepare your dashboard.</p>
       </div>
     );
   }
 
   // ============================================
-  // FORMAT PERCENTAGE
+  // AVERAGE SCORE
   // ============================================
 
-  const averageScore =
-    Number(dashboard.averageScore || 0);
+  const averageScore = Number(dashboard.averageScore || 0);
 
-  const formattedAverageScore =
-    Number.isFinite(averageScore)
-      ? `${Math.round(averageScore)}%`
-      : "0%";
+  const formattedAverageScore = Number.isFinite(averageScore)
+    ? `${Math.round(averageScore)}%`
+    : "0%";
 
   // ============================================
-  // UI
+  // DASHBOARD
   // ============================================
 
   return (
-
     <div className="dashboard">
 
+      {/* NAVBAR */}
       <Navbar />
 
-      <div className="dashboard-content">
 
-        {/* =========================
+      {/* MAIN CONTENT */}
+      <main className="dashboard-content">
+
+        {/* ========================================
             WELCOME
-        ========================= */}
+        ======================================== */}
 
-        <div className="welcome-section">
+        <section className="welcome-section">
 
-          <h1>
-            Welcome back!
-          </h1>
+          <div className="welcome-content">
 
-          <p className="subtitle">
-            Here's your examination overview
-          </p>
+            <span className="welcome-label">
+              STUDENT PORTAL
+            </span>
 
-        </div>
+            <h1>
+              Welcome back!
+            </h1>
+
+            <p className="subtitle">
+              Here's your examination overview
+            </p>
+
+          </div>
+
+        </section>
 
 
-        {/* =========================
+        {/* ========================================
             STATISTICS
-        ========================= */}
+        ======================================== */}
 
-        <div className="stats-row">
+        <section className="stats-row">
 
           <StatCard
             title="Total Exams"
@@ -139,140 +132,189 @@ function StudentDashboard() {
             icon="🏆"
           />
 
-        </div>
+        </section>
 
 
-        {/* =========================
+        {/* ========================================
             AVAILABLE EXAMS
-        ========================= */}
+        ======================================== */}
 
-        <div className="section-title">
+        <section className="dashboard-section">
 
-          <h2>
-            Available Exams
-          </h2>
+          <div className="section-title">
 
-          <p className="subtitle">
-            Start your pending examinations
-          </p>
+            <div>
 
-        </div>
+              <span className="section-label">
+                EXAMINATION
+              </span>
 
+              <h2>
+                Available Exams
+              </h2>
 
-        <div className="exam-row">
+              <p className="subtitle">
+                Start your pending examinations
+              </p>
 
-          {dashboard.exams &&
-          dashboard.exams.length > 0 ? (
+            </div>
 
-            dashboard.exams.map((exam) => (
-
-              <ExamCard
-                key={exam._id}
-
-                examId={exam._id}
-
-                title={exam.title}
-
-                description={exam.description}
-
-                duration={exam.duration}
-
-                marks={exam.totalMarks}
-
-                questions={exam.questionCount}
-
-                questionCount={exam.questionCount}
-
-                startTime={exam.startTime}
-
-                endTime={exam.endTime}
-
-                attempted={exam.attempted}
-              />
-
-            ))
-
-          ) : (
-
-            <p className="empty-message">
-              No available exams.
-            </p>
-
-          )}
-
-        </div>
+          </div>
 
 
-        {/* =========================
+          <div className="exam-row">
+
+            {dashboard.exams &&
+            dashboard.exams.length > 0 ? (
+
+              dashboard.exams.map((exam) => (
+
+                <ExamCard
+                  key={exam._id}
+
+                  examId={exam._id}
+
+                  title={exam.title}
+
+                  description={exam.description}
+
+                  duration={exam.duration}
+
+                  marks={exam.totalMarks}
+
+                  questions={exam.questionCount}
+
+                  questionCount={exam.questionCount}
+
+                  startTime={exam.startTime}
+
+                  endTime={exam.endTime}
+
+                  attempted={exam.attempted}
+                />
+
+              ))
+
+            ) : (
+
+              <div className="empty-message">
+
+                <div className="empty-icon">
+                  📝
+                </div>
+
+                <h3>
+                  No available exams
+                </h3>
+
+                <p>
+                  There are no pending examinations
+                  available right now.
+                </p>
+
+              </div>
+
+            )}
+
+          </div>
+
+        </section>
+
+
+        {/* ========================================
             RECENT RESULTS
-        ========================= */}
+        ======================================== */}
 
-        <div className="section-title">
+        <section className="dashboard-section">
 
-          <h2>
-            Recent Results
-          </h2>
+          <div className="section-title">
 
-          <p className="subtitle">
-            Your latest exam performances
-          </p>
+            <div>
 
-        </div>
+              <span className="section-label">
+                PERFORMANCE
+              </span>
+
+              <h2>
+                Recent Results
+              </h2>
+
+              <p className="subtitle">
+                Your latest exam performances
+              </p>
+
+            </div>
+
+          </div>
 
 
-        <div className="results-list">
+          <div className="results-list">
 
-          {dashboard.results &&
-          dashboard.results.length > 0 ? (
+            {dashboard.results &&
+            dashboard.results.length > 0 ? (
 
-            dashboard.results.map((result) => (
+              dashboard.results.map((result) => (
 
-              <ResultCard
+                <ResultCard
 
-                key={result._id}
+                  key={result._id}
 
-                examId={result.examId}
+                  examId={result.examId}
 
-                title={
-                  result.exam?.title ||
-                  result.title ||
-                  "Exam Result"
-                }
+                  title={
+                    result.exam?.title ||
+                    result.title ||
+                    "Exam Result"
+                  }
 
-                date={
-                  result.submittedAt
-                    ? new Date(
-                        result.submittedAt
-                      ).toLocaleDateString("en-IN")
-                    : "N/A"
-                }
+                  date={
+                    result.submittedAt
+                      ? new Date(
+                          result.submittedAt
+                        ).toLocaleDateString("en-IN")
+                      : "N/A"
+                  }
 
-                percentage={
-                  result.percentage
-                }
+                  percentage={
+                    result.percentage
+                  }
 
-                marks={
-                  `${result.score || 0}/${result.totalMarks || 0}`
-                }
+                  marks={
+                    `${result.score || 0}/${result.totalMarks || 0}`
+                  }
 
-              />
+                />
 
-            ))
+              ))
 
-          ) : (
+            ) : (
 
-            <p className="empty-message">
-              No recent results.
-            </p>
+              <div className="empty-message">
 
-          )}
+                <div className="empty-icon">
+                  📊
+                </div>
 
-        </div>
+                <h3>
+                  No recent results
+                </h3>
 
-      </div>
+                <p>
+                  Your completed exam results
+                  will appear here.
+                </p>
+
+              </div>
+
+            )}
+
+          </div>
+
+        </section>
+
+      </main>
 
     </div>
-
   );
 }
 

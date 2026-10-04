@@ -1,142 +1,300 @@
-/* =========================
+/* =========================================================
    STAT CARD
-========================= */
+   DARK PURPLE / BLACK / LAVENDER THEME
+========================================================= */
 
 .stat-card {
+    position: relative;
+
     width: 100%;
     min-width: 0;
 
-    background: #ffffff;
-
-    border-radius: 18px;
-
-    padding: 25px;
+    padding: 24px;
 
     display: flex;
     justify-content: space-between;
     align-items: center;
 
-    box-shadow: 0 10px 25px rgba(0, 0, 0, .08);
+    overflow: hidden;
 
-    transition: .3s;
+    background:
+        linear-gradient(
+            145deg,
+            #2a1936 0%,
+            #21142d 52%,
+            #170d20 100%
+        );
+
+    border:
+        1px solid rgba(190, 140, 211, 0.22);
+
+    border-radius: 18px;
+
+    box-shadow:
+        0 14px 32px rgba(0, 0, 0, 0.35),
+        inset 0 1px 0 rgba(255, 255, 255, 0.035);
+
+    transition:
+        transform 0.3s ease,
+        border-color 0.3s ease,
+        box-shadow 0.3s ease;
 }
+
+
+/* =========================================================
+   PURPLE GLOW
+========================================================= */
+
+.stat-card::after {
+    content: "";
+
+    position: absolute;
+
+    width: 150px;
+    height: 130px;
+
+    right: -55px;
+    top: -55px;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(180, 103, 190, 0.30),
+            transparent 70%
+        );
+
+    filter: blur(8px);
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   TOP ACCENT
+========================================================= */
+
+.stat-card::before {
+    content: "";
+
+    position: absolute;
+
+    left: 20px;
+    right: 20px;
+    top: 0;
+
+    height: 2px;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            #9b5ca9,
+            #d985c5,
+            transparent
+        );
+
+    opacity: 0.65;
+}
+
+
+/* =========================================================
+   HOVER
+========================================================= */
 
 .stat-card:hover {
     transform: translateY(-5px);
 
-    box-shadow: 0 20px 40px rgba(37, 99, 235, .18);
+    border-color:
+        rgba(211, 157, 224, 0.35);
+
+    box-shadow:
+        0 22px 42px rgba(0, 0, 0, 0.48),
+        0 0 25px rgba(125, 68, 143, 0.10);
 }
 
 
-/* =========================
+/* =========================================================
    STAT INFORMATION
-========================= */
+========================================================= */
 
 .stat-info {
+    position: relative;
+
+    z-index: 2;
+
     min-width: 0;
 }
 
+
+/* LABEL */
+
 .stat-info p {
-    color: #64748b;
-    font-size: 17px;
+    margin: 0;
+
+    color: #c2afc7;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    letter-spacing: 0.2px;
+
+    line-height: 1.4;
 
     white-space: nowrap;
 }
 
+
+/* VALUE */
+
 .stat-info h2 {
-    margin-top: 10px;
+    margin-top: 8px;
 
-    color: #2563eb;
+    color: #ffffff;
 
-    font-size: 36px;
+    font-size: 35px;
 
-    font-weight: 600;
+    font-weight: 750;
+
+    line-height: 1.1;
+
+    letter-spacing: -0.5px;
 
     word-break: break-word;
+
+    text-shadow:
+        0 2px 14px rgba(255, 255, 255, 0.04);
 }
 
 
-/* =========================
+/* =========================================================
    ICON
-========================= */
+========================================================= */
 
 .stat-icon {
-    width: 65px;
-    height: 65px;
+    position: relative;
 
-    min-width: 65px;
+    z-index: 2;
 
-    border-radius: 50%;
+    width: 62px;
+    height: 62px;
 
-    background: #2563eb;
-
-    color: white;
+    min-width: 62px;
 
     display: flex;
+
     justify-content: center;
     align-items: center;
 
-    font-size: 30px;
+    border-radius: 17px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #654170,
+            #45294f
+        );
+
+    border:
+        1px solid rgba(215, 158, 226, 0.24);
+
+    color: #f7eafa;
+
+    font-size: 27px;
+
+    box-shadow:
+        0 8px 22px rgba(92, 46, 108, 0.30),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+
+    transition:
+        transform 0.3s ease,
+        background 0.3s ease,
+        box-shadow 0.3s ease;
 }
 
 
-/* =========================
+/* =========================================================
+   ICON HOVER
+========================================================= */
+
+.stat-card:hover .stat-icon {
+    transform: scale(1.06);
+
+    background:
+        linear-gradient(
+            145deg,
+            #80518e,
+            #593563
+        );
+
+    box-shadow:
+        0 10px 27px rgba(116, 59, 134, 0.40);
+}
+
+
+/* =========================================================
    MOBILE
-========================= */
+========================================================= */
 
 @media (max-width: 768px) {
 
     .stat-card {
-        width: 100%;
-
         padding: 22px;
 
-        min-height: 145px;
+        min-height: 135px;
     }
 
+
     .stat-info p {
-        font-size: 17px;
+        font-size: 13px;
     }
+
 
     .stat-info h2 {
         font-size: 32px;
     }
 
-    .stat-icon {
-        width: 62px;
-        height: 62px;
-        min-width: 62px;
 
-        font-size: 28px;
+    .stat-icon {
+        width: 59px;
+        height: 59px;
+
+        min-width: 59px;
+
+        font-size: 25px;
     }
 }
 
 
-/* =========================
+/* =========================================================
    SMALL MOBILE
-========================= */
+========================================================= */
 
 @media (max-width: 480px) {
 
     .stat-card {
-        padding: 20px;
+        padding: 19px;
 
-        min-height: 135px;
+        min-height: 125px;
     }
+
 
     .stat-info p {
-        font-size: 16px;
+        font-size: 12px;
     }
+
 
     .stat-info h2 {
-        font-size: 30px;
+        font-size: 29px;
     }
 
-    .stat-icon {
-        width: 58px;
-        height: 58px;
-        min-width: 58px;
 
-        font-size: 26px;
+    .stat-icon {
+        width: 55px;
+        height: 55px;
+
+        min-width: 55px;
+
+        font-size: 23px;
     }
 }

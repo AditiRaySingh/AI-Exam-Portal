@@ -15,7 +15,7 @@ import aiQuestionRoutes from "./routes/aiQuestionRoutes.js";
 import resultRoutes from "./routes/resultRoutes.js";
 
 import errorHandler from "./middleware/errorMiddleware.js";
-
+import adminRoutes from "./routes/adminRoutes.js";
 dotenv.config();
 
 connectDB();
@@ -35,7 +35,7 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/exams", examRoutes);
 app.use("/api/questions", questionRoutes);
-app.use("/api/attempt", examAttemptRoutes);
+app.use("/api/exam-attempts", examAttemptRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 
 app.use("/api/ai/material", aiMaterialRoutes);
@@ -43,10 +43,12 @@ app.use("/api/ai/evaluation", aiEvaluationRoutes);
 app.use("/api/ai/question", aiQuestionRoutes);
 
 app.use("/api/results", resultRoutes);
+app.use("/api/admin", adminRoutes);
 
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 3000;
+console.log("GROQ KEY EXISTS:", Boolean(process.env.GROQ_API_KEY));
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

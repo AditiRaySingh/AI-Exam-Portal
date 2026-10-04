@@ -9,9 +9,32 @@
 }
 
 body {
-    background: #f5f7fb;
+    background:
+        radial-gradient(
+            circle at 85% 5%,
+            rgba(157, 79, 174, 0.18),
+            transparent 28%
+        ),
+        radial-gradient(
+            circle at 10% 60%,
+            rgba(91, 48, 111, 0.12),
+            transparent 30%
+        ),
+        linear-gradient(
+            135deg,
+            #0d0812 0%,
+            #130a19 50%,
+            #0b0710 100%
+        );
     font-family: Arial, Helvetica, sans-serif;
+    color: #ffffff;
+    min-height: 100vh;
 }
+
+
+/* =========================================
+   MAIN DASHBOARD
+========================================= */
 
 .teacher-dashboard {
     width: 100%;
@@ -32,13 +55,14 @@ body {
 }
 
 .dashboard-header h1 {
-    color: #3b82f6;
+    color: #ffffff;
     font-size: 36px;
     margin-bottom: 8px;
+    font-weight: 700;
 }
 
 .dashboard-header p {
-    color: #64748b;
+    color: #c2afc7;
     font-size: 17px;
 }
 
@@ -55,32 +79,91 @@ body {
 }
 
 .stat-card {
-    background: white;
-    border-radius: 16px;
+    position: relative;
+    overflow: hidden;
+    background:
+        linear-gradient(
+            145deg,
+            #2a1936 0%,
+            #21142d 52%,
+            #170d20 100%
+        );
+    border:
+        1px solid rgba(190, 140, 211, 0.22);
+    border-radius: 18px;
     padding: 25px;
     text-align: center;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, .08);
-    transition: .3s;
+    box-shadow:
+        0 14px 32px rgba(0, 0, 0, 0.35),
+        inset 0 1px 0 rgba(255, 255, 255, 0.035);
+    transition:
+        transform 0.3s ease,
+        border-color 0.3s ease,
+        box-shadow 0.3s ease;
+}
+
+.stat-card::before {
+    content: "";
+    position: absolute;
+    width: 170px;
+    height: 130px;
+    right: -70px;
+    top: -70px;
+    background:
+        radial-gradient(
+            circle,
+            rgba(178, 91, 192, 0.28),
+            transparent 70%
+        );
+    filter: blur(8px);
+    pointer-events: none;
+}
+
+.stat-card::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 22px;
+    right: 22px;
+    height: 2px;
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            #8c4d9e,
+            #d27ab7,
+            transparent
+        );
+    opacity: 0.65;
 }
 
 .stat-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, .12);
+    border-color: rgba(207, 153, 222, 0.35);
+    box-shadow:
+        0 18px 38px rgba(0, 0, 0, 0.45),
+        0 0 25px rgba(125, 68, 143, 0.10);
 }
 
 .stat-icon {
+    position: relative;
+    z-index: 2;
     font-size: 35px;
     margin-bottom: 10px;
 }
 
 .stat-card h3 {
-    color: #64748b;
+    position: relative;
+    z-index: 2;
+    color: #c2afc7;
     font-size: 16px;
     margin-bottom: 8px;
 }
 
 .stat-card h2 {
-    color: #2563eb;
+    position: relative;
+    z-index: 2;
+    color: #ffffff;
     font-size: 32px;
 }
 
@@ -90,19 +173,19 @@ body {
 ========================================= */
 
 .green {
-    color: #22c55e;
+    color: #8ed9a4;
 }
 
 .red {
-    color: #ef4444;
+    color: #ee9db5;
 }
 
 .gold {
-    color: #f59e0b;
+    color: #f0c878;
 }
 
 .blue {
-    color: #3b82f6;
+    color: #c47acb;
 }
 
 
@@ -112,33 +195,55 @@ body {
 
 .charts-grid {
     width: 100%;
-
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-
     gap: 25px;
-
     margin: 30px 0;
 }
 
 .chart-card {
+    position: relative;
     width: 100%;
     min-width: 0;
-
-    background: white;
-
-    border-radius: 16px;
-
-    padding: 20px;
-
-    box-shadow: 0 5px 15px rgba(0, 0, 0, .08);
-
     overflow: hidden;
+    background:
+        linear-gradient(
+            145deg,
+            #251630 0%,
+            #1a1023 100%
+        );
+    border:
+        1px solid rgba(190, 140, 211, 0.18);
+    border-radius: 18px;
+    padding: 20px;
+    box-shadow:
+        0 12px 30px rgba(0, 0, 0, 0.30),
+        inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+.chart-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 22px;
+    right: 22px;
+    height: 2px;
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            #a85bb4,
+            #d27ab7,
+            transparent
+        );
+    opacity: 0.6;
 }
 
 .chart-card h2,
 .chart-card h3 {
-    color: #1e293b;
+    position: relative;
+    z-index: 2;
+    color: #ffffff;
     margin-bottom: 15px;
 }
 
@@ -149,61 +254,73 @@ body {
 
 .toolbar {
     width: 100%;
-
     display: flex;
     align-items: center;
-
     gap: 15px;
-
     margin: 25px 0;
 }
 
 .search-box {
     flex: 1;
-
     padding: 12px 15px;
-
-    border-radius: 8px;
-
-    border: 1px solid #d1d5db;
-
-    background: white;
-
+    border-radius: 10px;
+    border:
+        1px solid rgba(190, 140, 211, 0.22);
+    background:
+        rgba(20, 11, 27, 0.88);
+    color: #ffffff;
     font-size: 15px;
-
     outline: none;
+    transition:
+        border-color 0.25s ease,
+        box-shadow 0.25s ease,
+        background 0.25s ease;
+}
+
+.search-box::placeholder {
+    color: #8f7c96;
 }
 
 .search-box:focus {
-    border-color: #4f46e5;
+    border-color: #b66bc0;
+    background: rgba(25, 13, 32, 0.95);
+    box-shadow:
+        0 0 0 3px rgba(166, 87, 181, 0.12),
+        0 0 18px rgba(137, 69, 151, 0.10);
 }
 
 .action-btn {
     padding: 12px 20px;
-
-    border: none;
-
-    border-radius: 8px;
-
+    border:
+        1px solid rgba(224, 165, 221, 0.35);
+    border-radius: 10px;
     cursor: pointer;
-
-    background: #4f46e5;
-
-    color: white;
-
+    background:
+        linear-gradient(
+            135deg,
+            #794487,
+            #a85a9f
+        );
+    color: #ffffff;
     font-size: 15px;
-
     font-weight: 600;
-
     white-space: nowrap;
-
-    transition: .3s;
+    transition:
+        transform 0.3s ease,
+        background 0.3s ease,
+        box-shadow 0.3s ease;
 }
 
 .action-btn:hover {
-    background: #3730a3;
-
+    background:
+        linear-gradient(
+            135deg,
+            #895097,
+            #b765aa
+        );
     transform: translateY(-2px);
+    box-shadow:
+        0 10px 22px rgba(113, 52, 127, 0.30);
 }
 
 
@@ -213,27 +330,51 @@ body {
 
 .leaderboard-card,
 .students-card {
+    position: relative;
     width: 100%;
-
-    background: white;
-
-    padding: 25px;
-
-    margin-top: 30px;
-
-    border-radius: 16px;
-
-    box-shadow: 0 5px 15px rgba(0, 0, 0, .08);
-
     overflow: hidden;
+    background:
+        linear-gradient(
+            145deg,
+            #2a1936 0%,
+            #21142d 55%,
+            #170d20 100%
+        );
+    padding: 25px;
+    margin-top: 30px;
+    border:
+        1px solid rgba(190, 140, 211, 0.22);
+    border-radius: 18px;
+    box-shadow:
+        0 14px 32px rgba(0, 0, 0, 0.35),
+        inset 0 1px 0 rgba(255, 255, 255, 0.035);
+}
+
+.leaderboard-card::before,
+.students-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 25px;
+    right: 25px;
+    height: 2px;
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            #8c4d9e,
+            #d27ab7,
+            transparent
+        );
+    opacity: 0.65;
 }
 
 .leaderboard-card h2,
 .students-card h2 {
-    color: #111827;
-
+    position: relative;
+    z-index: 2;
+    color: #ffffff;
     margin-bottom: 20px;
-
     font-size: 26px;
 }
 
@@ -243,46 +384,53 @@ body {
 ========================================= */
 
 .table-wrapper {
+    position: relative;
+    z-index: 2;
     width: 100%;
-
     overflow-x: auto;
-
     -webkit-overflow-scrolling: touch;
 }
 
 table {
     width: 100%;
-
     border-collapse: collapse;
-
     min-width: 650px;
 }
 
 th,
 td {
     padding: 14px 12px;
-
     text-align: center;
-
-    border-bottom: 1px solid #eee;
+    border-bottom:
+        1px solid rgba(190, 140, 211, 0.10);
 }
 
 th {
-    background: #4f46e5;
-
-    color: white;
-
+    background:
+        linear-gradient(
+            135deg,
+            #51305f,
+            #382044
+        );
+    color: #ffffff;
     font-size: 15px;
+    border-bottom:
+        1px solid rgba(205, 155, 220, 0.20);
 }
 
 td {
-    color: #334155;
-
+    color: #e4d6e7;
     font-size: 15px;
 }
 
+tbody tr {
+    transition:
+        background 0.25s ease;
+}
+
 tbody tr:hover {
-    background: #f8fafc;
+    background:
+        rgba(120, 65, 137, 0.13);
 }
 
 
@@ -291,30 +439,26 @@ tbody tr:hover {
 ========================================= */
 
 .pass {
-    color: #16a34a;
-
+    color: #9ee0b1;
     font-weight: bold;
-
-    background: #dcfce7;
-
+    background:
+        rgba(76, 145, 104, 0.16);
+    border:
+        1px solid rgba(104, 183, 130, 0.25);
     padding: 5px 10px;
-
-    border-radius: 6px;
-
+    border-radius: 8px;
     display: inline-block;
 }
 
 .fail {
-    color: #dc2626;
-
+    color: #efa5bb;
     font-weight: bold;
-
-    background: #fee2e2;
-
+    background:
+        rgba(173, 69, 98, 0.16);
+    border:
+        1px solid rgba(218, 108, 139, 0.25);
     padding: 5px 10px;
-
-    border-radius: 6px;
-
+    border-radius: 8px;
     display: inline-block;
 }
 
@@ -327,7 +471,6 @@ tbody tr:hover {
 
     .teacher-dashboard {
         width: 100%;
-
         padding: 20px 15px;
     }
 
@@ -344,7 +487,6 @@ tbody tr:hover {
 
     .dashboard-header p {
         font-size: 15px;
-
         line-height: 1.5;
     }
 
@@ -353,7 +495,6 @@ tbody tr:hover {
 
     .stats-grid {
         grid-template-columns: 1fr;
-
         gap: 15px;
     }
 
@@ -370,15 +511,12 @@ tbody tr:hover {
 
     .charts-grid {
         grid-template-columns: 1fr;
-
         gap: 18px;
-
         margin: 20px 0;
     }
 
     .chart-card {
         width: 100%;
-
         padding: 15px;
     }
 
@@ -387,15 +525,12 @@ tbody tr:hover {
 
     .toolbar {
         flex-direction: column;
-
         align-items: stretch;
-
         gap: 10px;
     }
 
     .search-box {
         width: 100%;
-
         flex: none;
     }
 
@@ -409,16 +544,13 @@ tbody tr:hover {
     .leaderboard-card,
     .students-card {
         padding: 18px;
-
         margin-top: 20px;
-
         border-radius: 15px;
     }
 
     .leaderboard-card h2,
     .students-card h2 {
         font-size: 23px;
-
         margin-bottom: 15px;
     }
 
@@ -427,7 +559,6 @@ tbody tr:hover {
 
     .table-wrapper {
         width: 100%;
-
         overflow-x: auto;
     }
 
@@ -438,7 +569,6 @@ tbody tr:hover {
     th,
     td {
         padding: 12px 10px;
-
         font-size: 14px;
     }
 }
@@ -470,7 +600,6 @@ tbody tr:hover {
 
     .stat-card {
         padding: 20px;
-
         border-radius: 14px;
     }
 
@@ -491,7 +620,6 @@ tbody tr:hover {
 
     .chart-card {
         padding: 12px;
-
         border-radius: 14px;
     }
 
@@ -513,7 +641,6 @@ tbody tr:hover {
     .leaderboard-card,
     .students-card {
         padding: 15px;
-
         border-radius: 14px;
     }
 
@@ -536,14 +663,12 @@ tbody tr:hover {
     th,
     td {
         padding: 10px 8px;
-
         font-size: 13px;
     }
 
     .pass,
     .fail {
         padding: 4px 8px;
-
         font-size: 12px;
     }
 }

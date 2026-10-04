@@ -15,7 +15,6 @@ function ExamCard({
   startTime,
   attempted
 }) {
-
   const navigate = useNavigate();
 
   // =====================================================
@@ -26,7 +25,6 @@ function ExamCard({
     questionCount ??
     questions ??
     0;
-
 
   // =====================================================
   // DATE
@@ -41,7 +39,6 @@ function ExamCard({
     endTime
       ? new Date(endTime)
       : null;
-
 
   // =====================================================
   // FORMAT DATE
@@ -59,7 +56,6 @@ function ExamCard({
         )
       : "Not Set";
 
-
   // =====================================================
   // FORMAT TIME
   // =====================================================
@@ -76,7 +72,6 @@ function ExamCard({
         )
       : "Not Set";
 
-
   const formattedEndTime =
     examEnd
       ? examEnd.toLocaleTimeString(
@@ -89,20 +84,17 @@ function ExamCard({
         )
       : "Not Set";
 
-
   // =====================================================
   // START EXAM
   // =====================================================
 
   const handleStartExam = async () => {
-
     try {
-
       const token =
         localStorage.getItem("token");
 
-      await api.post(
-        "/exams/start",
+      const response = await api.post(
+        "/exam-attempts/start",
         {
           examId
         },
@@ -114,10 +106,18 @@ function ExamCard({
         }
       );
 
+      // ---------------------------------------------------
+      // SAVE EXAM ID
+      // ---------------------------------------------------
+
       localStorage.setItem(
         "examId",
         examId
       );
+
+      // ---------------------------------------------------
+      // GO TO EXAM
+      // ---------------------------------------------------
 
       navigate("/exam");
 
@@ -128,6 +128,25 @@ function ExamCard({
         error
       );
 
+      // ---------------------------------------------------
+      // ALREADY ATTEMPTED
+      // ---------------------------------------------------
+
+      if (
+        error.response?.status === 409 ||
+        error.response?.data?.alreadyAttempted
+      ) {
+        alert(
+          "You have already attempted this exam."
+        );
+
+        return;
+      }
+
+      // ---------------------------------------------------
+      // OTHER ERRORS
+      // ---------------------------------------------------
+
       alert(
         error.response?.data?.message ||
         "Failed to start exam"
@@ -135,63 +154,70 @@ function ExamCard({
     }
   };
 
-
   // =====================================================
   // VIEW RESULT
   // =====================================================
 
   const handleViewResult = () => {
-
     navigate(
       `/result/${examId}`
     );
-
   };
-
 
   // =====================================================
   // UI
   // =====================================================
 
   return (
-
     <div className="exam-card">
 
-      {/* HEADER */}
+      {/* =================================================
+          HEADER
+      ================================================= */}
 
       <div className="exam-header">
 
-        <span className="status">
-          {attempted
-            ? "Completed"
-            : "Available"}
-        </span>
+        <div className="exam-status-row">
+
+          <span
+            className={
+              attempted
+                ? "status completed-status"
+                : "status available-status"
+            }
+          >
+            {attempted
+              ? "✓ Completed"
+              : "● Available"}
+          </span>
+
+        </div>
 
         <h2>
           {title}
         </h2>
 
         <p className="description">
-          {description || "No description"}
+          {description || "No description available"}
         </p>
 
       </div>
 
-
-      {/* EXAM INFORMATION */}
+      {/* =================================================
+          EXAM INFORMATION
+      ================================================= */}
 
       <div className="exam-info">
-
 
         {/* DATE */}
 
         <div className="info-card">
 
-          <div className="icon">
+          <div className="icon date-icon">
             📅
           </div>
 
-          <div>
+          <div className="info-content">
 
             <h4>
               Exam Date
@@ -205,16 +231,15 @@ function ExamCard({
 
         </div>
 
-
         {/* TIME */}
 
         <div className="info-card">
 
-          <div className="icon">
+          <div className="icon time-icon">
             🕐
           </div>
 
-          <div>
+          <div className="info-content">
 
             <h4>
               Exam Time
@@ -230,16 +255,15 @@ function ExamCard({
 
         </div>
 
-
         {/* DURATION */}
 
         <div className="info-card">
 
-          <div className="icon">
+          <div className="icon duration-icon">
             ⏱
           </div>
 
-          <div>
+          <div className="info-content">
 
             <h4>
               Duration
@@ -253,16 +277,15 @@ function ExamCard({
 
         </div>
 
-
         {/* QUESTIONS */}
 
         <div className="info-card">
 
-          <div className="icon">
+          <div className="icon question-icon">
             📄
           </div>
 
-          <div>
+          <div className="info-content">
 
             <h4>
               Questions
@@ -276,16 +299,15 @@ function ExamCard({
 
         </div>
 
+        {/* TOTAL MARKS */}
 
-        {/* MARKS */}
+        <div className="info-card marks-card">
 
-        <div className="info-card">
-
-          <div className="icon">
+          <div className="icon marks-icon">
             🏆
           </div>
 
-          <div>
+          <div className="info-content">
 
             <h4>
               Total Marks
@@ -301,8 +323,9 @@ function ExamCard({
 
       </div>
 
-
-      {/* BUTTON */}
+      {/* =================================================
+          BUTTON
+      ================================================= */}
 
       {attempted ? (
 
@@ -310,7 +333,14 @@ function ExamCard({
           className="start-btn"
           onClick={handleViewResult}
         >
-          View Result →
+          <span>
+            View Result
+          </span>
+
+          <span className="button-arrow">
+            →
+          </span>
+
         </button>
 
       ) : (
@@ -319,13 +349,19 @@ function ExamCard({
           className="start-btn"
           onClick={handleStartExam}
         >
-          Start Exam →
+          <span>
+            Start Exam
+          </span>
+
+          <span className="button-arrow">
+            →
+          </span>
+
         </button>
 
       )}
 
     </div>
-
   );
 }
 

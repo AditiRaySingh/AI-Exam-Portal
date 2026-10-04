@@ -1,40 +1,290 @@
-.dashboard-result-card{
- border:1px solid #ddd;
- border-radius:18px;
- background:white;
- padding:25px;
- display:flex;
- justify-content:space-between;
- align-items:center;
- margin-top:20px;
+/* =========================================================
+   DASHBOARD RESULT CARD
+   DARK PURPLE / BLACK / PINK THEME
+========================================================= */
+
+.dashboard-result-card {
+    position: relative;
+
+    width: 100%;
+
+    margin-top: 16px;
+
+    padding: 22px 24px;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    gap: 20px;
+
+    overflow: hidden;
+
+    background:
+        linear-gradient(
+            145deg,
+            #2a1936 0%,
+            #21142d 55%,
+            #170d20 100%
+        );
+
+    border:
+        1px solid rgba(190, 140, 211, 0.22);
+
+    border-radius: 18px;
+
+    box-shadow:
+        0 12px 30px rgba(0, 0, 0, 0.35),
+        inset 0 1px 0 rgba(255, 255, 255, 0.03);
+
+    transition: all 0.3s ease;
 }
 
-.dashboard-result-right{
- display:flex;
- align-items:center;
- gap:20px;
+
+/* =========================================================
+   PURPLE GLOW
+========================================================= */
+
+.dashboard-result-card::before {
+    content: "";
+
+    position: absolute;
+
+    width: 190px;
+    height: 150px;
+
+    right: -70px;
+    top: -80px;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(176, 96, 188, 0.30),
+            transparent 70%
+        );
+
+    filter: blur(8px);
+
+    pointer-events: none;
 }
 
-.dashboard-badge{
- padding:8px 15px;
- border-radius:10px;
- color:white;
- font-size:14px;
- font-weight:bold;
+
+/* =========================================================
+   TOP ACCENT
+========================================================= */
+
+.dashboard-result-card::after {
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    left: 22px;
+    right: 22px;
+
+    height: 2px;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            #a85bb4,
+            #d77fbd,
+            transparent
+        );
+
+    opacity: 0.65;
 }
 
-.dashboard-badge.pass{
- background:#22c55e;
+
+/* =========================================================
+   HOVER
+========================================================= */
+
+.dashboard-result-card:hover {
+    transform: translateY(-3px);
+
+    border-color:
+        rgba(207, 153, 222, 0.35);
+
+    box-shadow:
+        0 18px 38px rgba(0, 0, 0, 0.45),
+        0 0 25px rgba(125, 68, 143, 0.09);
 }
 
-.dashboard-badge.fail{
- background:#ef4444;
+
+/* =========================================================
+   RIGHT SIDE
+========================================================= */
+
+.dashboard-result-right {
+    position: relative;
+
+    z-index: 2;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 14px;
+
+    flex-shrink: 0;
 }
 
-.dashboard-detail-btn{
- padding:10px 18px;
- border:1px solid #ddd;
- background:white;
- border-radius:10px;
- cursor:pointer;
+
+/* =========================================================
+   PASS / FAIL BADGE
+========================================================= */
+
+.dashboard-badge {
+    padding: 7px 13px;
+
+    border-radius: 50px;
+
+    font-size: 11px;
+
+    font-weight: 750;
+
+    letter-spacing: 0.4px;
+
+    text-transform: uppercase;
+
+    border: 1px solid transparent;
+}
+
+
+/* =========================================================
+   PASS
+========================================================= */
+
+.dashboard-badge.pass {
+    background:
+        rgba(76, 145, 104, 0.16);
+
+    border-color:
+        rgba(104, 183, 130, 0.25);
+
+    color: #9ee0b1;
+}
+
+
+/* =========================================================
+   FAIL
+========================================================= */
+
+.dashboard-badge.fail {
+    background:
+        rgba(173, 69, 98, 0.16);
+
+    border-color:
+        rgba(218, 108, 139, 0.25);
+
+    color: #efa5bb;
+}
+
+
+/* =========================================================
+   DETAIL BUTTON
+========================================================= */
+
+.dashboard-detail-btn {
+    padding: 10px 17px;
+
+    border:
+        1px solid rgba(190, 140, 211, 0.24);
+
+    background:
+        rgba(113, 63, 128, 0.18);
+
+    color: #e4cce8;
+
+    border-radius: 10px;
+
+    cursor: pointer;
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    transition: all 0.25s ease;
+}
+
+
+/* =========================================================
+   DETAIL BUTTON HOVER
+========================================================= */
+
+.dashboard-detail-btn:hover {
+    background:
+        rgba(145, 78, 159, 0.30);
+
+    border-color:
+        rgba(211, 157, 224, 0.40);
+
+    color: #ffffff;
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 7px 18px rgba(89, 44, 103, 0.25);
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 768px) {
+
+    .dashboard-result-card {
+        padding: 19px;
+
+        gap: 15px;
+    }
+
+    .dashboard-result-right {
+        gap: 9px;
+    }
+
+    .dashboard-badge {
+        padding: 6px 10px;
+
+        font-size: 10px;
+    }
+
+    .dashboard-detail-btn {
+        padding: 9px 13px;
+
+        font-size: 11px;
+    }
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 520px) {
+
+    .dashboard-result-card {
+        flex-direction: column;
+
+        align-items: flex-start;
+
+        padding: 18px;
+    }
+
+    .dashboard-result-right {
+        width: 100%;
+
+        justify-content: space-between;
+    }
+
+    .dashboard-detail-btn {
+        flex: 1;
+
+        max-width: 150px;
+    }
 }

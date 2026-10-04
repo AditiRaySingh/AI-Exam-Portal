@@ -1,238 +1,510 @@
+/* =========================================================
+   EXAM CARD — HIGH CONTRAST DARK PURPLE
+========================================================= */
+
 .exam-card {
+    position: relative;
     width: 100%;
-    background: #fff;
-    border: 1px solid #e3e8f0;
-    border-radius: 18px;
-    overflow: hidden;
-    box-shadow: 0 4px 18px rgba(15, 23, 42, 0.06);
+    min-width: 0;
+
     display: flex;
     flex-direction: column;
-    transition: 0.2s ease;
+
+    background:
+        linear-gradient(
+            145deg,
+            #2a1936 0%,
+            #21142d 48%,
+            #170d20 100%
+        );
+
+    border: 1px solid rgba(190, 140, 211, 0.25);
+
+    border-radius: 20px;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 15px 40px rgba(0, 0, 0, 0.45),
+        inset 0 1px 0 rgba(255, 255, 255, 0.035);
+
+    transition: all 0.3s ease;
 }
+
+
+/* =========================================================
+   PURPLE GLOW
+========================================================= */
+
+.exam-card::after {
+    content: "";
+
+    position: absolute;
+
+    width: 280px;
+    height: 220px;
+
+    top: -120px;
+    right: -60px;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(180, 103, 190, 0.35),
+            rgba(125, 67, 145, 0.15) 40%,
+            transparent 72%
+        );
+
+    filter: blur(10px);
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   TOP BORDER GLOW
+========================================================= */
+
+.exam-card::before {
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    left: 25px;
+    right: 25px;
+
+    height: 2px;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            #bd7ac9,
+            #8e5a9e,
+            transparent
+        );
+
+    opacity: 0.8;
+}
+
 
 .exam-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.1);
+    transform: translateY(-5px);
+
+    border-color:
+        rgba(201, 151, 219, 0.38);
+
+    box-shadow:
+        0 22px 50px rgba(0, 0, 0, 0.55),
+        0 0 35px rgba(140, 75, 160, 0.13);
 }
 
 
-/* HEADER */
+/* =========================================================
+   HEADER
+========================================================= */
 
 .exam-card .exam-header {
-    padding: 20px 22px 18px;
-    border-bottom: 1px solid #edf0f4;
+    position: relative;
+    z-index: 2;
+
+    padding: 24px 23px 21px;
+
+    border-bottom:
+        1px solid rgba(220, 190, 230, 0.10);
 }
+
+
+/* =========================================================
+   STATUS
+========================================================= */
 
 .exam-card .status {
     display: inline-flex;
-    padding: 5px 11px;
-    margin-bottom: 9px;
+
+    align-items: center;
+
+    padding: 6px 11px;
+
+    margin-bottom: 11px;
+
     border-radius: 50px;
 
-    background: #eaf9f1;
-    color: #138a50;
+    color: #e1b7e8;
 
-    font-size: 11px;
-    font-weight: 700;
+    background:
+        rgba(153, 84, 169, 0.20);
+
+    border:
+        1px solid rgba(204, 139, 217, 0.30);
+
+    font-size: 10px;
+
+    font-weight: 800;
+
+    letter-spacing: 0.6px;
+
+    text-transform: uppercase;
 }
+
+
+/* =========================================================
+   TITLE
+========================================================= */
 
 .exam-card .exam-header h2 {
     margin: 0;
 
-    color: #182238;
+    color: #ffffff;
+
     font-size: 20px;
+
     font-weight: 750;
-    line-height: 1.3;
+
+    line-height: 1.35;
+
+    letter-spacing: -0.3px;
 
     white-space: nowrap;
+
     overflow: hidden;
+
     text-overflow: ellipsis;
+
+    text-shadow:
+        0 1px 12px rgba(255, 255, 255, 0.05);
 }
+
+
+/* =========================================================
+   DESCRIPTION
+========================================================= */
 
 .exam-card .description {
-    margin: 5px 0 0;
+    margin: 8px 0 0;
 
-    color: #7a8799;
+    color: #c0aec5;
+
     font-size: 13px;
 
+    font-weight: 450;
+
+    line-height: 1.55;
+
     white-space: nowrap;
+
     overflow: hidden;
+
     text-overflow: ellipsis;
 }
 
 
-/* INFORMATION */
+/* =========================================================
+   INFORMATION AREA
+========================================================= */
 
 .exam-card .exam-info {
-    padding: 18px 22px;
+    position: relative;
+    z-index: 2;
+
+    padding: 19px 22px;
 
     display: grid;
+
     grid-template-columns: 1fr 1fr;
 
-    gap: 12px;
+    gap: 11px;
 }
 
 
-/* INFORMATION CARD */
+/* =========================================================
+   INFORMATION CARD
+========================================================= */
 
 .exam-card .info-card {
+    position: relative;
+
     min-width: 0;
-    min-height: 68px;
+    min-height: 70px;
 
     padding: 12px;
 
     display: flex;
+
     align-items: center;
 
-    gap: 10px;
-
-    background: #f8fafc;
-
-    border: 1px solid #e8edf4;
-    border-radius: 12px;
+    gap: 11px;
 
     box-sizing: border-box;
+
+    background:
+        linear-gradient(
+            145deg,
+            #382448,
+            #2b1b39
+        );
+
+    border:
+        1px solid rgba(194, 145, 211, 0.20);
+
+    border-radius: 13px;
+
+    overflow: hidden;
+
+    transition: all 0.25s ease;
 }
 
 
-/* ICON */
+.exam-card .info-card:hover {
+    background:
+        linear-gradient(
+            145deg,
+            #442a55,
+            #321f42
+        );
+
+    border-color:
+        rgba(207, 157, 222, 0.32);
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 8px 20px rgba(0, 0, 0, 0.22);
+}
+
+
+/* =========================================================
+   LEFT PURPLE ACCENT
+========================================================= */
+
+.exam-card .info-card::before {
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+
+    top: 12px;
+    bottom: 12px;
+
+    width: 3px;
+
+    border-radius: 5px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #d08ad9,
+            #865296
+        );
+}
+
+
+/* =========================================================
+   ICON
+========================================================= */
 
 .exam-card .info-card .icon {
     flex-shrink: 0;
 
-    width: 38px;
-    height: 38px;
+    width: 39px;
+    height: 39px;
 
     display: flex;
+
     align-items: center;
     justify-content: center;
 
     border-radius: 10px;
 
-    background: #edf3ff;
+    background:
+        linear-gradient(
+            145deg,
+            #62406f,
+            #452b50
+        );
 
-    font-size: 17px;
+    border:
+        1px solid rgba(213, 163, 226, 0.22);
+
+    font-size: 16px;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
 
-/* TEXT */
+/* =========================================================
+   CONTENT
+========================================================= */
 
 .exam-card .info-card > div:last-child {
     min-width: 0;
 }
 
+
+/* LABEL — NOW BRIGHT ENOUGH */
+
 .exam-card .info-card h4 {
-    margin: 0 0 4px;
+    margin: 0 0 5px;
 
-    color: #7b8798;
+    color: #c7b3cc;
 
-    font-size: 11px;
-    font-weight: 600;
+    font-size: 10px;
+
+    font-weight: 650;
+
+    letter-spacing: 0.25px;
+
+    line-height: 1.2;
 }
+
+
+/* VALUE — CLEAR WHITE */
 
 .exam-card .info-card p {
     margin: 0;
 
-    color: #202b3d;
+    color: #ffffff;
 
     font-size: 13px;
-    font-weight: 700;
+
+    font-weight: 750;
 
     line-height: 1.35;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
 }
 
 
-/* TOTAL MARKS */
+/* =========================================================
+   TOTAL MARKS
+========================================================= */
 
-.exam-card .info-card:last-child {
+.exam-card .marks-card {
     grid-column: span 2;
 }
 
 
-/* BUTTON */
+/* =========================================================
+   BUTTON
+========================================================= */
 
 .exam-card .start-btn {
+    position: relative;
+
+    z-index: 2;
+
     width: calc(100% - 44px);
-    height: 44px;
+
+    height: 46px;
 
     margin: 0 22px 22px;
 
-    border: none !important;
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 9px;
+
+    border: 1px solid
+        rgba(220, 164, 232, 0.35) !important;
+
     outline: none;
 
-    border-radius: 11px;
+    border-radius: 12px;
 
-    background: #2563eb !important;
-    color: #fff !important;
+    background:
+        linear-gradient(
+            135deg,
+            #a66abb,
+            #89529c,
+            #704184
+        ) !important;
+
+    color: #ffffff !important;
 
     font-family: inherit;
-    font-size: 14px;
-    font-weight: 700;
+
+    font-size: 13px;
+
+    font-weight: 750;
 
     cursor: pointer;
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    box-shadow:
+        0 9px 25px
+        rgba(105, 57, 125, 0.38);
 
-    transition: 0.2s ease;
+    transition: all 0.25s ease;
 }
+
 
 .exam-card .start-btn:hover {
-    background: #1d4ed8 !important;
-    color: #fff !important;
+    background:
+        linear-gradient(
+            135deg,
+            #b879c9,
+            #995bb0,
+            #79468e
+        ) !important;
 
-    transform: translateY(-1px);
+    transform: translateY(-2px);
 
-    box-shadow: 0 6px 16px rgba(37, 99, 235, 0.25);
+    box-shadow:
+        0 13px 32px
+        rgba(137, 70, 158, 0.48);
 }
 
 
-/* TABLET */
-
-@media (max-width: 1100px) {
-
-    .exam-card .exam-info {
-        grid-template-columns: 1fr 1fr;
-    }
-
-}
-
-
-/* MOBILE */
+/* =========================================================
+   MOBILE
+========================================================= */
 
 @media (max-width: 768px) {
 
     .exam-card .exam-header {
-        padding: 18px;
+        padding: 20px 18px 18px;
     }
 
     .exam-card .exam-header h2 {
         font-size: 18px;
     }
 
+    .exam-card .description {
+        font-size: 12px;
+    }
+
     .exam-card .exam-info {
-        padding: 14px 18px;
+        padding: 15px 18px;
         gap: 9px;
     }
 
     .exam-card .info-card {
-        min-height: 62px;
+        min-height: 63px;
         padding: 10px;
+        gap: 9px;
     }
 
     .exam-card .info-card .icon {
-        width: 34px;
-        height: 34px;
-        font-size: 15px;
+        width: 35px;
+        height: 35px;
+        font-size: 14px;
     }
 
     .exam-card .info-card h4 {
-        font-size: 10px;
+        font-size: 9px;
     }
 
     .exam-card .info-card p {
-        font-size: 12px;
+        font-size: 11px;
     }
 
     .exam-card .start-btn {
@@ -245,16 +517,21 @@
 }
 
 
-/* SMALL MOBILE */
-
 @media (max-width: 480px) {
 
     .exam-card .exam-info {
         grid-template-columns: 1fr;
     }
 
-    .exam-card .info-card:last-child {
+    .exam-card .marks-card {
         grid-column: span 1;
     }
 
+    .exam-card .start-btn {
+        width: calc(100% - 32px);
+
+        margin-left: 16px;
+        margin-right: 16px;
+        margin-bottom: 16px;
+    }
 }

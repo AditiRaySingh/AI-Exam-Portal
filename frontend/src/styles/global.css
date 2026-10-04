@@ -1,10 +1,74 @@
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
+/* =========================================================
+   GLOBAL AI EXAM PORTAL THEME
+========================================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-body{
-  font-family:Arial,sans-serif;
-  background:#f5f5f5;
+html,
+body,
+#root {
+    width: 100%;
+    min-height: 100%;
+
+    margin: 0;
+    padding: 0;
+
+    background: #0d0812;
+}
+
+body {
+    font-family: Arial, sans-serif;
+
+    color: #ffffff;
+
+    background:
+        radial-gradient(
+            circle at 82% 5%,
+            rgba(151, 82, 165, 0.20),
+            transparent 27%
+        ),
+        radial-gradient(
+            circle at 12% 50%,
+            rgba(91, 48, 111, 0.12),
+            transparent 30%
+        ),
+        linear-gradient(
+            135deg,
+            #0d0812 0%,
+            #130a19 50%,
+            #0b0710 100%
+        );
+
+    background-attachment: fixed;
+
+    overflow-x: hidden;
+}
+
+
+/* Remove default white form/button appearance */
+
+button,
+input,
+textarea,
+select {
+    font-family: inherit;
+}
+
+
+/* Smooth scrolling */
+
+html {
+    scroll-behavior: smooth;
+}
+
+
+/* Selection */
+
+::selection {
+    background: rgba(190, 113, 202, 0.35);
+    color: #ffffff;
 }

@@ -1,351 +1,291 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
+import "../styles/ai.css";
 
 function GenerateFromMaterial() {
 
-const navigate = useNavigate();
+  const navigate = useNavigate();
 
-const [file, setFile] =
-useState(null);
+  const [file, setFile] = useState(null);
 
-const [exams, setExams] =
-useState([]);
+  const [exams, setExams] = useState([]);
 
-const [loading, setLoading] =
-useState(false);
+  const [loading, setLoading] = useState(false);
 
-const [formData, setFormData] =
-useState({
-examId: "",
-difficulty: "easy",
-questionType: "mcq",
-numberOfQuestions: 5
-});
+  const [formData, setFormData] = useState({
+    examId: "",
+    difficulty: "easy",
+    questionType: "mcq",
+    numberOfQuestions: 5
+  });
 
-useEffect(() => {
-fetchExams();
-}, []);
+  useEffect(() => {
+    fetchExams();
+  }, []);
 
-const fetchExams = async () => {
+  const fetchExams = async () => {
 
+    try {
 
-try {
+      const token =
+        localStorage.getItem("token");
 
-  const token =
-    localStorage.getItem("token");
-
-const res = await api.get(
-  "/exams/teacher",
-  {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  }
-);
-
-console.log(res.data);
-
-setExams(res.data.exams);
-console.log(res.data);
-} catch (error) {
-
-  console.log(error);
-
-}
-
-
-};
-
-const handleChange = (e) => {
-
-
-setFormData({
-  ...formData,
-  [e.target.name]:
-    e.target.value
-});
-
-
-};
-
-const handleSubmit =
-async (e) => {
-
-
-  e.preventDefault();
-
-  if (!file) {
-
-    alert(
-      "Please Upload File"
-    );
-
-    return;
-
-  }
-
-  try {
-
-    setLoading(true);
-
-    const token =
-      localStorage.getItem(
-        "token"
+      const res = await api.get(
+        "/exams/teacher",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
       );
 
-    const data =
-      new FormData();
+      console.log(res.data);
 
-    data.append(
-      "file",
-      file
-    );
+      setExams(res.data.exams);
 
-    data.append(
-      "examId",
-      formData.examId
-    );
+    } catch (error) {
 
-    data.append(
-      "difficulty",
-      formData.difficulty
-    );
+      console.log(error);
 
-    data.append(
-      "questionType",
-      formData.questionType
-    );
-
-    data.append(
-      "numberOfQuestions",
-      formData.numberOfQuestions
-    );
-
-    const res = await api.post(
-  "/ai/material/generate-from-material",
-  data,
-  {
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "multipart/form-data"
     }
-  }
-);
-    alert(
-      `${res.data.totalQuestions} Questions Generated Successfully`
-    );
 
-    navigate(
-      `/questions/${formData.examId}`
-    );
+  };
 
-  } catch (error) {
+  const handleChange = (e) => {
 
-    console.log(error);
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
 
-    alert(
-      error.response?.data?.message ||
-      "Generation Failed"
-    );
+  };
 
-  } finally {
+  const handleSubmit = async (e) => {
 
-    setLoading(false);
+    e.preventDefault();
 
-  }
+    if (!file) {
 
-};
+      alert("Please Upload File");
 
+      return;
 
-return (
+    }
 
+    try {
 
-<div
-  style={{
-    padding: "40px"
-  }}
->
+      setLoading(true);
 
-  <div
-    style={{
-      maxWidth: "700px",
-      margin: "auto",
-      background: "#fff",
-      padding: "30px",
-      borderRadius: "20px",
-      boxShadow:
-        "0 10px 30px rgba(0,0,0,0.1)"
-    }}
-  >
+      const token =
+        localStorage.getItem("token");
 
-    <h1>
-      📄 Generate Questions
-      From Notes
-    </h1>
+      const data = new FormData();
 
-    <form
-      onSubmit={handleSubmit}
-    >
+      data.append(
+        "file",
+        file
+      );
 
-      <select
-        name="examId"
-        value={
-          formData.examId
+      data.append(
+        "examId",
+        formData.examId
+      );
+
+      data.append(
+        "difficulty",
+        formData.difficulty
+      );
+
+      data.append(
+        "questionType",
+        formData.questionType
+      );
+
+      data.append(
+        "numberOfQuestions",
+        formData.numberOfQuestions
+      );
+
+      const res = await api.post(
+        "/ai/material/generate-from-material",
+        data,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data"
+          }
         }
-        onChange={
-          handleChange
-        }
-        required
-        style={{
-          width: "100%",
-          padding: "12px",
-          marginTop: "20px"
-        }}
-      >
+      );
 
-        <option value="">
-          Select Exam
-        </option>
+      alert(
+        `${res.data.totalQuestions} Questions Generated Successfully`
+      );
 
-        {exams.map(
-          (exam) => (
+      navigate(
+        `/questions/${formData.examId}`
+      );
 
-            <option
-              key={exam._id}
-              value={exam._id}
-            >
-              {exam.title}
+    } catch (error) {
+
+      console.log(error);
+
+      alert(
+        error.response?.data?.message ||
+        "Generation Failed"
+      );
+
+    } finally {
+
+      setLoading(false);
+
+    }
+
+  };
+
+  return (
+
+    <div className="ai-page">
+
+      <div className="ai-card">
+
+        <h1>
+          📄 Generate Questions From Notes
+        </h1>
+
+        <p>
+          Upload your study material and let AI
+          generate questions automatically.
+        </p>
+
+        <form onSubmit={handleSubmit}>
+
+          <label>
+            Select Exam
+          </label>
+
+          <select
+            name="examId"
+            value={formData.examId}
+            onChange={handleChange}
+            required
+          >
+
+            <option value="">
+              Select Exam
             </option>
 
-          )
-        )}
+            {exams.map((exam) => (
 
-      </select>
+              <option
+                key={exam._id}
+                value={exam._id}
+              >
+                {exam.title}
+              </option>
 
-      <input
-        type="file"
-        accept=".pdf,.doc,.docx,.txt"
-        onChange={(e) =>
-          setFile(
-            e.target.files[0]
-          )
-        }
-        style={{
-          width: "100%",
-          marginTop: "20px"
-        }}
-      />
+            ))}
 
-      <select
-        name="questionType"
-        value={
-          formData.questionType
-        }
-        onChange={
-          handleChange
-        }
-        style={{
-          width: "100%",
-          padding: "12px",
-          marginTop: "20px"
-        }}
-      >
-
-        <option value="mcq">
-          MCQ
-        </option>
-
-        <option value="truefalse">
-          True False
-        </option>
-
-        <option value="shortanswer">
-          Short Answer
-        </option>
-
-        <option value="veryshortanswer">
-          Very Short Answer
-        </option>
-
-      </select>
-
-      <select
-        name="difficulty"
-        value={
-          formData.difficulty
-        }
-        onChange={
-          handleChange
-        }
-        style={{
-          width: "100%",
-          padding: "12px",
-          marginTop: "20px"
-        }}
-      >
-
-        <option value="easy">
-          Easy
-        </option>
-
-        <option value="medium">
-          Medium
-        </option>
-
-        <option value="hard">
-          Hard
-        </option>
-
-      </select>
-
-      <input
-        type="number"
-        name="numberOfQuestions"
-        value={
-          formData.numberOfQuestions
-        }
-        onChange={
-          handleChange
-        }
-        min="1"
-        max="50"
-        style={{
-          width: "100%",
-          padding: "12px",
-          marginTop: "20px"
-        }}
-      />
-
-      <button
-        type="submit"
-        disabled={loading}
-        style={{
-          width: "100%",
-          padding: "15px",
-          marginTop: "25px",
-          background:
-            "#4f46e5",
-          color: "white",
-          border: "none",
-          borderRadius: "10px"
-        }}
-      >
-
-        {loading
-          ? "Generating..."
-          : "Generate Questions"}
-
-      </button>
-
-    </form>
-
-  </div>
-
-</div>
+          </select>
 
 
-);
+          <label>
+            Upload Study Material
+          </label>
+
+          <input
+            type="file"
+            accept=".pdf,.doc,.docx,.txt"
+            onChange={(e) =>
+              setFile(e.target.files[0])
+            }
+          />
+
+
+          <label>
+            Question Type
+          </label>
+
+          <select
+            name="questionType"
+            value={formData.questionType}
+            onChange={handleChange}
+          >
+
+            <option value="mcq">
+              MCQ
+            </option>
+
+            <option value="truefalse">
+              True False
+            </option>
+
+            <option value="shortanswer">
+              Short Answer
+            </option>
+
+            <option value="veryshortanswer">
+              Very Short Answer
+            </option>
+
+          </select>
+
+
+          <label>
+            Difficulty
+          </label>
+
+          <select
+            name="difficulty"
+            value={formData.difficulty}
+            onChange={handleChange}
+          >
+
+            <option value="easy">
+              Easy
+            </option>
+
+            <option value="medium">
+              Medium
+            </option>
+
+            <option value="hard">
+              Hard
+            </option>
+
+          </select>
+
+
+          <label>
+            Number of Questions
+          </label>
+
+          <input
+            type="number"
+            name="numberOfQuestions"
+            value={formData.numberOfQuestions}
+            onChange={handleChange}
+            min="1"
+            max="50"
+          />
+
+
+          <button
+            type="submit"
+            disabled={loading}
+          >
+            {loading
+              ? "Generating..."
+              : "Generate Questions"}
+          </button>
+
+        </form>
+
+      </div>
+
+    </div>
+
+  );
 
 }
 

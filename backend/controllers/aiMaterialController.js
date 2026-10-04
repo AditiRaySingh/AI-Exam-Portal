@@ -164,7 +164,7 @@ function normalizeMcqAnswer(answer, options) {
   // ------------------------------------------
   // Actual option text
   // ------------------------------------------
-
+  
   const matchingOption = options.find(
     (option) =>
       String(option)

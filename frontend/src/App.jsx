@@ -41,6 +41,7 @@ import SubjectiveEvaluation
 from "./pages/SubjectiveEvaluation";
 
 import TeacherAnalytics from "./pages/TeacherAnalytics";
+import AdminDashboard from "./pages/AdminDashboard";
 
 function App() {
  return (
@@ -56,8 +57,7 @@ function App() {
     <Route
      path="/register"
      element={<Register />}
-    />
-
+    /> 
     <Route
   path="/student-dashboard"
   element={<StudentDashboard/>}
@@ -68,13 +68,10 @@ function App() {
   element={<TeacherDashboard/>}
  />
 
-
-
    <Route
  path="/exam"
  element={<ExamPage/>}
 />
-
 
 <Route
  path="/result/:examId"
@@ -86,31 +83,25 @@ function App() {
   element={<TeacherResults/>}
 />
 
-
 <Route
  path="/add-question/:examId"
  element={<AddQuestion/>}
 />
-
 
 <Route
   path="/create-exam"
   element={<CreateExam />}
 />
 
-
-
 <Route
   path="/questions/:examId"
   element={<ManageQuestions />}
 />
 
-
 <Route
   path="/edit-question/:id"
   element={<EditQuestion />}
 />
-
 
 <Route
  path="/ai-generate/:examId"
@@ -121,32 +112,27 @@ function App() {
  path="/generate-material/:examId"
  element={<GenerateFromMaterial />}
 />
-
-
 <Route
  path="/evaluate"
  element={<SubjectiveEvaluation/>}
 />
-
-
-
 <Route
  path="/student-results"
  element={<StudentResults />}
 />
-
-
-
-
    <Route
   path="/teacher-analytics/:examId"
   element={<TeacherAnalytics />}
 />
 
+<Route
+  path="/admin-dashboard"
+  element={<AdminDashboard />}
+/>
+
+
+
    </Routes>
-
-
-
   </BrowserRouter>
  );
 }

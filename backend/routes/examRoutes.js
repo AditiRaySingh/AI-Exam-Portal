@@ -7,8 +7,7 @@ import {
   deleteExam,
   publishExam,
   getPublishedExams,
-  getSingleExam,
-  startExam
+  getSingleExam
 } from "../controllers/examController.js";
 
 import {
@@ -16,16 +15,7 @@ import {
   authorizeRoles
 } from "../middleware/authMiddleware.js";
 
-
-
 const router = express.Router();
-
-router.post(
-  "/start",
-  protect,
-  authorizeRoles("student"),
-  startExam
-);
 
 router.post(
   "/create",

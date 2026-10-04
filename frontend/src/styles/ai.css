@@ -1,18 +1,14 @@
 /* ================================
-   CREATE PAGE
+   AI GENERATION PAGES
+   Dark Purple / Black / Pink Theme
 ================================ */
 
-.create-page {
+.ai-page {
     min-height: 100vh;
-
     width: 100%;
-
     display: flex;
-
     justify-content: center;
-
     align-items: center;
-
     padding: 40px 20px;
 
     background:
@@ -36,17 +32,15 @@
 
 
 /* ================================
-   CREATE CARD
+   MAIN CARD
 ================================ */
 
-.create-card {
+.ai-card {
     position: relative;
-
     width: 100%;
+    max-width: 700px;
 
-    max-width: 900px;
-
-    padding: 40px;
+    padding: 35px;
 
     background:
         linear-gradient(
@@ -56,9 +50,7 @@
             #170d20 100%
         );
 
-    border:
-        1px solid rgba(190, 140, 211, 0.22);
-
+    border: 1px solid rgba(190, 140, 211, 0.22);
     border-radius: 20px;
 
     box-shadow:
@@ -69,21 +61,16 @@
 }
 
 
-/* ================================
-   PURPLE GLOW
-================================ */
+/* Purple glow */
 
-.create-card::before {
+.ai-card::before {
     content: "";
-
     position: absolute;
 
-    width: 300px;
+    width: 270px;
+    height: 210px;
 
-    height: 220px;
-
-    right: -120px;
-
+    right: -110px;
     top: -110px;
 
     background:
@@ -99,20 +86,16 @@
 }
 
 
-/* ================================
-   TOP ACCENT
-================================ */
+/* Top accent */
 
-.create-card::after {
+.ai-card::after {
     content: "";
 
     position: absolute;
 
     top: 0;
-
-    left: 35px;
-
-    right: 35px;
+    left: 30px;
+    right: 30px;
 
     height: 2px;
 
@@ -134,37 +117,30 @@
    HEADING
 ================================ */
 
-.create-card h1 {
+.ai-card h1 {
     position: relative;
-
     z-index: 2;
-
-    text-align: center;
 
     color: #ffffff;
 
-    font-size: 30px;
+    text-align: center;
 
+    font-size: 30px;
     font-weight: 700;
 
     margin-bottom: 10px;
 }
 
 
-/* ================================
-   DESCRIPTION
-================================ */
-
-.create-card p {
+.ai-card p {
     position: relative;
-
     z-index: 2;
 
     text-align: center;
 
     color: #c3b0c9;
 
-    margin-bottom: 35px;
+    margin-bottom: 30px;
 
     line-height: 1.5;
 }
@@ -174,66 +150,45 @@
    FORM
 ================================ */
 
-.create-card form {
+.ai-card form {
     position: relative;
-
     z-index: 2;
 
     display: flex;
-
     flex-direction: column;
 
-    gap: 22px;
+    gap: 18px;
 }
 
 
-/* ================================
-   ROW
-================================ */
+/* Labels */
 
-.row {
-    display: grid;
-
-    grid-template-columns: 1fr 1fr;
-
-    gap: 20px;
-}
-
-
-/* ================================
-   LABEL
-================================ */
-
-.create-card label {
-    display: block;
-
-    margin-bottom: 8px;
+.ai-card label {
+    color: #e6d8e8;
 
     font-weight: 600;
 
     font-size: 14px;
 
-    color: #e6d8e8;
+    margin-bottom: -10px;
 }
 
 
 /* ================================
-   INPUT + TEXTAREA
+   INPUTS + SELECT
 ================================ */
 
-.create-card input,
-.create-card textarea {
+.ai-card input,
+.ai-card select {
     width: 100%;
 
     padding: 14px;
 
-    background:
-        rgba(13, 8, 18, 0.70);
+    background: rgba(13, 8, 18, 0.70);
 
     color: #ffffff;
 
-    border:
-        1px solid rgba(190, 140, 211, 0.22);
+    border: 1px solid rgba(190, 140, 211, 0.22);
 
     border-radius: 10px;
 
@@ -248,24 +203,20 @@
 }
 
 
-/* Placeholder */
-
-.create-card input::placeholder,
-.create-card textarea::placeholder {
+.ai-card input::placeholder {
     color: #8f7c96;
 }
 
 
 /* Focus */
 
-.create-card input:focus,
-.create-card textarea:focus {
-    outline: none;
-
+.ai-card input:focus,
+.ai-card select:focus {
     border-color: #b66bc0;
 
-    background:
-        rgba(25, 13, 32, 0.90);
+    background: rgba(25, 13, 32, 0.90);
+
+    outline: none;
 
     box-shadow:
         0 0 0 3px rgba(166, 87, 181, 0.12),
@@ -273,27 +224,86 @@
 }
 
 
-/* Textarea */
+/* Select options */
 
-.create-card textarea {
-    resize: vertical;
-
-    min-height: 120px;
-
-    line-height: 1.5;
+.ai-card select option {
+    background: #21142d;
+    color: #ffffff;
 }
 
 
 /* ================================
-   CREATE BUTTON
+   FILE UPLOAD
 ================================ */
 
-.create-card button {
+.ai-card input[type="file"] {
+    width: 100%;
+
+    padding: 11px;
+
+    background: rgba(13, 8, 18, 0.70);
+
+    color: #cdbbd2;
+
+    border: 1px solid rgba(190, 140, 211, 0.22);
+
+    border-radius: 10px;
+
+    font-size: 14px;
+
+    cursor: pointer;
+}
+
+
+.ai-card input[type="file"]::file-selector-button {
+    margin-right: 12px;
+
+    padding: 8px 13px;
+
+    border: 1px solid rgba(224, 165, 221, 0.30);
+
+    border-radius: 7px;
+
+    background: #633771;
+
+    color: #ffffff;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: background 0.2s ease;
+}
+
+
+.ai-card input[type="file"]::file-selector-button:hover {
+    background: #7a4588;
+}
+
+
+/* ================================
+   TWO COLUMN ROW
+================================ */
+
+.row {
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 20px;
+}
+
+
+/* ================================
+   BUTTON
+================================ */
+
+.ai-card button {
     position: relative;
 
     margin-top: 10px;
 
-    padding: 16px;
+    padding: 15px;
 
     background:
         linear-gradient(
@@ -304,12 +314,11 @@
 
     color: #ffffff;
 
-    border:
-        1px solid rgba(224, 165, 221, 0.35);
+    border: 1px solid rgba(224, 165, 221, 0.35);
 
     border-radius: 10px;
 
-    font-size: 17px;
+    font-size: 16px;
 
     font-weight: 700;
 
@@ -321,7 +330,10 @@
         background 0.25s ease;
 }
 
-.create-card button:hover {
+
+.ai-card button:hover {
+    transform: translateY(-2px);
+
     background:
         linear-gradient(
             135deg,
@@ -329,14 +341,35 @@
             #b765aa
         );
 
-    transform: translateY(-2px);
-
     box-shadow:
         0 12px 25px rgba(113, 52, 127, 0.35);
 }
 
-.create-card button:active {
+
+.ai-card button:active {
     transform: translateY(0);
+}
+
+
+/* Disabled */
+
+.ai-card button:disabled {
+    background:
+        linear-gradient(
+            135deg,
+            #4b3a50,
+            #382b3d
+        );
+
+    color: #9f91a4;
+
+    border-color: rgba(190, 140, 211, 0.12);
+
+    cursor: not-allowed;
+
+    box-shadow: none;
+
+    transform: none;
 }
 
 
@@ -344,15 +377,15 @@
    TABLET
 ================================ */
 
-@media (max-width: 768px) {
+@media (max-width: 700px) {
 
-    .create-page {
+    .ai-page {
         padding: 25px 15px;
 
         align-items: flex-start;
     }
 
-    .create-card {
+    .ai-card {
         padding: 28px 22px;
 
         margin-top: 15px;
@@ -360,12 +393,14 @@
         border-radius: 18px;
     }
 
-    .create-card h1 {
+    .ai-card h1 {
         font-size: 27px;
     }
 
     .row {
         grid-template-columns: 1fr;
+
+        gap: 18px;
     }
 }
 
@@ -376,40 +411,40 @@
 
 @media (max-width: 480px) {
 
-    .create-page {
+    .ai-page {
         padding: 18px 10px;
     }
 
-    .create-card {
-        padding: 24px 16px;
+    .ai-card {
+        padding: 25px 18px;
+
+        border-radius: 16px;
     }
 
-    .create-card h1 {
+    .ai-card h1 {
         font-size: 24px;
     }
 
-    .create-card p {
+    .ai-card p {
         font-size: 14px;
 
-        margin-bottom: 25px;
+        margin-bottom: 24px;
     }
 
-    .create-card input,
-    .create-card textarea {
+    .ai-card label {
+        font-size: 13px;
+    }
+
+    .ai-card input,
+    .ai-card select {
+        padding: 12px;
+
+        font-size: 14px;
+    }
+
+    .ai-card button {
         padding: 13px;
 
-        font-size: 14px;
-    }
-
-    .create-card button {
-        padding: 14px;
-
         font-size: 15px;
-    }
-
-    .create-card::after {
-        left: 18px;
-
-        right: 18px;
     }
 }

@@ -28,6 +28,7 @@ function Login() {
   const handleSubmit = async (e) => {
 
     e.preventDefault();
+    console.log("LOGIN BUTTON CLICKED");
 
     try {
 
@@ -53,15 +54,13 @@ console.log("============================");
 
       alert("Login Successful");
 
-      if (res.data.user.role === "teacher") {
-
-        navigate("/teacher-dashboard");
-
-      } else {
-
-        navigate("/student-dashboard");
-
-      }
+     if (res.data.user.role === "admin") {
+  navigate("/admin-dashboard");
+} else if (res.data.user.role === "teacher") {
+  navigate("/teacher-dashboard");
+} else {
+  navigate("/student-dashboard");
+}
 
     } catch (error) {
 
