@@ -3,12 +3,18 @@ import ExamAttemptModel from "../models/ExamAttemptModel.js";
 import questionModel from "../models/QuestionModel.js";
 import { evaluateAnswer } from "./aiEvaluationController.js";
 
+// ============================================================
+// HELPER: GET USER ID
+// ============================================================
+
+const getUserId = (req) => {
+  return req.user?._id || req.user?.id;
+};
 
 // ============================================================
-// HELPER FUNCTIONS
+// HELPER: CLEAN ANSWER
 // ============================================================
 
-// Convert any answer into a clean string
 const cleanAnswer = (answer) => {
   if (answer === null || answer === undefined) {
     return "";
@@ -19,26 +25,11 @@ const cleanAnswer = (answer) => {
     .replace(/\s+/g, " ");
 };
 
-
 // ============================================================
-// GET ACTUAL OPTION TEXT
-//
-// Examples:
-//
-// correctAnswer = "B"
-// options = ["7","8","9","10"]
-//
-// returns "8"
-//
-// correctAnswer = "B) 8"
-// returns "8"
-//
-// correctAnswer = "8"
-// returns "8"
+// HELPER: RESOLVE ANSWER
 // ============================================================
 
 const resolveAnswer = (answer, options = []) => {
-
   let value = cleanAnswer(answer);
 
   if (!value) {
@@ -46,82 +37,60 @@ const resolveAnswer = (answer, options = []) => {
   }
 
   // ----------------------------------------------------------
-  // Case 1:
-  // "B) 8"
-  // "C. 10"
-  // "A - 7"
+  // Example:
+  // B) 8
+  // C. 10
+  // A - 7
   // ----------------------------------------------------------
 
-  const optionWithTextMatch =
-    value.match(/^([A-Da-d])\s*[\)\.\-:]\s*(.+)$/);
+  const optionWithTextMatch = value.match(
+    /^([A-Da-d])\s*[\)\.\-:]\s*(.+)$/
+  );
 
   if (optionWithTextMatch) {
+    const letter = optionWithTextMatch[1].toUpperCase();
 
-    const letter =
-      optionWithTextMatch[1].toUpperCase();
-
-    const index =
-      letter.charCodeAt(0) - 65;
+    const index = letter.charCodeAt(0) - 65;
 
     if (
       Array.isArray(options) &&
       options[index] !== undefined
     ) {
-
       return cleanAnswer(options[index]);
     }
 
     return cleanAnswer(optionWithTextMatch[2]);
   }
 
-
   // ----------------------------------------------------------
-  // Case 2:
   // Only option letter
-  //
-  // "A"
-  // "B"
-  // "C"
-  // "D"
+  // A / B / C / D
   // ----------------------------------------------------------
 
-  const onlyLetterMatch =
-    value.match(/^[A-Da-d]$/);
+  const onlyLetterMatch = value.match(/^[A-Da-d]$/);
 
   if (onlyLetterMatch) {
+    const letter = onlyLetterMatch[0].toUpperCase();
 
-    const letter =
-      value.toUpperCase();
-
-    const index =
-      letter.charCodeAt(0) - 65;
+    const index = letter.charCodeAt(0) - 65;
 
     if (
       Array.isArray(options) &&
       options[index] !== undefined
     ) {
-
       return cleanAnswer(options[index]);
     }
   }
 
-
   // ----------------------------------------------------------
-  // Case 3:
-  // Already actual option text
-  //
-  // "8"
-  // "10"
-  // "Rs 3"
-  // "Java"
+  // Already actual answer
   // ----------------------------------------------------------
 
   return value;
 };
 
-
 // ============================================================
-// COMPARE ANSWERS
+// HELPER: COMPARE ANSWERS
 // ============================================================
 
 const answersMatch = (
@@ -129,24 +98,15 @@ const answersMatch = (
   correctAnswer,
   options = []
 ) => {
+  const student = resolveAnswer(
+    studentAnswer,
+    options
+  );
 
-  const student =
-    resolveAnswer(
-      studentAnswer,
-      options
-    );
-
-  const correct =
-    resolveAnswer(
-      correctAnswer,
-      options
-    );
-
-  console.log("Student raw:", studentAnswer);
-  console.log("Correct raw:", correctAnswer);
-
-  console.log("Student resolved:", student);
-  console.log("Correct resolved:", correct);
+  const correct = resolveAnswer(
+    correctAnswer,
+    options
+  );
 
   return (
     student.toLowerCase() ===
@@ -154,79 +114,57 @@ const answersMatch = (
   );
 };
 
-
 // ============================================================
 // START EXAM
 // ============================================================
 
 export const startExam = async (req, res) => {
-
   try {
-
     const { examId } = req.body;
 
-    const studentId = req.user._id;
+    const studentId = getUserId(req);
 
+    if (!studentId) {
+      return res.status(401).json({
+        success: false,
+        message: "User not authenticated."
+      });
+    }
 
     // --------------------------------------------------------
     // VALIDATION
     // --------------------------------------------------------
 
     if (!examId) {
-
       return res.status(400).json({
-
         success: false,
-
-        message:
-          "Exam Id is required."
-
+        message: "Exam Id is required."
       });
-
     }
-
 
     // --------------------------------------------------------
     // FIND EXAM
     // --------------------------------------------------------
 
-    const exam =
-      await examModel.findById(examId);
-
+    const exam = await examModel.findById(examId);
 
     if (!exam) {
-
       return res.status(404).json({
-
         success: false,
-
-        message:
-          "Exam not found."
-
+        message: "Exam not found."
       });
-
     }
-
 
     // --------------------------------------------------------
     // PUBLISHED CHECK
     // --------------------------------------------------------
 
-    if (
-      exam.status !== "published"
-    ) {
-
+    if (exam.status !== "published") {
       return res.status(400).json({
-
         success: false,
-
-        message:
-          "Exam is not published."
-
+        message: "Exam is not published."
       });
-
     }
-
 
     // --------------------------------------------------------
     // START TIME CHECK
@@ -236,18 +174,11 @@ export const startExam = async (req, res) => {
       exam.startTime &&
       new Date() < new Date(exam.startTime)
     ) {
-
       return res.status(400).json({
-
         success: false,
-
-        message:
-          "Exam has not started yet."
-
+        message: "Exam has not started yet."
       });
-
     }
-
 
     // --------------------------------------------------------
     // END TIME CHECK
@@ -257,18 +188,11 @@ export const startExam = async (req, res) => {
       exam.endTime &&
       new Date() > new Date(exam.endTime)
     ) {
-
       return res.status(400).json({
-
         success: false,
-
-        message:
-          "Exam has already ended."
-
+        message: "Exam has already ended."
       });
-
     }
-
 
     // --------------------------------------------------------
     // CHECK EXISTING ATTEMPT
@@ -276,27 +200,16 @@ export const startExam = async (req, res) => {
 
     const alreadyAttempt =
       await ExamAttemptModel.findOne({
-
         studentId,
-
         examId
-
       });
-
 
     if (alreadyAttempt) {
-
       return res.status(400).json({
-
         success: false,
-
-        message:
-          "You have already attempted this exam."
-
+        message: "You have already attempted this exam."
       });
-
     }
-
 
     // --------------------------------------------------------
     // QUESTION COUNT
@@ -304,25 +217,15 @@ export const startExam = async (req, res) => {
 
     const totalQuestions =
       await questionModel.countDocuments({
-
         examId
-
       });
-
 
     if (totalQuestions === 0) {
-
       return res.status(400).json({
-
         success: false,
-
-        message:
-          "No questions available."
-
+        message: "No questions available."
       });
-
     }
-
 
     // --------------------------------------------------------
     // CREATE ATTEMPT
@@ -330,70 +233,48 @@ export const startExam = async (req, res) => {
 
     const examAttempt =
       await ExamAttemptModel.create({
-
         studentId,
-
         examId,
-
-        status:
-          "in-progress",
-
-        startedAt:
-          new Date()
-
+        status: "in-progress",
+        startedAt: new Date(),
+        score: 0,
+        totalMarks: 0,
+        percentage: 0,
+        correctCount: 0,
+        wrongCount: 0,
+        skippedCount: 0,
+        result: "Fail",
+        answers: []
       });
 
-
     return res.status(201).json({
-
       success: true,
-
-      message:
-        "Exam started successfully.",
-
+      message: "Exam started successfully.",
       examAttempt,
-
-      duration:
-        exam.duration,
-
+      duration: exam.duration,
       totalQuestions
-
     });
 
-  }
-
-  catch (error) {
-
+  } catch (error) {
     console.error(
       "START EXAM ERROR:",
       error
     );
 
     return res.status(500).json({
-
       success: false,
-
-      message:
-        error.message
-
+      message: error.message
     });
-
   }
-
 };
-
 
 // ============================================================
 // SHOW QUESTIONS
 // ============================================================
 
 export const showQuestions = async (req, res) => {
-
   try {
-
-    const { examId } =
-      req.params;
-
+    const { examId } = req.params;
 
     // --------------------------------------------------------
     // FIND EXAM
@@ -402,146 +283,93 @@ export const showQuestions = async (req, res) => {
     const exam =
       await examModel.findById(examId);
 
-
     if (!exam) {
-
       return res.status(404).json({
-
         success: false,
-
-        message:
-          "Exam not found."
-
+        message: "Exam not found."
       });
-
     }
-
 
     // --------------------------------------------------------
     // PUBLISHED CHECK
     // --------------------------------------------------------
 
-    if (
-      exam.status !== "published"
-    ) {
-
+    if (exam.status !== "published") {
       return res.status(400).json({
-
         success: false,
-
-        message:
-          "Exam is not available."
-
+        message: "Exam is not available."
       });
-
     }
-
 
     // --------------------------------------------------------
     // GET QUESTIONS
-    //
-    // VERY IMPORTANT:
-    // correctAnswer is NOT sent to student.
     // --------------------------------------------------------
 
     const questions =
       await questionModel
-        .find({
-          examId
-        })
+        .find({ examId })
         .select("-correctAnswer")
-        .sort({
-          createdAt: 1
-        });
+        .sort({ createdAt: 1 });
 
-
-    if (
-      questions.length === 0
-    ) {
-
+    if (questions.length === 0) {
       return res.status(404).json({
-
         success: false,
-
-        message:
-          "Questions not found."
-
+        message: "Questions not found."
       });
-
     }
 
-
     return res.status(200).json({
-
       success: true,
-
-      totalQuestions:
-        questions.length,
-
+      totalQuestions: questions.length,
       questions
-
     });
 
-  }
-
-  catch (error) {
-
+  } catch (error) {
     console.error(
       "SHOW QUESTIONS ERROR:",
       error
     );
 
     return res.status(500).json({
-
       success: false,
-
-      message:
-        error.message
-
+      message: error.message
     });
-
   }
-
 };
-
 
 // ============================================================
 // SUBMIT EXAM
 // ============================================================
 
 export const submitExam = async (req, res) => {
-
   try {
-
     const {
       examId,
       answers
     } = req.body;
 
-    const studentId =
-      req.user._id;
-
+    const studentId = getUserId(req);
 
     // --------------------------------------------------------
     // VALIDATION
     // --------------------------------------------------------
 
+    if (!studentId) {
+      return res.status(401).json({
+        success: false,
+        message: "User not authenticated."
+      });
+    }
+
     if (
       !examId ||
       !Array.isArray(answers)
     ) {
-
       return res.status(400).json({
-
         success: false,
-
-        message:
-          "Exam ID and answers are required."
-
+        message: "Exam ID and answers are required."
       });
-
     }
-
 
     // --------------------------------------------------------
     // FIND EXAM
@@ -550,20 +378,12 @@ export const submitExam = async (req, res) => {
     const exam =
       await examModel.findById(examId);
 
-
     if (!exam) {
-
       return res.status(404).json({
-
         success: false,
-
-        message:
-          "Exam not found."
-
+        message: "Exam not found."
       });
-
     }
-
 
     // --------------------------------------------------------
     // FIND ATTEMPT
@@ -571,27 +391,16 @@ export const submitExam = async (req, res) => {
 
     const examAttempt =
       await ExamAttemptModel.findOne({
-
         studentId,
-
         examId
-
       });
-
 
     if (!examAttempt) {
-
       return res.status(404).json({
-
         success: false,
-
-        message:
-          "Exam attempt not found."
-
+        message: "Exam attempt not found."
       });
-
     }
-
 
     // --------------------------------------------------------
     // ALREADY SUBMITTED
@@ -600,18 +409,11 @@ export const submitExam = async (req, res) => {
     if (
       examAttempt.status === "submitted"
     ) {
-
       return res.status(400).json({
-
         success: false,
-
-        message:
-          "Exam already submitted."
-
+        message: "Exam already submitted."
       });
-
     }
-
 
     // --------------------------------------------------------
     // GET QUESTIONS
@@ -619,57 +421,42 @@ export const submitExam = async (req, res) => {
 
     const questions =
       await questionModel
-        .find({
-          examId
-        })
-        .sort({
-          createdAt: 1
-        });
+        .find({ examId })
+        .sort({ createdAt: 1 });
 
-
-    if (
-      questions.length === 0
-    ) {
-
+    if (questions.length === 0) {
       return res.status(400).json({
-
         success: false,
-
-        message:
-          "No questions found."
-
+        message: "No questions found."
       });
-
     }
 
-
-    // --------------------------------------------------------
+    // ========================================================
     // SCORE VARIABLES
-    // --------------------------------------------------------
+    // ========================================================
 
     let score = 0;
-
     let correctCount = 0;
-
     let wrongCount = 0;
-
+    let skippedCount = 0;
     let totalMarks = 0;
 
     const evaluatedAnswers = [];
-
 
     // ========================================================
     // CHECK EVERY QUESTION
     // ========================================================
 
-    for (
-      const question of questions
-    ) {
+    for (const question of questions) {
 
+      // ------------------------------------------------------
+      // ADD QUESTION MARKS
+      // ------------------------------------------------------
 
-      totalMarks +=
+      const questionMarks =
         Number(question.marks) || 0;
 
+      totalMarks += questionMarks;
 
       // ------------------------------------------------------
       // FIND STUDENT ANSWER
@@ -677,31 +464,26 @@ export const submitExam = async (req, res) => {
 
       const studentAnswer =
         answers.find(
-
-          ans =>
-
+          (ans) =>
             String(ans.questionId) ===
             String(question._id)
-
         );
 
-
       // ======================================================
-      // NOT ATTEMPTED
+      // NOT ATTEMPTED = SKIPPED
       // ======================================================
 
-      if (!studentAnswer) {
+      if (
+        !studentAnswer ||
+        !cleanAnswer(studentAnswer.selectedAnswer)
+      ) {
 
-        wrongCount++;
-
+        skippedCount++;
 
         evaluatedAnswers.push({
+          questionId: question._id,
 
-          questionId:
-            question._id,
-
-          selectedAnswer:
-            "",
+          selectedAnswer: "",
 
           correctAnswer:
             resolveAnswer(
@@ -709,171 +491,100 @@ export const submitExam = async (req, res) => {
               question.options
             ),
 
-          isCorrect:
-            false,
+          isCorrect: false,
 
-          obtainedMarks:
-            0,
+          obtainedMarks: 0,
 
-          aiScore:
-            0,
+          aiScore: 0,
 
-          aiFeedback:
-            "Not Attempted",
+          aiFeedback: "Not Attempted",
 
           timeTaken:
-            0
-
+            studentAnswer?.timeTaken || 0
         });
 
-
         continue;
-
       }
-
 
       // ======================================================
       // MCQ / TRUE FALSE
       // ======================================================
 
       if (
-
-        question.questionType ===
-          "mcq" ||
-
-        question.questionType ===
-          "truefalse"
-
+        question.questionType === "mcq" ||
+        question.questionType === "truefalse"
       ) {
-
 
         const rawStudentAnswer =
           studentAnswer.selectedAnswer;
 
-
         const rawCorrectAnswer =
           question.correctAnswer;
 
-
         // ----------------------------------------------------
-        // RESOLVE BOTH ANSWERS TO ACTUAL OPTION TEXT
+        // RESOLVE ANSWERS
         // ----------------------------------------------------
 
         const resolvedStudentAnswer =
           resolveAnswer(
-
             rawStudentAnswer,
-
             question.options
-
           );
-
 
         const resolvedCorrectAnswer =
           resolveAnswer(
-
             rawCorrectAnswer,
-
             question.options
-
           );
-
 
         // ----------------------------------------------------
         // COMPARE
         // ----------------------------------------------------
 
         const isCorrect =
-          resolvedStudentAnswer
-            .toLowerCase() ===
-          resolvedCorrectAnswer
-            .toLowerCase();
-
-
-        // ----------------------------------------------------
-        // DEBUG
-        // ----------------------------------------------------
-
-        console.log(
-          "========================================"
-        );
-
-        console.log(
-          "Question:",
-          question.question
-        );
-
-        console.log(
-          "Options:",
-          JSON.stringify(
+          answersMatch(
+            rawStudentAnswer,
+            rawCorrectAnswer,
             question.options
-          )
-        );
-
-        console.log(
-          "Raw Correct:",
-          JSON.stringify(
-            rawCorrectAnswer
-          )
-        );
-
-        console.log(
-          "Raw Student:",
-          JSON.stringify(
-            rawStudentAnswer
-          )
-        );
-
-        console.log(
-          "Resolved Correct:",
-          JSON.stringify(
-            resolvedCorrectAnswer
-          )
-        );
-
-        console.log(
-          "Resolved Student:",
-          JSON.stringify(
-            resolvedStudentAnswer
-          )
-        );
-
-        console.log(
-          "Matched:",
-          isCorrect
-        );
-
-        console.log(
-          "========================================"
-        );
-
+          );
 
         // ----------------------------------------------------
         // MARKS
         // ----------------------------------------------------
 
-        const obtainedMarks =
-          isCorrect
-            ? Number(question.marks)
-            : 0;
-
-
-        score +=
-          obtainedMarks;
-
+        let obtainedMarks = 0;
 
         if (isCorrect) {
 
+          obtainedMarks =
+            questionMarks;
+
+          score += obtainedMarks;
+
           correctCount++;
 
-        }
+        } else {
 
-        else {
+          // --------------------------------------------------
+          // WRONG ANSWER
+          // --------------------------------------------------
 
           wrongCount++;
 
-        }
+          // --------------------------------------------------
+          // NEGATIVE MARKING
+          // --------------------------------------------------
 
+          if (
+            exam.negativeMarking === true
+          ) {
+
+            const negativeMarks =
+              Number(exam.negativeMarks) || 0;
+
+            score -= negativeMarks;
+          }
+        }
 
         // ----------------------------------------------------
         // SAVE ANSWER
@@ -890,76 +601,108 @@ export const submitExam = async (req, res) => {
           correctAnswer:
             resolvedCorrectAnswer,
 
-          isCorrect:
-            isCorrect,
+          isCorrect,
 
-          obtainedMarks:
-            obtainedMarks,
+          obtainedMarks,
 
           aiScore:
             obtainedMarks,
 
           aiFeedback:
-
             isCorrect
-
               ? `Correct! Your answer "${resolvedStudentAnswer}" is correct.`
-
               : `Incorrect. Your answer "${resolvedStudentAnswer}" is wrong. The correct answer is "${resolvedCorrectAnswer}".`,
 
           timeTaken:
             studentAnswer.timeTaken || 0
-
         });
 
+        // ----------------------------------------------------
+        // DEBUG
+        // ----------------------------------------------------
 
+        console.log(
+          "========================================"
+        );
+
+        console.log(
+          "Question:",
+          question.question
+        );
+
+        console.log(
+          "Raw Student:",
+          rawStudentAnswer
+        );
+
+        console.log(
+          "Raw Correct:",
+          rawCorrectAnswer
+        );
+
+        console.log(
+          "Resolved Student:",
+          resolvedStudentAnswer
+        );
+
+        console.log(
+          "Resolved Correct:",
+          resolvedCorrectAnswer
+        );
+
+        console.log(
+          "Is Correct:",
+          isCorrect
+        );
+
+        console.log(
+          "Obtained Marks:",
+          obtainedMarks
+        );
+
+        console.log(
+          "========================================"
+        );
       }
 
-
       // ======================================================
-      // SUBJECTIVE
+      // SUBJECTIVE QUESTION
       // ======================================================
 
       else {
 
-
         const aiResult =
           await evaluateAnswer(
-
             question.question,
-
             question.correctAnswer,
-
             studentAnswer.selectedAnswer,
-
-            question.marks
-
+            questionMarks
           );
-
 
         const aiScore =
           Number(aiResult.score) || 0;
 
+        score += aiScore;
 
-        score +=
-          aiScore;
-
+        // ----------------------------------------------------
+        // CORRECT / WRONG
+        // ----------------------------------------------------
 
         if (
           aiScore >=
-          Number(question.marks) / 2
+          questionMarks / 2
         ) {
 
           correctCount++;
 
-        }
-
-        else {
+        } else {
 
           wrongCount++;
-
         }
 
+        // ----------------------------------------------------
+        // SAVE SUBJECTIVE ANSWER
+        // ----------------------------------------------------
 
         evaluatedAnswers.push({
 
@@ -973,27 +716,29 @@ export const submitExam = async (req, res) => {
             question.correctAnswer,
 
           isCorrect:
-            aiScore ===
-            Number(question.marks),
+            aiScore === questionMarks,
 
           obtainedMarks:
             aiScore,
 
-          aiScore:
-            aiScore,
+          aiScore,
 
           aiFeedback:
             aiResult.feedback,
 
           timeTaken:
             studentAnswer.timeTaken || 0
-
         });
-
       }
-
     }
 
+    // ========================================================
+    // PREVENT NEGATIVE SCORE
+    // ========================================================
+
+    if (score < 0) {
+      score = 0;
+    }
 
     // ========================================================
     // PERCENTAGE
@@ -1001,33 +746,61 @@ export const submitExam = async (req, res) => {
 
     const percentage =
       totalMarks === 0
-
         ? 0
-
         : Number(
-
             (
               (score / totalMarks) *
               100
-
             ).toFixed(2)
-
           );
-
 
     // ========================================================
     // PASS / FAIL
     // ========================================================
+    //
+    // PASSING RULE:
+    // 40% OR ABOVE = PASS
+    //
+    // Example:
+    // 10/10 = 100% = PASS
+    // 4/10  = 40%  = PASS
+    // 3/10  = 30%  = FAIL
+    //
+    // ========================================================
 
-    const passingMarks =
-      exam.passingMarks || 40;
-
+    const passingPercentage = 40;
 
     const resultStatus =
-      percentage >= passingMarks
+      percentage >= passingPercentage
         ? "Pass"
         : "Fail";
 
+    // ========================================================
+    // REMARKS
+    // ========================================================
+
+    let remarks = "";
+
+    if (percentage >= 80) {
+
+      remarks =
+        "Outstanding Performance";
+
+    } else if (percentage >= 60) {
+
+      remarks =
+        "Good Performance";
+
+    } else if (percentage >= 40) {
+
+      remarks =
+        "Passed. Keep improving.";
+
+    } else {
+
+      remarks =
+        "Needs Improvement";
+    }
 
     // ========================================================
     // SAVE RESULT
@@ -1051,15 +824,20 @@ export const submitExam = async (req, res) => {
     examAttempt.wrongCount =
       wrongCount;
 
+    examAttempt.skippedCount =
+      skippedCount;
+
     examAttempt.result =
       resultStatus;
+
+    examAttempt.remarks =
+      remarks;
 
     examAttempt.status =
       "submitted";
 
     examAttempt.submittedAt =
       new Date();
-
 
     // ========================================================
     // DEBUG FINAL RESULT
@@ -1085,6 +863,16 @@ export const submitExam = async (req, res) => {
     );
 
     console.log(
+      "PASSING PERCENTAGE:",
+      passingPercentage
+    );
+
+    console.log(
+      "RESULT:",
+      resultStatus
+    );
+
+    console.log(
       "CORRECT:",
       correctCount
     );
@@ -1095,30 +883,19 @@ export const submitExam = async (req, res) => {
     );
 
     console.log(
-      "EVALUATED ANSWERS:"
-    );
-
-    console.log(
-
-      JSON.stringify(
-        evaluatedAnswers,
-        null,
-        2
-      )
-
+      "SKIPPED:",
+      skippedCount
     );
 
     console.log(
       "========================================"
     );
 
-
     // ========================================================
-    // SAVE TO DATABASE
+    // SAVE DATABASE
     // ========================================================
 
     await examAttempt.save();
-
 
     // ========================================================
     // RESPONSE
@@ -1139,24 +916,26 @@ export const submitExam = async (req, res) => {
 
         percentage,
 
-        resultStatus,
+        result:
+          resultStatus,
 
         correctAnswers:
           correctCount,
 
         wrongAnswers:
-          wrongCount
+          wrongCount,
 
+        skippedAnswers:
+          skippedCount,
+
+        remarks
       },
 
       answers:
         evaluatedAnswers
-
     });
 
-  }
-
-  catch (error) {
+  } catch (error) {
 
     console.error(
       "SUBMIT EXAM ERROR:",
@@ -1169,13 +948,9 @@ export const submitExam = async (req, res) => {
 
       message:
         error.message
-
     });
-
   }
-
 };
-
 
 // ============================================================
 // STUDENT RESULT
@@ -1192,8 +967,18 @@ export const getExamResults = async (
       req.params;
 
     const studentId =
-      req.user._id;
+      getUserId(req);
 
+    if (!studentId) {
+
+      return res.status(401).json({
+
+        success: false,
+
+        message:
+          "User not authenticated."
+      });
+    }
 
     // --------------------------------------------------------
     // FIND ATTEMPT
@@ -1206,11 +991,13 @@ export const getExamResults = async (
 
         examId,
 
-        status:
-          "submitted"
-
+        status: {
+          $in: [
+            "submitted",
+            "auto-submitted"
+          ]
+        }
       });
-
 
     if (!examAttempt) {
 
@@ -1220,11 +1007,8 @@ export const getExamResults = async (
 
         message:
           "Result not found."
-
       });
-
     }
-
 
     // --------------------------------------------------------
     // FIND EXAM
@@ -1235,7 +1019,6 @@ export const getExamResults = async (
         examId
       );
 
-
     if (!exam) {
 
       return res.status(404).json({
@@ -1244,11 +1027,12 @@ export const getExamResults = async (
 
         message:
           "Exam not found."
-
       });
-
     }
 
+    // --------------------------------------------------------
+    // DEBUG
+    // --------------------------------------------------------
 
     console.log(
       "GET RESULT"
@@ -1260,20 +1044,32 @@ export const getExamResults = async (
     );
 
     console.log(
-      "Answers:",
-      JSON.stringify(
-        examAttempt.answers,
-        null,
-        2
-      )
+      "Total Marks:",
+      examAttempt.totalMarks
     );
 
+    console.log(
+      "Percentage:",
+      examAttempt.percentage
+    );
+
+    console.log(
+      "Result:",
+      examAttempt.result
+    );
+
+    // --------------------------------------------------------
+    // RESPONSE
+    // --------------------------------------------------------
 
     return res.status(200).json({
 
       success: true,
 
       exam: {
+
+        _id:
+          exam._id,
 
         title:
           exam.title,
@@ -1282,43 +1078,52 @@ export const getExamResults = async (
           exam.subject,
 
         duration:
-          exam.duration
+          exam.duration,
 
+        totalMarks:
+          exam.totalMarks,
+
+        passingMarks:
+          exam.passingMarks
       },
 
       result: {
 
         score:
-          examAttempt.score,
+          examAttempt.score || 0,
 
         totalMarks:
-          examAttempt.totalMarks,
+          examAttempt.totalMarks ||
+          exam.totalMarks ||
+          0,
 
         percentage:
-          examAttempt.percentage,
+          examAttempt.percentage || 0,
 
         correctAnswers:
-          examAttempt.correctCount,
+          examAttempt.correctCount || 0,
 
         wrongAnswers:
-          examAttempt.wrongCount,
+          examAttempt.wrongCount || 0,
 
-        status:
-          examAttempt.result,
+        skippedAnswers:
+          examAttempt.skippedCount || 0,
+
+        result:
+          examAttempt.result || "Fail",
+
+        remarks:
+          examAttempt.remarks || "",
 
         submittedAt:
           examAttempt.submittedAt
-
       },
 
       answers:
-        examAttempt.answers
-
+        examAttempt.answers || []
     });
 
-  }
-
-  catch (error) {
+  } catch (error) {
 
     console.error(
       "GET RESULT ERROR:",
@@ -1331,13 +1136,9 @@ export const getExamResults = async (
 
       message:
         error.message
-
     });
-
   }
-
 };
-
 
 // ============================================================
 // TEACHER ANALYTICS
@@ -1351,12 +1152,14 @@ async (req, res) => {
     const { examId } =
       req.params;
 
+    // --------------------------------------------------------
+    // FIND EXAM
+    // --------------------------------------------------------
 
     const exam =
       await examModel.findById(
         examId
       );
-
 
     if (!exam) {
 
@@ -1366,36 +1169,40 @@ async (req, res) => {
 
         message:
           "Exam not found."
-
       });
-
     }
 
+    // --------------------------------------------------------
+    // GET RESULTS
+    // --------------------------------------------------------
 
     const results =
       await ExamAttemptModel.find({
 
         examId,
 
-        status:
-          "submitted"
+        status: {
+          $in: [
+            "submitted",
+            "auto-submitted"
+          ]
+        }
 
       })
 
-      .populate(
-        "studentId",
-        "name email"
-      )
+        .populate(
+          "studentId",
+          "name email"
+        )
 
-      .populate(
-        "examId",
-        "title subject"
-      )
+        .populate(
+          "examId",
+          "title subject"
+        )
 
-      .sort({
-        score: -1
-      });
-
+        .sort({
+          score: -1
+        });
 
     if (
       results.length === 0
@@ -1409,20 +1216,20 @@ async (req, res) => {
           "No student has attempted this exam.",
 
         results: []
-
       });
-
     }
 
+    // --------------------------------------------------------
+    // ANALYTICS
+    // --------------------------------------------------------
 
     const totalAttempts =
       results.length;
 
-
     let highestScore = 0;
 
     let lowestScore =
-      results[0].score;
+      results[0].score || 0;
 
     let totalScore = 0;
 
@@ -1430,117 +1237,109 @@ async (req, res) => {
 
     let failCount = 0;
 
-
     results.forEach(
-      item => {
+      (item) => {
+
+        const itemScore =
+          Number(item.score) || 0;
+
+        const itemPercentage =
+          Number(item.percentage) || 0;
 
         totalScore +=
-          item.score;
-
+          itemScore;
 
         if (
-          item.score >
+          itemScore >
           highestScore
         ) {
 
           highestScore =
-            item.score;
-
+            itemScore;
         }
 
-
         if (
-          item.score <
+          itemScore <
           lowestScore
         ) {
 
           lowestScore =
-            item.score;
-
+            itemScore;
         }
 
-
+        // Same 40% rule
         if (
-          item.percentage >=
-          40
+          itemPercentage >= 40
         ) {
 
           passCount++;
 
-        }
-
-        else {
+        } else {
 
           failCount++;
-
         }
-
       }
     );
 
-
     const averageScore =
       Number(
-
         (
           totalScore /
           totalAttempts
-
         ).toFixed(2)
-
       );
-
 
     const passPercentage =
       Number(
-
         (
           (passCount /
             totalAttempts) *
           100
-
         ).toFixed(2)
-
       );
-
 
     const failPercentage =
       Number(
-
         (
           (failCount /
             totalAttempts) *
           100
-
         ).toFixed(2)
-
       );
 
+    // --------------------------------------------------------
+    // LEADERBOARD
+    // --------------------------------------------------------
 
     const leaderboard =
       results.map(
-
         (student, index) => ({
 
           rank:
             index + 1,
 
           studentName:
-            student.studentId.name,
+            student.studentId?.name ||
+            "Unknown",
 
           email:
-            student.studentId.email,
+            student.studentId?.email ||
+            "",
 
           score:
-            student.score,
+            student.score || 0,
 
           percentage:
-            student.percentage
+            student.percentage || 0,
 
+          result:
+            student.result || "Fail"
         })
-
       );
 
+    // --------------------------------------------------------
+    // RESPONSE
+    // --------------------------------------------------------
 
     return res.status(200).json({
 
@@ -1553,7 +1352,6 @@ async (req, res) => {
 
         subject:
           exam.subject
-
       },
 
       analytics: {
@@ -1573,18 +1371,14 @@ async (req, res) => {
         passPercentage,
 
         failPercentage
-
       },
 
       leaderboard,
 
       results
-
     });
 
-  }
-
-  catch (error) {
+  } catch (error) {
 
     console.error(
       "ANALYTICS ERROR:",
@@ -1597,13 +1391,9 @@ async (req, res) => {
 
       message:
         error.message
-
     });
-
   }
-
 };
-
 
 // ============================================================
 // STUDENT HISTORY
@@ -1615,43 +1405,104 @@ async (req, res) => {
   try {
 
     const studentId =
-      req.user._id;
+      getUserId(req);
 
+    if (!studentId) {
+
+      return res.status(401).json({
+
+        success: false,
+
+        message:
+          "User not authenticated."
+      });
+    }
 
     const history =
       await ExamAttemptModel.find({
 
         studentId,
 
-        status:
-          "submitted"
+        status: {
+          $in: [
+            "submitted",
+            "auto-submitted"
+          ]
+        }
 
       })
 
-      .populate(
-        "examId",
-        "title subject duration"
-      )
+        .populate(
+          "examId",
+          "title subject duration totalMarks passingMarks"
+        )
 
-      .sort({
-        submittedAt: -1
-      });
+        .sort({
+          submittedAt: -1
+        });
 
+    // --------------------------------------------------------
+    // FORMAT HISTORY
+    // --------------------------------------------------------
+
+    const results =
+      history.map(
+        (attempt) => ({
+
+          _id:
+            attempt._id,
+
+          exam:
+            attempt.examId,
+
+          score:
+            attempt.score || 0,
+
+          totalMarks:
+            attempt.totalMarks ||
+            attempt.examId?.totalMarks ||
+            0,
+
+          percentage:
+            attempt.percentage || 0,
+
+          correctCount:
+            attempt.correctCount || 0,
+
+          wrongCount:
+            attempt.wrongCount || 0,
+
+          skippedCount:
+            attempt.skippedCount || 0,
+
+          result:
+            attempt.result || "Fail",
+
+          submittedAt:
+            attempt.submittedAt,
+
+          timeTaken:
+            attempt.timeTaken || 0,
+
+          answers:
+            attempt.answers || []
+        })
+      );
 
     return res.status(200).json({
 
       success: true,
 
       total:
-        history.length,
+        results.length,
 
-      history
+      history:
+        results,
 
+      results
     });
 
-  }
-
-  catch (error) {
+  } catch (error) {
 
     console.error(
       "STUDENT HISTORY ERROR:",
@@ -1664,16 +1515,13 @@ async (req, res) => {
 
       message:
         error.message
-
     });
-
   }
-
 };
 
-// =====================================================
+// ============================================================
 // GET STUDENT RESULTS
-// =====================================================
+// ============================================================
 
 export const getStudentResults = async (
   req,
@@ -1683,8 +1531,18 @@ export const getStudentResults = async (
   try {
 
     const studentId =
-      req.user.id;
+      getUserId(req);
 
+    if (!studentId) {
+
+      return res.status(401).json({
+
+        success: false,
+
+        message:
+          "User not authenticated."
+      });
+    }
 
     const attempts =
       await ExamAttemptModel.find({
@@ -1699,14 +1557,19 @@ export const getStudentResults = async (
         }
 
       })
-      .populate(
-        "examId",
-        "title subject duration totalMarks passingMarks"
-      )
-      .sort({
-        createdAt: -1
-      });
 
+        .populate(
+          "examId",
+          "title subject duration totalMarks passingMarks"
+        )
+
+        .sort({
+          createdAt: -1
+        });
+
+    // --------------------------------------------------------
+    // FORMAT RESULTS
+    // --------------------------------------------------------
 
     const results =
       attempts.map(
@@ -1739,27 +1602,25 @@ export const getStudentResults = async (
             attempt.skippedCount || 0,
 
           result:
-            attempt.result ||
-            "Fail",
+            attempt.result || "Fail",
 
           submittedAt:
             attempt.submittedAt,
 
           timeTaken:
-            attempt.timeTaken || 0
+            attempt.timeTaken || 0,
 
+          answers:
+            attempt.answers || []
         })
       );
-
 
     return res.status(200).json({
 
       success: true,
 
       results
-
     });
-
 
   } catch (error) {
 
@@ -1768,16 +1629,12 @@ export const getStudentResults = async (
       error
     );
 
-
     return res.status(500).json({
 
       success: false,
 
       message:
         error.message
-
     });
-
   }
-
 };
