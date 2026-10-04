@@ -18,7 +18,6 @@ role-based access control, and performance analytics.
 <img src="https://img.shields.io/badge/AI-Powered-FF69B4?style=for-the-badge">
 
 </p>
-
 ---
 
 # 📌 Project Overview
