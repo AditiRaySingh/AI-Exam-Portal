@@ -82,7 +82,9 @@ function ResultPage() {
       console.log("Response:", res.data);
 
 
-   setResult(res.data.result);
+      // IMPORTANT:
+      // Store complete backend response
+      setResult(res.data);
 
     }
 
@@ -92,11 +94,16 @@ function ResultPage() {
       console.error("RESULT API ERROR");
       console.error("Message:", error.message);
       console.error("Status:", error.response?.status);
+
       console.error(
         "Response:",
         error.response?.data
       );
-      console.error("Full error:", error);
+
+      console.error(
+        "Full error:",
+        error
+      );
 
 
       alert(
@@ -147,9 +154,12 @@ function ResultPage() {
 
       const element = resultRef.current;
 
+
       if (!element) {
 
-        alert("Result content not found");
+        alert(
+          "Result content not found"
+        );
 
         return;
 
@@ -228,8 +238,13 @@ function ResultPage() {
       }
 
 
+      const examTitle =
+        result.exam?.title ||
+        "Exam";
+
+
       pdf.save(
-        `${result.exam.title}-Result.pdf`
+        `${examTitle}-Result.pdf`
       );
 
     }
@@ -290,12 +305,17 @@ function ResultPage() {
           No Result Found
         </h2>
 
+
         <button
           onClick={() =>
-            navigate("/student-dashboard")
+            navigate(
+              "/student-dashboard"
+            )
           }
         >
+
           Back to Dashboard
+
         </button>
 
       </div>
@@ -306,12 +326,23 @@ function ResultPage() {
 
 
   // ============================================
+  // RESULT DATA
+  // ============================================
+
+  const exam = result.exam || {};
+
+  const resultData = result.result || {};
+
+  const answers = result.answers || [];
+
+
+  // ============================================
   // PERCENTAGE
   // ============================================
 
   const rawPercentage =
     Number(
-      result.result?.percentage || 0
+      resultData.percentage || 0
     );
 
 
@@ -326,11 +357,47 @@ function ResultPage() {
 
 
   // ============================================
+  // SCORE
+  // ============================================
+
+  const score =
+    Number(
+      resultData.score || 0
+    );
+
+
+  const totalMarks =
+    Number(
+      resultData.totalMarks ||
+      exam.totalMarks ||
+      0
+    );
+
+
+  const correctAnswers =
+    Number(
+      resultData.correctAnswers || 0
+    );
+
+
+  const wrongAnswers =
+    Number(
+      resultData.wrongAnswers || 0
+    );
+
+
+  const skippedAnswers =
+    Number(
+      resultData.skippedAnswers || 0
+    );
+
+
+  // ============================================
   // PASS / FAIL
   // ============================================
 
   const passed =
-    percentage >= 40;
+    resultData.result === "Pass";
 
 
   // ============================================
@@ -341,26 +408,22 @@ function ResultPage() {
 
     {
       name: "Correct",
-      value:
-        result.result?.correctAnswers || 0
+      value: correctAnswers
     },
 
     {
       name: "Wrong",
-      value:
-        result.result?.wrongAnswers || 0
+      value: wrongAnswers
     },
 
     {
       name: "Score",
-      value:
-        result.result?.score || 0
+      value: score
     },
 
     {
       name: "Total",
-      value:
-        result.result?.totalMarks || 0
+      value: totalMarks
     }
 
   ];
@@ -374,14 +437,12 @@ function ResultPage() {
 
     {
       name: "Correct",
-      value:
-        result.result?.correctAnswers || 0
+      value: correctAnswers
     },
 
     {
       name: "Wrong",
-      value:
-        result.result?.wrongAnswers || 0
+      value: wrongAnswers
     }
 
   ];
@@ -405,11 +466,13 @@ function ResultPage() {
 
     }
 
+
     if (percentage >= 75) {
 
       return "🥇 Excellent Performance";
 
     }
+
 
     if (percentage >= 60) {
 
@@ -417,11 +480,13 @@ function ResultPage() {
 
     }
 
-    if (percentage >= 40) {
+
+    if (passed) {
 
       return "🙂 Passed Successfully";
 
     }
+
 
     return "📚 Needs Improvement";
 
@@ -440,6 +505,7 @@ function ResultPage() {
         className="result-card"
         ref={resultRef}
       >
+
 
         {/* =====================================
             HEADER
@@ -476,7 +542,7 @@ function ResultPage() {
         <div className="exam-info">
 
           <h2>
-            {result.exam?.title}
+            {exam.title || "Exam"}
           </h2>
 
 
@@ -486,7 +552,7 @@ function ResultPage() {
               Subject:
             </strong>{" "}
 
-            {result.exam?.subject}
+            {exam.subject || "N/A"}
 
           </p>
 
@@ -497,7 +563,7 @@ function ResultPage() {
               Duration:
             </strong>{" "}
 
-            {result.exam?.duration}
+            {exam.duration || 0}
 
             {" "}Minutes
 
@@ -566,11 +632,11 @@ function ResultPage() {
 
             <p>
 
-              {result.result?.score}
+              {score}
 
               {" / "}
 
-              {result.result?.totalMarks}
+              {totalMarks}
 
             </p>
 
@@ -584,7 +650,7 @@ function ResultPage() {
             </h3>
 
             <p>
-              {result.result?.correctAnswers}
+              {correctAnswers}
             </p>
 
           </div>
@@ -597,7 +663,20 @@ function ResultPage() {
             </h3>
 
             <p>
-              {result.result?.wrongAnswers}
+              {wrongAnswers}
+            </p>
+
+          </div>
+
+
+          <div className="result-box">
+
+            <h3>
+              Skipped
+            </h3>
+
+            <p>
+              {skippedAnswers}
             </p>
 
           </div>
@@ -756,7 +835,7 @@ function ResultPage() {
 
 
         {/* =====================================
-            AI FEEDBACK
+            AI EVALUATION
         ===================================== */}
 
         <h2 className="feedback-title">
@@ -768,91 +847,113 @@ function ResultPage() {
 
         <div className="feedback-list">
 
-          {result.answers?.map(
-            (answer, index) => (
 
-              <div
-                key={index}
-                className={
-                  `feedback-card ${
-                    answer.isCorrect
-                      ? "correct"
-                      : "wrong"
-                  }`
-                }
-              >
+          {answers.length > 0 ? (
 
-                <div className="feedback-header">
+            answers.map(
+              (answer, index) => (
 
-                  <h3>
-
-                    {answer.isCorrect
-                      ? "✅"
-                      : "❌"}
-
-                    {" "}
-
-                    Question {index + 1}
-
-                  </h3>
+                <div
+                  key={
+                    answer.questionId ||
+                    index
+                  }
+                  className={
+                    `feedback-card ${
+                      answer.isCorrect
+                        ? "correct"
+                        : "wrong"
+                    }`
+                  }
+                >
 
 
-                  <span className="marks-badge">
+                  <div className="feedback-header">
 
-                    {answer.obtainedMarks}
+                    <h3>
 
-                    /
+                      {answer.isCorrect
+                        ? "✅"
+                        : "❌"}
+
+                      {" "}
+
+                      Question {index + 1}
+
+                    </h3>
+
+
+                    <span className="marks-badge">
+
+                      {answer.obtainedMarks ?? 0}
+
+                      /
+
+                      {
+                        answer.aiScore ??
+                        answer.obtainedMarks ??
+                        0
+                      }
+
+                    </span>
+
+                  </div>
+
+
+                  <p>
+
+                    <strong>
+                      Your Answer:
+                    </strong>
+
+                  </p>
+
+
+                  <p className="answer-text">
 
                     {
-                      answer.aiScore ??
-                      answer.obtainedMarks
+                      answer.selectedAnswer ||
+                      "Not Attempted"
                     }
 
-                  </span>
+                  </p>
+
+
+                  <p>
+
+                    <strong>
+                      Feedback:
+                    </strong>
+
+                  </p>
+
+
+                  <p className="feedback-text">
+
+                    {
+                      answer.aiFeedback ||
+                      "No feedback available."
+                    }
+
+                  </p>
+
 
                 </div>
 
-
-                <p>
-
-                  <strong>
-                    Your Answer:
-                  </strong>
-
-                </p>
-
-
-                <p className="answer-text">
-
-                  {
-                    answer.selectedAnswer ||
-                    "Not Attempted"
-                  }
-
-                </p>
-
-
-                <p>
-
-                  <strong>
-                    Feedback:
-                  </strong>
-
-                </p>
-
-
-                <p className="feedback-text">
-
-                  {
-                    answer.aiFeedback ||
-                    "No feedback available."
-                  }
-
-                </p>
-
-              </div>
+              )
 
             )
+
+          ) : (
+
+            <div className="no-feedback">
+
+              <p>
+                📝 No question-wise evaluation available.
+              </p>
+
+            </div>
+
           )}
 
         </div>
@@ -881,13 +982,13 @@ function ResultPage() {
             You scored{" "}
 
             <strong>
-              {result.result?.score}
+              {score}
             </strong>
 
             {" "}out of{" "}
 
             <strong>
-              {result.result?.totalMarks}
+              {totalMarks}
             </strong>
 
             {" "}marks with{" "}
@@ -908,6 +1009,7 @@ function ResultPage() {
         ===================================== */}
 
         <div className="result-actions">
+
 
           <button
             className="download-btn"
@@ -931,6 +1033,7 @@ function ResultPage() {
             Back to Dashboard
 
           </button>
+
 
         </div>
 
