@@ -99,29 +99,86 @@ Step	Action
 3	🏆 Generate Result
 4	📈 Update Performance Data
 📸 Application Screenshots
-A quick look at the main student, teacher, admin, and AI interfaces.
+🎨 All screenshots are shown one-by-one at a comfortable size so each page is clearly visible on GitHub.
 
-<table>
-<tr>
-<td align="center"><b>🔐 Login</b><br><br><img src="./Screenshots/Login.png" width="380" alt="AI Exam Portal Login"></td>
-<td align="center"><b>📚 Available Exams</b><br><br><img src="./Screenshots/Available_exam.png" width="380" alt="Available Exams"></td>
-</tr>
-<tr>
-<td align="center"><b>📝 Online Examination</b><br><br><img src="./Screenshots/exam.png" width="380" alt="Online Examination"></td>
-<td align="center"><b>🎓 Student Dashboard</b><br><br><img src="./Screenshots/student_dashboard.png" width="380" alt="Student Dashboard"></td>
-</tr>
-<tr>
-<td align="center"><b>📊 Examination Results</b><br><br><img src="./Screenshots/results.png" width="380" alt="Examination Results"></td>
-<td align="center"><b>🏆 Ranking & Performance</b><br><br><img src="./Screenshots/ranking.png" width="380" alt="Ranking and Performance"></td>
-</tr>
-<tr>
-<td align="center"><b>👨‍🏫 Teacher Dashboard</b><br><br><img src="./Screenshots/teacher_dashboard.png" width="380" alt="Teacher Dashboard"></td>
-<td align="center"><b>🛡️ Admin Dashboard</b><br><br><img src="./Screenshots/admin_dashboard.png" width="380" alt="Admin Dashboard"></td>
-</tr>
-<tr>
-<td align="center"><b>✅ Admin Approval</b><br><br><img src="./Screenshots/admin_approval.png" width="380" alt="Admin Approval"></td>
-<td align="center"><b>🤖 AI Answer Evaluation</b><br><br><img src="./Screenshots/ai_evaluation.png" width="380" alt="AI Answer Evaluation"></td>
-</tr>
+🔐 Authentication
+<table align="center">
+<tr><th>🔑 Secure Login</th></tr>
+<tr><td align="center">
+<img src="./Screenshots/Login.png" width="700" alt="AI Exam Portal Login">
+</td></tr>
+</table>
+
+📚 Available Examinations
+<table align="center">
+<tr><th>📚 Published & Available Exams</th></tr>
+<tr><td align="center">
+<img src="./Screenshots/Available_exam.png" width="700" alt="Available Examinations">
+</td></tr>
+</table>
+
+📝 Online Examination
+<table align="center">
+<tr><th>⏱️ Interactive Online Examination</th></tr>
+<tr><td align="center">
+<img src="./Screenshots/exam.png" width="700" alt="Online Examination">
+</td></tr>
+</table>
+
+🎓 Student Dashboard
+<table align="center">
+<tr><th>🎓 Student Dashboard & Exam Overview</th></tr>
+<tr><td align="center">
+<img src="./Screenshots/student_dashboard.png" width="700" alt="Student Dashboard">
+</td></tr>
+</table>
+
+📊 Examination Results
+<table align="center">
+<tr><th>📊 Detailed Examination Results</th></tr>
+<tr><td align="center">
+<img src="./Screenshots/results.png" width="700" alt="Examination Results">
+</td></tr>
+</table>
+
+🏆 Ranking & Performance
+<table align="center">
+<tr><th>🏆 Student Ranking & Performance</th></tr>
+<tr><td align="center">
+<img src="./Screenshots/ranking.png" width="700" alt="Ranking and Performance">
+</td></tr>
+</table>
+
+👨‍🏫 Teacher Dashboard
+<table align="center">
+<tr><th>👨‍🏫 Teacher Dashboard & Examination Management</th></tr>
+<tr><td align="center">
+<img src="./Screenshots/teacher_dashboard.png" width="700" alt="Teacher Dashboard">
+</td></tr>
+</table>
+
+🛡️ Admin Dashboard
+<table align="center">
+<tr><th>🛡️ Administrative Dashboard</th></tr>
+<tr><td align="center">
+<img src="./Screenshots/admin_dashboard.png" width="700" alt="Admin Dashboard">
+</td></tr>
+</table>
+
+✅ Admin Approval
+<table align="center">
+<tr><th>✅ Admin Approval Management</th></tr>
+<tr><td align="center">
+<img src="./Screenshots/admin_approval.png" width="700" alt="Admin Approval">
+</td></tr>
+</table>
+
+🤖 AI-Assisted Answer Evaluation
+<table align="center">
+<tr><th>🤖 AI-Assisted Answer Evaluation</th></tr>
+<tr><td align="center">
+<img src="./Screenshots/ai_evaluation.png" width="700" alt="AI Evaluation">
+</td></tr>
 </table>
 
 🏗️ System Architecture
@@ -155,16 +212,16 @@ flowchart TB
 ```
 🧩 Technology Stack
 Layer	Technologies
-🎨 Frontend	React, JavaScript, CSS
-🔀 Routing	React Router
-🌐 API Communication	Axios
-⚙️ Backend	Node.js, Express.js
-🗄️ Database	MongoDB, Mongoose
-🔐 Authentication	JWT
-🛡️ Authorization	Role-Based Access Control
-🤖 AI	AI Question Generation, Material Generation, Answer Evaluation
-📊 Visualization	Recharts
-📄 PDF	jsPDF, html2canvas
+| 🎨 Frontend | React, JavaScript, CSS |
+| 🔀 Routing | React Router |
+| 🌐 API Communication | Axios |
+| ⚙️ Backend | Node.js, Express.js |
+| 🗄️ Database | MongoDB, Mongoose |
+| 🔐 Authentication | JWT |
+| 🛡️ Authorization | Role-Based Access Control |
+| 🤖 AI | AI Question Generation, Material Generation, Answer Evaluation |
+| 📊 Visualization | Recharts |
+| 📄 PDF | jsPDF, html2canvas |
 📁 Project Structure
 AI-Exam-Portal/
 │
@@ -211,7 +268,7 @@ Authentication Flow
 ✅ Requested Resource
 Security Features
 Security Feature	Implementation
-🔐 Authentication	JWT
+| 🔐 Authentication | JWT |
 🛡️ Protected Routes	Middleware
 👥 Authorization	Role-Based Access
 🚫 Duplicate Attempts	Attempt Validation
@@ -291,8 +348,8 @@ Area	Implementation
 🎨 Frontend	React-based responsive interface
 ⚙️ Backend	Node.js + Express REST APIs
 🍃 Database	MongoDB with Mongoose
-🔐 Authentication	JWT
-🛡️ Authorization	Role-Based Access Control
+| 🔐 Authentication | JWT |
+| 🛡️ Authorization | Role-Based Access Control |
 📝 Examination	Complete examination lifecycle
 🤖 AI	Question generation & answer evaluation
 📚 Questions	Manual & AI-assisted
