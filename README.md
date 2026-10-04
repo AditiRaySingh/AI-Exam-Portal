@@ -1,214 +1,202 @@
 # 🧠 AI Exam Portal
 
 <p align="center">
-  <img src="./Screenshots/ai_evaluation.png" width="520" alt="AI Exam Portal">
-</p>
 
-<h2 align="center">AI-Powered Full-Stack Online Examination Platform</h2>
+## AI-Powered Full-Stack Online Examination Platform
 
-<p align="center">
-  A modern MERN-based examination platform combining online assessments,
-  AI-assisted question generation, answer evaluation, role-based access,
-  and performance analytics.
-</p>
+A modern examination platform built with the MERN stack, combining
+online assessments, AI-assisted question generation, answer evaluation,
+role-based access control, and performance analytics.
 
-<p align="center">
-  <img src="https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=react&logoColor=black">
-  <img src="https://img.shields.io/badge/Node.js-339933?style=flat-square&logo=node.js&logoColor=white">
-  <img src="https://img.shields.io/badge/Express.js-000000?style=flat-square&logo=express&logoColor=white">
-  <img src="https://img.shields.io/badge/MongoDB-47A248?style=flat-square&logo=mongodb&logoColor=white">
-  <img src="https://img.shields.io/badge/JWT-7B61FF?style=flat-square">
-  <img src="https://img.shields.io/badge/AI-FF4FA3?style=flat-square">
 </p>
 
 <p align="center">
-  <a href="#-overview">Overview</a> •
-  <a href="#-features">Features</a> •
-  <a href="#-ai-integration">AI</a> •
-  <a href="#-screenshots">Screenshots</a> •
-  <a href="#-architecture">Architecture</a> •
-  <a href="#-setup">Setup</a>
+
+![React](https://img.shields.io/badge/Frontend-React-61DAFB?style=for-the-badge&logo=react&logoColor=black)
+![Node](https://img.shields.io/badge/Backend-Node.js-339933?style=for-the-badge&logo=node.js&logoColor=white)
+![Express](https://img.shields.io/badge/API-Express-000000?style=for-the-badge&logo=express&logoColor=white)
+![MongoDB](https://img.shields.io/badge/Database-MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white)
+![JWT](https://img.shields.io/badge/Auth-JWT-7B61FF?style=for-the-badge)
+![AI](https://img.shields.io/badge/AI-Powered-EC4899?style=for-the-badge)
+
 </p>
 
 ---
 
-## 🌟 Overview
+## 📌 Project Overview
 
-**AI Exam Portal** is a full-stack examination platform designed for:
+**AI Exam Portal** is a full-stack online examination system designed for
+**Students, Teachers, and Administrators**.
 
-| 👨‍🎓 Student | 👨‍🏫 Teacher | 🛡️ Admin |
-|:---:|:---:|:---:|
-| Attempt examinations | Create examinations | Manage users |
-| View results | Manage questions | Monitor platform |
-| Track history | AI question generation | View statistics |
-| View performance | Analytics | Administrative operations |
+The platform manages the complete examination lifecycle:
 
-The platform manages the complete examination lifecycle from **exam creation to performance analytics**.
+| Stage | Function |
+|---|---|
+| 📝 01 | Create Examination |
+| 📚 02 | Add / Generate Questions |
+| 🤖 03 | AI-Assisted Question Generation |
+| 🔍 04 | Teacher Review |
+| 🚀 05 | Publish Examination |
+| 🎓 06 | Student Examination |
+| 🧠 07 | Answer Evaluation |
+| 📊 08 | Result Generation |
+| 📈 09 | Performance Analytics |
 
 ### 🎯 Main Objectives
 
-- 📝 Provide an interactive online examination experience
-- 📚 Simplify examination and question management
-- 🤖 Reduce manual effort using AI-assisted generation
-- 📄 Generate questions from study material
-- 🧠 Assist with answer evaluation
-- 📊 Provide detailed performance analytics
-- 🔐 Implement secure authentication and authorization
-- 🛡️ Prevent duplicate examination attempts
+- Provide an interactive online examination experience
+- Simplify exam and question management
+- Reduce teacher effort using AI
+- Generate questions from study material
+- Assist with answer evaluation
+- Provide detailed examination results
+- Provide student and teacher analytics
+- Implement secure role-based access
+- Prevent duplicate examination attempts
 
 ---
 
-# ✨ Features
+# ✨ Core Features
 
-## 🎓 Student Features
+## 👥 Role-Based Features
+
+| 🎓 Student | 👨‍🏫 Teacher | 🛡️ Admin |
+|---|---|---|
+| Secure Registration & Login | Create Examinations | User Management |
+| View Published Exams | Question Management | Student Management |
+| Attempt Exams | AI Question Generation | Teacher Management |
+| Exam Timer | Material-Based Generation | Platform Dashboard |
+| Question Navigation | Question Review | Platform Statistics |
+| Answer Submission | Exam Publishing | Administrative Operations |
+| View Results | Student Results | |
+| View History | Performance Analytics | |
+| Attempt Protection | Attempt Statistics | |
+
+---
+
+# 🤖 AI Capabilities
+
+AI is integrated into the actual examination workflow to assist teachers.
+
+## AI Question Generation
 
 
-🔐 Secure Authentication
-        ↓
-📚 Browse Published Exams
-        ↓
-📝 Attempt Examination
-        ↓
-⏱️ Timer & Question Navigation
-        ↓
-📤 Submit Answers
-        ↓
-📊 View Results
-        ↓
-📜 View Examination History
-Student Capabilities
-Secure registration and login
-View published examinations
-Interactive examination interface
-Countdown timer
-Question navigation
-Answer submission
-Automatic score calculation
-Percentage and result status
-Correct / wrong / skipped statistics
-Examination history
-Duplicate attempt protection
-👨‍🏫 Teacher Features
-Feature	Description
-📝 Exam Creation	Create and configure examinations
-📚 Question Management	Add, edit and manage questions
-🤖 AI Generation	Generate questions using AI
-📄 Material Generation	Generate questions from study material
-🔍 Question Review	Review and modify generated questions
-🚀 Publishing	Publish examinations for students
-👥 Student Results	View student performance
-📈 Analytics	Analyze examination performance
-📊 Statistics	Track students and attempts
-🛡️ Admin Features
-👥 User management
-🎓 Student management
-👨‍🏫 Teacher management
-📊 Platform statistics
-⚙️ Administrative operations
-🔐 Role-based access control
-🤖 AI Integration
-
-AI is integrated directly into the examination workflow to assist teachers.
-
-🧠 AI Question Generation
-📚 Study Material
-       │
-       ▼
-🤖 AI Processing
-       │
-       ▼
-📝 Generated Questions
-       │
-       ▼
-👨‍🏫 Teacher Review
-       │
-       ▼
-🚀 Examination
-AI Capabilities
-🤖 Capability	Purpose
-🧠 AI Question Generation	Generate examination questions
-📄 Material-Based Generation	Generate questions from study material
-💬 AI Answer Evaluation	Assist with answer evaluation
-🔍 Teacher Review	Teacher reviews generated questions
+Study Material
+      ↓
+AI Processing
+      ↓
+Generated Questions
+      ↓
+Teacher Review
+      ↓
+Published Examination
+AI Feature	Purpose
+🤖 AI Question Generation	Generate examination questions
+📄 Material-Based Generation	Generate questions from uploaded study material
+🧠 AI Answer Evaluation	Assist with answer evaluation
+🔍 Teacher Review	Review and modify generated questions
 ⚡ Faster Preparation	Reduce manual question creation
 
-AI assists the teacher while keeping the final review and control with the teacher.
+The teacher remains in control of the final question review and examination.
 
 🔄 Examination Workflow
-👨‍🏫 Teacher
-📝 Create Exam
-      ↓
-📚 Add Questions
-      ↓
-🤖 Generate Questions with AI
-      ↓
-🔍 Review Questions
-      ↓
-🚀 Publish Exam
-🎓 Student
-📚 View Published Exam
-      ↓
-▶️ Start Exam
-      ↓
-✍️ Answer Questions
-      ↓
-📤 Submit Exam
-⚙️ System
-🧠 Evaluate Answers
-      ↓
-📊 Calculate Score
-      ↓
-🏆 Generate Result
-      ↓
-📈 Update Analytics
-📸 Screenshots
-🔐 Authentication & Exams
-<p align="center"> <img src="./Screenshots/Login.png" width="340" alt="Login"> &nbsp;&nbsp;&nbsp; <img src="./Screenshots/Available_exam.png" width="340" alt="Available Exams"> </p> <p align="center"> <b>🔐 Login</b> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>📚 Available Examinations</b> </p> <br> <p align="center"> <img src="./Screenshots/exam.png" width="720" alt="Online Examination"> </p> <p align="center"> <b>📝 Online Examination Interface</b> </p>
-🎓 Student Dashboard & Results
-<p align="center"> <img src="./Screenshots/student_dashboard.png" width="340" alt="Student Dashboard"> &nbsp;&nbsp;&nbsp; <img src="./Screenshots/results.png" width="340" alt="Results"> </p> <p align="center"> <b>🎓 Student Dashboard</b> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>📊 Examination Results</b> </p> <br> <p align="center"> <img src="./Screenshots/ranking.png" width="620" alt="Ranking"> </p> <p align="center"> <b>🏆 Ranking & Performance</b> </p>
-👨‍🏫 Teacher & 🛡️ Admin
-<p align="center"> <img src="./Screenshots/teacher_dashboard.png" width="340" alt="Teacher Dashboard"> &nbsp;&nbsp;&nbsp; <img src="./Screenshots/admin_dashboard.png" width="340" alt="Admin Dashboard"> </p> <p align="center"> <b>👨‍🏫 Teacher Dashboard</b> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>🛡️ Admin Dashboard</b> </p> <br> <p align="center"> <img src="./Screenshots/admin_approval.png" width="620" alt="Admin Approval"> </p> <p align="center"> <b>✅ Admin Approval</b> </p>
-🤖 AI-Assisted Evaluation
-<p align="center"> <img src="./Screenshots/ai_evaluation.png" width="620" alt="AI Evaluation"> </p> <p align="center"> <b>🧠 AI-Assisted Answer Evaluation</b> </p>
-🏗️ Architecture
-                    🌐 React Frontend
-                           │
-                           │ REST API
-                           ▼
-                 🚀 Node.js + Express
-                           │
-        ┌──────────────────┼──────────────────┐
-        │                  │                  │
-        ▼                  ▼                  ▼
-   🔐 Authentication   📝 Exam System      🤖 AI Services
-        │                  │                  │
-        │            ┌─────┴─────┐      ┌─────┴─────┐
-        │            │           │      │           │
-        ▼            ▼           ▼      ▼           ▼
-      JWT       Questions    Attempts  Generation  Evaluation
-                     │           │
-                     └─────┬─────┘
-                           ▼
-                      🍃 MongoDB
-👥 Role-Based System
-Role	Main Responsibilities
-🎓 Student	Attempt exams, submit answers, view results and history
-👨‍🏫 Teacher	Create exams, manage questions, generate AI questions and analyze results
-🛡️ Admin	Manage users, monitor platform and perform administrative operations
-🛠️ Technology Stack
-🎨 Frontend
-<p> <img src="https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=react&logoColor=black"> <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=javascript&logoColor=black"> <img src="https://img.shields.io/badge/CSS-1572B6?style=flat-square&logo=css3&logoColor=white"> <img src="https://img.shields.io/badge/Axios-5A29E4?style=flat-square"> <img src="https://img.shields.io/badge/React_Router-CA4245?style=flat-square&logo=reactrouter"> </p>
-⚙️ Backend
-<p> <img src="https://img.shields.io/badge/Node.js-339933?style=flat-square&logo=nodedotjs&logoColor=white"> <img src="https://img.shields.io/badge/Express.js-000000?style=flat-square&logo=express&logoColor=white"> <img src="https://img.shields.io/badge/REST_API-6C63FF?style=flat-square"> <img src="https://img.shields.io/badge/JWT-7B61FF?style=flat-square"> </p>
-🍃 Database
-<p> <img src="https://img.shields.io/badge/MongoDB-47A248?style=flat-square&logo=mongodb&logoColor=white"> <img src="https://img.shields.io/badge/Mongoose-880000?style=flat-square&logo=mongoose&logoColor=white"> </p>
-🤖 AI
-<p> <img src="https://img.shields.io/badge/Question_Generation-9C27B0?style=flat-square"> <img src="https://img.shields.io/badge/Material_Generation-673AB7?style=flat-square"> <img src="https://img.shields.io/badge/Answer_Evaluation-E91E63?style=flat-square"> </p>
+👨‍🏫 Teacher Workflow
+Step	Action
+1	📝 Create Exam
+2	📚 Add Questions
+3	🤖 Generate Questions with AI
+4	🔍 Review Questions
+5	🚀 Publish Exam
+🎓 Student Workflow
+Step	Action
+1	📚 View Published Exam
+2	▶️ Start Examination
+3	✍️ Answer Questions
+4	⏱️ Complete Within Time
+5	📤 Submit Examination
+6	📊 View Result
+⚙️ System Workflow
+Step	Action
+1	🧠 Evaluate Answers
+2	📊 Calculate Score
+3	🏆 Generate Result
+4	📈 Update Performance Data
+📸 Application Screenshots
+🔐 Authentication
+<p align="center"> <img src="./Screenshots/Login.png" width="700" alt="AI Exam Portal Login"> </p> <p align="center"> <b>🔐 Secure Login</b> </p>
+📚 Available Examinations
+<p align="center"> <img src="./Screenshots/Available_exam.png" width="850" alt="Available Examinations"> </p> <p align="center"> <b>📚 Student Examination Dashboard</b> </p>
+📝 Online Examination
+<p align="center"> <img src="./Screenshots/exam.png" width="850" alt="Online Examination"> </p> <p align="center"> <b>📝 Interactive Online Examination Interface</b> </p>
+🎓 Student Dashboard
+<p align="center"> <img src="./Screenshots/student_dashboard.png" width="850" alt="Student Dashboard"> </p> <p align="center"> <b>🎓 Student Dashboard</b> </p>
+📊 Examination Results
+<p align="center"> <img src="./Screenshots/results.png" width="850" alt="Examination Results"> </p> <p align="center"> <b>📊 Detailed Examination Results</b> </p>
+🏆 Ranking & Performance
+<p align="center"> <img src="./Screenshots/ranking.png" width="850" alt="Ranking"> </p> <p align="center"> <b>🏆 Student Ranking & Performance</b> </p>
+👨‍🏫 Teacher Dashboard
+<p align="center"> <img src="./Screenshots/teacher_dashboard.png" width="850" alt="Teacher Dashboard"> </p> <p align="center"> <b>👨‍🏫 Teacher Dashboard & Examination Management</b> </p>
+🛡️ Admin Dashboard
+<p align="center"> <img src="./Screenshots/admin_dashboard.png" width="850" alt="Admin Dashboard"> </p> <p align="center"> <b>🛡️ Administrative Dashboard</b> </p>
+✅ Admin Approval
+<p align="center"> <img src="./Screenshots/admin_approval.png" width="850" alt="Admin Approval"> </p> <p align="center"> <b>✅ Admin Approval Management</b> </p>
+🤖 AI-Assisted Answer Evaluation
+<p align="center"> <img src="./Screenshots/ai_evaluation.png" width="850" alt="AI Evaluation"> </p> <p align="center"> <b>🤖 AI-Assisted Answer Evaluation</b> </p>
+🏗️ System Architecture
+                         ┌───────────────────────┐
+                         │    🌐 React Frontend   │
+                         │                       │
+                         │ Student / Teacher     │
+                         │ Admin Interfaces      │
+                         └───────────┬───────────┘
+                                     │
+                                  REST API
+                                     │
+                                     ▼
+                         ┌───────────────────────┐
+                         │  🚀 Node.js + Express │
+                         │                       │
+                         │ Authentication        │
+                         │ Exam Management       │
+                         │ Questions             │
+                         │ Exam Attempts         │
+                         │ Results               │
+                         │ Dashboard             │
+                         │ Administration        │
+                         │ AI Services            │
+                         └───────────┬───────────┘
+                                     │
+                    ┌────────────────┴────────────────┐
+                    │                                 │
+                    ▼                                 ▼
+          ┌──────────────────┐              ┌──────────────────┐
+          │   🍃 MongoDB     │              │    🤖 AI Layer   │
+          │                  │              │                  │
+          │ Users            │              │ Question         │
+          │ Exams            │              │ Generation       │
+          │ Questions        │              │                  │
+          │ Attempts         │              │ Answer           │
+          │ Results          │              │ Evaluation       │
+          └──────────────────┘              └──────────────────┘
+🧩 Technology Stack
+Layer	Technologies
+🎨 Frontend	React, JavaScript, CSS
+🔀 Routing	React Router
+🌐 API Communication	Axios
+⚙️ Backend	Node.js, Express.js
+🗄️ Database	MongoDB, Mongoose
+🔐 Authentication	JWT
+🛡️ Authorization	Role-Based Access Control
+🤖 AI	AI Question Generation, Material Generation, Answer Evaluation
+📊 Visualization	Recharts
+📄 PDF	jsPDF, html2canvas
 📁 Project Structure
 AI-Exam-Portal/
 │
-├── 🎨 frontend/
+├── frontend/
+│   │
 │   ├── public/
+│   │
 │   └── src/
 │       ├── components/
 │       ├── pages/
@@ -217,7 +205,8 @@ AI-Exam-Portal/
 │       ├── assets/
 │       └── App.jsx
 │
-├── ⚙️ backend/
+├── backend/
+│   │
 │   ├── config/
 │   ├── controllers/
 │   ├── middleware/
@@ -225,86 +214,120 @@ AI-Exam-Portal/
 │   ├── routes/
 │   └── server.js
 │
-├── 📸 Screenshots/
+├── Screenshots/
 │
 ├── .gitignore
-└── README.md
-🔐 Security
+├── README.md
+│
+└── package.json
+🔐 Security & Authentication
 
-The application uses JWT authentication and role-based authorization.
+The application uses JWT-based authentication and role-based authorization.
 
+Authentication Flow
 👤 User
-  │
-  ▼
-🔐 Login / Registration
-  │
-  ▼
+  ↓
+🔐 Register / Login
+  ↓
 🎟️ JWT Token
-  │
-  ▼
-🛡️ Protected Route
-  │
-  ▼
+  ↓
+🛡️ Protected API Request
+  ↓
 👮 Role Authorization
-  │
-  ▼
+  ↓
 ✅ Requested Resource
 Security Features
-🔐 JWT authentication
-🛡️ Protected API routes
-👥 Role-based authorization
-🔒 Student / Teacher route separation
-⏱️ Examination timing validation
-🚫 Duplicate attempt protection
-🙈 Correct answers hidden during examination
-📤 Protected answer submission
+Security Feature	Implementation
+🔐 Authentication	JWT
+🛡️ Protected Routes	Middleware
+👥 Authorization	Role-Based Access
+🚫 Duplicate Attempts	Attempt Validation
+⏱️ Exam Timing	Start / End Time Validation
+🙈 Correct Answers	Hidden During Examination
+📤 Answer Submission	Protected API
+🔒 Route Separation	Student / Teacher / Admin
 📡 API Modules
 Endpoint	Purpose
-🔐 /api/auth	Authentication & registration
-📝 /api/exams	Examination management
-📚 /api/questions	Question management
-▶️ /api/exam-attempts	Attempts & submission
-📊 /api/dashboard	Dashboard information
-📄 /api/ai/material	Material-based AI generation
-🤖 /api/ai/question	AI question generation
-🧠 /api/ai/evaluation	AI answer evaluation
-🏆 /api/results	Result management
-🛡️ /api/admin	Administrative operations
-📊 Evaluation System
+🔐 /api/auth	Authentication & Registration
+📝 /api/exams	Examination Management
+📚 /api/questions	Question Management
+▶️ /api/exam-attempts	Exam Attempts & Submission
+📊 /api/dashboard	Dashboard Data
+📄 /api/ai/material	Material-Based AI Generation
+🤖 /api/ai/question	AI Question Generation
+🧠 /api/ai/evaluation	AI Answer Evaluation
+🏆 /api/results	Student Results
+🛡️ /api/admin	Administrative Operations
+📊 Examination Evaluation
+
+The examination system records multiple performance metrics.
+
 Metric	Description
-🏆 Score	Marks obtained
+🏆 Score	Marks obtained by the student
 📊 Percentage	Overall examination percentage
 ✅ Correct	Number of correct answers
 ❌ Wrong	Number of incorrect answers
 ⏭️ Skipped	Number of unanswered questions
-🎯 Result	Pass / Fail
+🎯 Result	Pass or Fail
 ⏱️ Time Taken	Time spent during examination
-🔄 Attempt Status	Current attempt state
-📂 Setup
-1️⃣ Clone Repository
+🔄 Attempt Status	Current examination state
+📈 Analytics
+Teacher Analytics
+
+Teachers can analyze:
+
+📊 Average score
+🏆 Highest score
+👥 Total attempts
+✅ Pass count
+❌ Fail count
+🥇 Student leaderboard
+📈 Student performance
+Student Performance
+
+Students can view:
+
+Score
+Percentage
+Correct answers
+Wrong answers
+Skipped answers
+Result status
+Time taken
+Previous examination attempts
+🚀 Installation & Setup
+1. Clone Repository
 git clone https://github.com/AditiRaySingh/AI-Exam-Portal.git
+
 cd AI-Exam-Portal
-2️⃣ Backend
+2. Backend Setup
 cd backend
+
 npm install
+
 npm start
-3️⃣ Frontend
+3. Frontend Setup
 
 Open another terminal:
 
 cd frontend
+
 npm install
+
 npm run dev
 🔑 Environment Variables
 
-Create a .env file inside the backend directory:
+Create a .env file inside the backend directory.
 
 PORT=3000
+
 MONGO_URI=your_mongodb_connection_string
+
 JWT_SECRET=your_jwt_secret
+
 GROQ_API_KEY=your_ai_api_key
 
-⚠️ Never commit .env files, database credentials, JWT secrets, or AI API keys.
+⚠️ Never commit .env files, database credentials, JWT secrets, or AI API keys to GitHub.
 
 🌐 Local Development
 Service	URL
@@ -312,12 +335,12 @@ Service	URL
 ⚙️ Backend	http://localhost:3000
 💡 Engineering Highlights
 Area	Implementation
-🎨 Frontend	React responsive interface
+🎨 Frontend	React-based responsive interface
 ⚙️ Backend	Node.js + Express REST APIs
-🍃 Database	MongoDB + Mongoose
+🍃 Database	MongoDB with Mongoose
 🔐 Authentication	JWT
-🛡️ Authorization	Role-based access control
-📝 Examination	Complete exam lifecycle
+🛡️ Authorization	Role-Based Access Control
+📝 Examination	Complete examination lifecycle
 🤖 AI	Question generation & answer evaluation
 📚 Questions	Manual & AI-assisted
 📊 Evaluation	Score, percentage, correct, wrong, skipped
@@ -325,15 +348,15 @@ Area	Implementation
 🔒 Security	Protected routes & attempt control
 🌙 UI	Responsive dark-themed interface
 🗺️ Future Improvements
-🚀 Planned Feature	
-📧 Email Notifications	Planned
-⚡ Real-Time Notifications	Planned
-📊 Advanced Analytics	Planned
-🧠 Enhanced AI Evaluation	Planned
-🏆 Advanced Leaderboard	Planned
-📱 Progressive Web App	Planned
-☁️ Cloud Deployment Improvements	Planned
-🔐 Additional Exam Security	Planned
+Planned Feature	Status
+📧 Email Notifications	🔵 Planned
+⚡ Real-Time Notifications	🔵 Planned
+📊 Advanced Analytics	🔵 Planned
+🧠 Enhanced AI Evaluation	🔵 Planned
+🏆 Advanced Leaderboard	🔵 Planned
+📱 Progressive Web App	🔵 Planned
+☁️ Improved Cloud Deployment	🔵 Planned
+🔐 Additional Exam Security	🔵 Planned
 👩‍💻 Author
 <p align="center">
 Aditi Singh
@@ -345,9 +368,7 @@ Full-Stack Developer · MERN Stack · AI Integration
 
 If you find this project interesting:
 
-⭐ Star the repository   •  
-🍴 Fork the project   •  
-💡 Share feedback
+⭐ Star the repository · 🍴 Fork the project · 💡 Share feedback
 
 <p align="center">
 🧠 AI Exam Portal
