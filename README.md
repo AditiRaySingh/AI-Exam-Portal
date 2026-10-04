@@ -73,7 +73,7 @@ The platform manages the complete examination lifecycle:
 | 🔐 Security | Implement authentication and role-based authorization |
 | 🚫 Attempt Protection | Prevent duplicate examination attempts |
 
----
+----
 
 # ✨ Core Features
 
