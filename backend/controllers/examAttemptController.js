@@ -1567,6 +1567,11 @@ export const getStudentResults = async (
           createdAt: -1
         });
 
+
+        console.log("STUDENT ID:", studentId);
+console.log("TOTAL HISTORY ATTEMPTS:", attempts.length);
+console.log("ATTEMPTS:", attempts);
+
     // --------------------------------------------------------
     // FORMAT RESULTS
     // --------------------------------------------------------

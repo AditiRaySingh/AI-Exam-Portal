@@ -60,14 +60,14 @@ function StudentResults() {
 
       const token = localStorage.getItem("token");
 
-      const res = await api.get(
-        "/attempt/history",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        }
-      );
+    const res = await api.get(
+  "/exam-attempts/history",
+  {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  }
+);
 
       console.log("STUDENT RESULTS:", res.data);
 
@@ -273,7 +273,7 @@ function StudentResults() {
                     <FaBook />
 
                     <h2>
-                      {result.examId?.title || "Exam"}
+                    {result.exam?.title || "Exam"}
                     </h2>
 
                   </div>
@@ -668,9 +668,7 @@ function StudentResults() {
                   <button
                     className="student-view-btn"
                     onClick={() =>
-                      navigate(
-                        `/result/${result.examId?._id || result.examId}`
-                      )
+                      navigate(`/result/${result.exam?._id}`)
                     }
                   >
                     View Full Result →
