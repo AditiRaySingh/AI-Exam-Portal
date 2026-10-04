@@ -38,14 +38,14 @@ function TeacherResults() {
         try {
             const token = localStorage.getItem("token");
 
-            const res = await api.get(
-                `/attempt/teacher/${examId}`,
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
-            );
+           const res = await api.get(
+  `/exam-attempts/teacher/${examId}`,
+  {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  }
+);
 
             console.log("Teacher Results:", res.data);
 
