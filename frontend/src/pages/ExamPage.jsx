@@ -560,7 +560,7 @@ function ExamPage() {
       // -------------------------------------------------
 
       await api.post(
-        "/attempt/submit",
+        "/exam-attempts/submit",
         {
           examId,
 

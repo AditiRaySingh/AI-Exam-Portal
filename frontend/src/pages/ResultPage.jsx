@@ -43,73 +43,98 @@ function ResultPage() {
 
   const navigate = useNavigate();
 
-  const [result, setResult] =
-    useState(null);
+  const [result, setResult] = useState(null);
 
-  const [loading, setLoading] =
-    useState(true);
+  const [loading, setLoading] = useState(true);
 
-  const resultRef =
-    useRef();
+  const resultRef = useRef(null);
 
 
   // ============================================
   // FETCH RESULT
   // ============================================
 
-  useEffect(() => {
-
-    fetchResult();
-
-  }, [examId]);
-
-
   const fetchResult = async () => {
 
     try {
 
-      const token =
-        localStorage.getItem("token");
+      const token = localStorage.getItem("token");
 
-      const res =
-        await api.get(
-          `/attempt/result/${examId}`,
-          {
-            headers: {
-              Authorization:
-                `Bearer ${token}`
-            }
-          }
-        );
+      console.log("================================");
+      console.log("RESULT PAGE STARTED");
+      console.log("Exam ID:", examId);
+      console.log("Token exists:", !!token);
+      console.log("Calling API...");
 
-      console.log(
-        "RESULT:",
-        res.data
+
+      const res = await api.get(
+        `/exam-attempts/result/${examId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
 
-      setResult(
-        res.data
-      );
 
-    } catch (error) {
+      console.log("API SUCCESS");
+      console.log("Status:", res.status);
+      console.log("Response:", res.data);
 
-      console.log(
-        "RESULT ERROR:",
-        error
+
+   setResult(res.data.result);
+
+    }
+
+    catch (error) {
+
+      console.error("================================");
+      console.error("RESULT API ERROR");
+      console.error("Message:", error.message);
+      console.error("Status:", error.response?.status);
+      console.error(
+        "Response:",
+        error.response?.data
       );
+      console.error("Full error:", error);
+
 
       alert(
         error.response?.data?.message ||
-        "Failed to Load Result"
+        "Failed to load result"
       );
 
-    } finally {
+
+      setResult(null);
+
+    }
+
+    finally {
+
+      console.log(
+        "SETTING LOADING FALSE"
+      );
 
       setLoading(false);
 
     }
 
   };
+
+
+  // ============================================
+  // CALL FETCH RESULT
+  // ============================================
+
+  useEffect(() => {
+
+    if (examId) {
+
+      fetchResult();
+
+    }
+
+  }, [examId]);
 
 
   // ============================================
@@ -120,39 +145,48 @@ function ResultPage() {
 
     try {
 
-      const element =
-        resultRef.current;
+      const element = resultRef.current;
 
-      const canvas =
-        await html2canvas(
-          element,
-          {
-            scale: 2
-          }
-        );
+      if (!element) {
 
-      const imgData =
-        canvas.toDataURL(
-          "image/png"
-        );
+        alert("Result content not found");
 
-      const pdf =
-        new jsPDF(
-          "p",
-          "mm",
-          "a4"
-        );
+        return;
+
+      }
+
+
+      const canvas = await html2canvas(
+        element,
+        {
+          scale: 2
+        }
+      );
+
+
+      const imgData = canvas.toDataURL(
+        "image/png"
+      );
+
+
+      const pdf = new jsPDF(
+        "p",
+        "mm",
+        "a4"
+      );
+
 
       const imgWidth = 190;
 
       const pageHeight = 295;
 
+
       const imgHeight =
         (canvas.height * imgWidth) /
         canvas.width;
 
-      let heightLeft =
-        imgHeight;
+
+      let heightLeft = imgHeight;
 
       let position = 10;
 
@@ -170,15 +204,14 @@ function ResultPage() {
       heightLeft -= pageHeight;
 
 
-      while (
-        heightLeft > 0
-      ) {
+      while (heightLeft > 0) {
 
         position =
-          heightLeft -
-          imgHeight;
+          heightLeft - imgHeight;
+
 
         pdf.addPage();
+
 
         pdf.addImage(
           imgData,
@@ -189,6 +222,7 @@ function ResultPage() {
           imgHeight
         );
 
+
         heightLeft -= pageHeight;
 
       }
@@ -198,12 +232,15 @@ function ResultPage() {
         `${result.exam.title}-Result.pdf`
       );
 
-    } catch (error) {
+    }
+
+    catch (error) {
 
       console.error(
         "PDF ERROR:",
         error
       );
+
 
       alert(
         "Failed to generate PDF"
@@ -245,14 +282,23 @@ function ResultPage() {
 
     return (
 
-      <h2
-        style={{
-          textAlign: "center",
-          marginTop: "100px"
-        }}
+      <div
+        className="no-result-screen"
       >
-        No Result Found
-      </h2>
+
+        <h2>
+          No Result Found
+        </h2>
+
+        <button
+          onClick={() =>
+            navigate("/student-dashboard")
+          }
+        >
+          Back to Dashboard
+        </button>
+
+      </div>
 
     );
 
@@ -270,17 +316,10 @@ function ResultPage() {
 
 
   const percentage =
-    Number.isFinite(
-      rawPercentage
-    )
+    Number.isFinite(rawPercentage)
       ? rawPercentage
       : 0;
 
-
-  // IMPORTANT
-  // 100.00 -> 100
-  // 85.00 -> 85
-  // 75.50 -> 76
 
   const formattedPercentage =
     Math.round(percentage);
@@ -303,25 +342,25 @@ function ResultPage() {
     {
       name: "Correct",
       value:
-        result.result.correctAnswers || 0
+        result.result?.correctAnswers || 0
     },
 
     {
       name: "Wrong",
       value:
-        result.result.wrongAnswers || 0
+        result.result?.wrongAnswers || 0
     },
 
     {
       name: "Score",
       value:
-        result.result.score || 0
+        result.result?.score || 0
     },
 
     {
       name: "Total",
       value:
-        result.result.totalMarks || 0
+        result.result?.totalMarks || 0
     }
 
   ];
@@ -336,13 +375,13 @@ function ResultPage() {
     {
       name: "Correct",
       value:
-        result.result.correctAnswers || 0
+        result.result?.correctAnswers || 0
     },
 
     {
       name: "Wrong",
       value:
-        result.result.wrongAnswers || 0
+        result.result?.wrongAnswers || 0
     }
 
   ];
@@ -358,36 +397,35 @@ function ResultPage() {
   // PERFORMANCE MESSAGE
   // ============================================
 
-  const getPerformanceMessage =
-    () => {
+  const getPerformanceMessage = () => {
 
-      if (
-        percentage >= 90
-      ) {
-        return "🏆 Outstanding Performance";
-      }
+    if (percentage >= 90) {
 
-      if (
-        percentage >= 75
-      ) {
-        return "🥇 Excellent Performance";
-      }
+      return "🏆 Outstanding Performance";
 
-      if (
-        percentage >= 60
-      ) {
-        return "👍 Good Performance";
-      }
+    }
 
-      if (
-        percentage >= 40
-      ) {
-        return "🙂 Passed Successfully";
-      }
+    if (percentage >= 75) {
 
-      return "📚 Needs Improvement";
+      return "🥇 Excellent Performance";
 
-    };
+    }
+
+    if (percentage >= 60) {
+
+      return "👍 Good Performance";
+
+    }
+
+    if (percentage >= 40) {
+
+      return "🙂 Passed Successfully";
+
+    }
+
+    return "📚 Needs Improvement";
+
+  };
 
 
   // ============================================
@@ -403,15 +441,16 @@ function ResultPage() {
         ref={resultRef}
       >
 
-        {/* =========================
+        {/* =====================================
             HEADER
-        ========================= */}
+        ===================================== */}
 
         <div className="result-header">
 
           <h1>
             🎉 Exam Result
           </h1>
+
 
           <span
             className={
@@ -430,37 +469,46 @@ function ResultPage() {
         </div>
 
 
-        {/* =========================
+        {/* =====================================
             EXAM INFO
-        ========================= */}
+        ===================================== */}
 
         <div className="exam-info">
 
           <h2>
-            {result.exam.title}
+            {result.exam?.title}
           </h2>
 
+
           <p>
+
             <strong>
               Subject:
             </strong>{" "}
-            {result.exam.subject}
+
+            {result.exam?.subject}
+
           </p>
 
+
           <p>
+
             <strong>
               Duration:
             </strong>{" "}
-            {result.exam.duration}
+
+            {result.exam?.duration}
+
             {" "}Minutes
+
           </p>
 
         </div>
 
 
-        {/* =========================
+        {/* =====================================
             CIRCULAR SCORE
-        ========================= */}
+        ===================================== */}
 
         <div className="circle-wrapper">
 
@@ -488,10 +536,10 @@ function ResultPage() {
                       : "#ef4444",
 
                   textColor:
-                    "#111827",
+                    "#ffffff",
 
                   trailColor:
-                    "#e5e7eb"
+                    "#3b3152"
 
                 })
               }
@@ -503,9 +551,9 @@ function ResultPage() {
         </div>
 
 
-        {/* =========================
+        {/* =====================================
             STATS
-        ========================= */}
+        ===================================== */}
 
         <div className="result-grid">
 
@@ -517,9 +565,13 @@ function ResultPage() {
             </h3>
 
             <p>
-              {result.result.score}
+
+              {result.result?.score}
+
               {" / "}
-              {result.result.totalMarks}
+
+              {result.result?.totalMarks}
+
             </p>
 
           </div>
@@ -532,7 +584,7 @@ function ResultPage() {
             </h3>
 
             <p>
-              {result.result.correctAnswers}
+              {result.result?.correctAnswers}
             </p>
 
           </div>
@@ -545,7 +597,7 @@ function ResultPage() {
             </h3>
 
             <p>
-              {result.result.wrongAnswers}
+              {result.result?.wrongAnswers}
             </p>
 
           </div>
@@ -571,22 +623,27 @@ function ResultPage() {
             </h3>
 
             <p>
+
               {passed
                 ? "Pass"
                 : "Fail"}
+
             </p>
 
           </div>
 
+
         </div>
 
 
-        {/* =========================
+        {/* =====================================
             BAR CHART
-        ========================= */}
+        ===================================== */}
 
         <h2 className="chart-title">
+
           📊 Performance Chart
+
         </h2>
 
 
@@ -603,15 +660,18 @@ function ResultPage() {
 
               <XAxis
                 dataKey="name"
+                stroke="#c4b5fd"
               />
 
-              <YAxis />
+              <YAxis
+                stroke="#c4b5fd"
+              />
 
               <Tooltip />
 
               <Bar
                 dataKey="value"
-                fill="#2563eb"
+                fill="#a855f7"
                 radius={[
                   6,
                   6,
@@ -627,12 +687,14 @@ function ResultPage() {
         </div>
 
 
-        {/* =========================
+        {/* =====================================
             PIE CHART
-        ========================= */}
+        ===================================== */}
 
         <h2 className="chart-title">
+
           🥧 Correct vs Wrong
+
         </h2>
 
 
@@ -681,6 +743,7 @@ function ResultPage() {
 
               </Pie>
 
+
               <Tooltip />
 
               <Legend />
@@ -692,12 +755,14 @@ function ResultPage() {
         </div>
 
 
-        {/* =========================
+        {/* =====================================
             AI FEEDBACK
-        ========================= */}
+        ===================================== */}
 
         <h2 className="feedback-title">
+
           🤖 AI Evaluation
+
         </h2>
 
 
@@ -726,6 +791,7 @@ function ResultPage() {
                       : "❌"}
 
                     {" "}
+
                     Question {index + 1}
 
                   </h3>
@@ -734,9 +800,11 @@ function ResultPage() {
                   <span className="marks-badge">
 
                     {answer.obtainedMarks}
+
                     /
+
                     {
-                      answer.aiScore ||
+                      answer.aiScore ??
                       answer.obtainedMarks
                     }
 
@@ -746,9 +814,11 @@ function ResultPage() {
 
 
                 <p>
+
                   <strong>
                     Your Answer:
                   </strong>
+
                 </p>
 
 
@@ -763,15 +833,20 @@ function ResultPage() {
 
 
                 <p>
+
                   <strong>
                     Feedback:
                   </strong>
+
                 </p>
 
 
                 <p className="feedback-text">
 
-                  {answer.aiFeedback}
+                  {
+                    answer.aiFeedback ||
+                    "No feedback available."
+                  }
 
                 </p>
 
@@ -783,9 +858,9 @@ function ResultPage() {
         </div>
 
 
-        {/* =========================
+        {/* =====================================
             SUMMARY
-        ========================= */}
+        ===================================== */}
 
         <div className="summary-card">
 
@@ -793,22 +868,26 @@ function ResultPage() {
             📈 Performance Summary
           </h2>
 
+
           <h3>
+
             {getPerformanceMessage()}
+
           </h3>
+
 
           <p>
 
             You scored{" "}
 
             <strong>
-              {result.result.score}
+              {result.result?.score}
             </strong>
 
             {" "}out of{" "}
 
             <strong>
-              {result.result.totalMarks}
+              {result.result?.totalMarks}
             </strong>
 
             {" "}marks with{" "}
@@ -824,9 +903,9 @@ function ResultPage() {
         </div>
 
 
-        {/* =========================
+        {/* =====================================
             BUTTONS
-        ========================= */}
+        ===================================== */}
 
         <div className="result-actions">
 
@@ -834,7 +913,9 @@ function ResultPage() {
             className="download-btn"
             onClick={downloadPDF}
           >
+
             📄 Download PDF
+
           </button>
 
 
@@ -846,10 +927,13 @@ function ResultPage() {
               )
             }
           >
+
             Back to Dashboard
+
           </button>
 
         </div>
+
 
       </div>
 
@@ -858,5 +942,6 @@ function ResultPage() {
   );
 
 }
+
 
 export default ResultPage;

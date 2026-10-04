@@ -63,8 +63,8 @@ function TeacherAnalytics() {
                 return;
             }
 
-            const res = await api.get(
-                `/attempt/teacher/${examId}`,
+          const res = await api.get(
+    `/exam-attempts/teacher/${examId}`,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`

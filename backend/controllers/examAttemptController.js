@@ -1670,3 +1670,114 @@ async (req, res) => {
   }
 
 };
+
+// =====================================================
+// GET STUDENT RESULTS
+// =====================================================
+
+export const getStudentResults = async (
+  req,
+  res
+) => {
+
+  try {
+
+    const studentId =
+      req.user.id;
+
+
+    const attempts =
+      await ExamAttemptModel.find({
+
+        studentId,
+
+        status: {
+          $in: [
+            "submitted",
+            "auto-submitted"
+          ]
+        }
+
+      })
+      .populate(
+        "examId",
+        "title subject duration totalMarks passingMarks"
+      )
+      .sort({
+        createdAt: -1
+      });
+
+
+    const results =
+      attempts.map(
+        (attempt) => ({
+
+          _id:
+            attempt._id,
+
+          exam:
+            attempt.examId,
+
+          score:
+            attempt.score || 0,
+
+          totalMarks:
+            attempt.totalMarks ||
+            attempt.examId?.totalMarks ||
+            0,
+
+          percentage:
+            attempt.percentage || 0,
+
+          correctCount:
+            attempt.correctCount || 0,
+
+          wrongCount:
+            attempt.wrongCount || 0,
+
+          skippedCount:
+            attempt.skippedCount || 0,
+
+          result:
+            attempt.result ||
+            "Fail",
+
+          submittedAt:
+            attempt.submittedAt,
+
+          timeTaken:
+            attempt.timeTaken || 0
+
+        })
+      );
+
+
+    return res.status(200).json({
+
+      success: true,
+
+      results
+
+    });
+
+
+  } catch (error) {
+
+    console.error(
+      "GET STUDENT RESULTS ERROR:",
+      error
+    );
+
+
+    return res.status(500).json({
+
+      success: false,
+
+      message:
+        error.message
+
+    });
+
+  }
+
+};
