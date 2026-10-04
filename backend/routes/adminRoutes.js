@@ -6,7 +6,7 @@ import {
 } from "../middleware/authMiddleware.js";
 
 import User from "../models/userModel.js";
-import Exam from "../models/ExamModel.js";
+import Exam from "../models/examModel.js";
 
 const router = express.Router();
 
